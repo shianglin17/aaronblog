@@ -1,0 +1,31 @@
+{
+    "status": "success",
+    "code": 200,
+    "message": "獲取成功",
+    "data": {
+        "items": [
+            {
+                "id": 1,
+                "date": "2021-01-01",
+                "authors": "John Doe",
+                "title": "Article 1",
+                "content": "Content 1",
+                "tags": ["tag1", "tag2", "tag3"]
+            },
+            {
+                "id": 2,
+                "date": "2021-01-02",
+                "authors": "Jane Smith",
+                "title": "Article 2",
+                "content": "Content 2",
+                "tags": ["tag4", "tag5", "tag6"]
+            }
+        ],
+        "pagination": {
+            "currentPage": 1,
+            "totalPages": 10,
+            "totalItems": 100,
+            "perPage": 10
+        }
+    }
+}

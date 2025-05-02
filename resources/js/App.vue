@@ -4,10 +4,10 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { defineOptions } from 'vue'
 
-export default defineComponent({
+defineOptions({
     name: 'App'
 })
 </script>
