@@ -80,7 +80,7 @@ Authorization: Bearer {token}
         "name": "string",
         "email": "string",
         "avatar": "string",
-        "created_at": "datetime"
+        "createdAt": "datetime"
     }
 }
 ```
@@ -94,7 +94,7 @@ GET /posts
 
 查詢參數：
 - page: 頁碼
-- per_page: 每頁數量
+- perPage: 每頁數量
 - category: 分類 ID
 - tag: 標籤 ID
 
@@ -105,7 +105,7 @@ GET /posts
     "code": 200,
     "message": "獲取成功",
     "data": {
-        "current_page": "integer",
+        "currentPage": "integer",
         "data": [
             {
                 "id": "integer",
@@ -121,11 +121,11 @@ GET /posts
                         "name": "string"
                     }
                 ],
-                "created_at": "datetime"
+                "createdAt": "datetime"
             }
         ],
         "total": "integer",
-        "per_page": "integer"
+        "perPage": "integer"
     }
 }
 ```
@@ -146,8 +146,8 @@ Content-Type: application/json
 {
     "title": "string",
     "content": "string",
-    "category_id": "integer",
-    "tag_ids": ["integer"]
+    "categoryId": "integer",
+    "tagIds": ["integer"]
 }
 ```
 
@@ -171,7 +171,7 @@ Content-Type: application/json
                 "name": "string"
             }
         ],
-        "created_at": "datetime"
+        "createdAt": "datetime"
     }
 }
 ```
@@ -198,7 +198,7 @@ GET /posts/{id}/comments
                 "name": "string",
                 "avatar": "string"
             },
-            "created_at": "datetime"
+            "createdAt": "datetime"
         }
     ]
 }
@@ -236,7 +236,7 @@ Content-Type: application/json
             "name": "string",
             "avatar": "string"
         },
-        "created_at": "datetime"
+        "createdAt": "datetime"
     }
 }
 ```
@@ -252,7 +252,7 @@ GET /search
 - q: 搜尋關鍵字
 - type: 搜尋類型（post/user）
 - page: 頁碼
-- per_page: 每頁數量
+- perPage: 每頁數量
 
 回應：
 ```json
@@ -261,7 +261,7 @@ GET /search
     "code": 200,
     "message": "搜尋成功",
     "data": {
-        "current_page": "integer",
+        "currentPage": "integer",
         "data": [
             {
                 "id": "integer",
@@ -271,7 +271,7 @@ GET /search
             }
         ],
         "total": "integer",
-        "per_page": "integer"
+        "perPage": "integer"
     }
 }
 ``` 
