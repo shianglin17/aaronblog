@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255)->comment('文章標題');
+            $table->string('slug', 255)->comment('slug')->unique();
+            $table->string('title', 255)->comment('文章標題')->unique();
             $table->text('content')->comment('文章內容');
-            $table->string('authors', 100)->comment('作者名稱');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null')->comment('使用者 ID');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null')->comment('分類 ID');
             $table->timestamps();
         });

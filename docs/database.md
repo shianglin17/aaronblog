@@ -6,38 +6,48 @@
 | 欄位名稱    | 型別          | 屬性                      | 說明         |
 |------------|--------------|--------------------------|-------------|
 | id         | bigint      | unsigned, auto_increment | 主鍵 ID      |
-| title      | varchar(255)| not null                | 文章標題      |
+| slug       | varchar(255)| not null, unique        | slug        |
+| title      | varchar(255)| not null, unique        | 文章標題      |
 | content    | text        | not null                | 文章內容      |
-| authors    | varchar(100)| not null                | 作者名稱      |
+| user_id    | bigint      | unsigned, nullable      | 作者 ID      |
 | category_id| bigint      | unsigned, nullable      | 分類 ID      |
 | created_at | timestamp   | nullable                | 建立時間      |
 | updated_at | timestamp   | nullable                | 更新時間      |
 
 索引：
 - PRIMARY KEY (`id`)
-- FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`)
+- UNIQUE KEY (`slug`)
+- UNIQUE KEY (`title`)
+- FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
+- FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
 
 ### 2. categories（分類表）
 | 欄位名稱    | 型別          | 屬性                      | 說明         |
 |------------|--------------|--------------------------|-------------|
 | id         | bigint      | unsigned, auto_increment | 主鍵 ID      |
-| name       | varchar(50) | not null                | 分類名稱      |
+| slug       | varchar(255)| not null, unique        | slug        |
+| name       | varchar(50) | not null, unique        | 分類名稱      |
+| description| text        | not null                | 分類描述      |
 | created_at | timestamp   | nullable                | 建立時間      |
 | updated_at | timestamp   | nullable                | 更新時間      |
 
 索引：
 - PRIMARY KEY (`id`)
+- UNIQUE KEY (`slug`)
+- UNIQUE KEY (`name`)
 
 ### 3. tags（標籤表）
 | 欄位名稱    | 型別          | 屬性                      | 說明         |
 |------------|--------------|--------------------------|-------------|
 | id         | bigint      | unsigned, auto_increment | 主鍵 ID      |
+| slug       | varchar(255)| not null, unique        | slug        |
 | name       | varchar(50) | not null                | 標籤名稱      |
 | created_at | timestamp   | nullable                | 建立時間      |
 | updated_at | timestamp   | nullable                | 更新時間      |
 
 索引：
 - PRIMARY KEY (`id`)
+- UNIQUE KEY (`slug`)
 
 ### 4. article_tag（文章標籤關聯表）
 | 欄位名稱    | 型別          | 屬性                      | 說明         |
@@ -49,37 +59,47 @@
 
 索引：
 - PRIMARY KEY (`article_id`, `tag_id`)
-- FOREIGN KEY (`article_id`) REFERENCES `articles`(`id`)
-- FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`)
+- FOREIGN KEY (`article_id`) REFERENCES `articles`(`id`) ON DELETE CASCADE
+- FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON DELETE CASCADE
 
 ## 資料表關聯說明
 
-1. **文章與分類（一對多）**
-   - 一個文章只能屬於一個分類
-   - 一個分類可以有多個文章
-   - 使用 `category_id` 作為外鍵
+1. **文章與使用者（多對一）**
+   - 一篇文章只能屬於一個使用者
+   - 一個使用者可以有多篇文章
+   - 使用 `user_id` 作為外鍵
+   - 當使用者被刪除時，相關文章的 `user_id` 設為 NULL
 
-2. **文章與標籤（多對多）**
-   - 一個文章可以有多個標籤
-   - 一個標籤可以屬於多個文章
+2. **文章與分類（多對一）**
+   - 一篇文章只能屬於一個分類
+   - 一個分類可以有多篇文章
+   - 使用 `category_id` 作為外鍵
+   - 當分類被刪除時，相關文章的 `category_id` 設為 NULL
+
+3. **文章與標籤（多對多）**
+   - 一篇文章可以有多個標籤
+   - 一個標籤可以屬於多篇文章
    - 使用 `article_tag` 關聯表建立多對多關係
+   - 當文章或標籤被刪除時，相關的關聯記錄也會被刪除
 
 ## 注意事項
 
-1. **軟刪除考量**
-   - 如果之後需要軟刪除功能，可以在相關表加入 `deleted_at` 欄位
+1. **唯一性約束**
+   - 文章的 slug 和標題必須唯一
+   - 分類的 slug 和名稱必須唯一
+   - 標籤的 slug 必須唯一
 
-2. **索引優化**
-   - 已加入基本的主鍵和外鍵索引
-   - 可能需要根據實際查詢需求增加其他索引
+2. **外鍵約束**
+   - 使用者被刪除時，相關文章的 user_id 設為 NULL
+   - 分類被刪除時，相關文章的 category_id 設為 NULL
+   - 文章或標籤被刪除時，關聯表的記錄會被級聯刪除
 
 3. **欄位長度**
-   - 標題長度限制為 255 字元
-   - 作者名稱限制為 100 字元
+   - slug 長度限制為 255 字元
+   - 文章標題長度限制為 255 字元
    - 分類和標籤名稱限制為 50 字元
-   - 內容使用 text 型別，可存儲較長文字
+   - 文章內容和分類描述使用 text 型別，可存儲較長文字
 
 4. **時間戳記**
-   - 使用 Laravel 的 timestamps 功能
-   - `articles`、`categories` 和 `tags` 表包含 `created_at` 和 `updated_at`
-   - `article_tag` 關聯表不需要時間戳記 
+   - 所有表都包含 `created_at` 和 `updated_at` 時間戳記
+   - 用於追蹤記錄的建立和更新時間 

@@ -35,6 +35,7 @@ class Article extends Model
      */
     protected $fillable = [
         'title',
+        'slug',
         'content',
         'category_id',
         'user_id',
