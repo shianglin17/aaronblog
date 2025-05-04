@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null')->comment('使用者 ID');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null')->comment('分類 ID');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

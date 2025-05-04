@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('slug', 255)->comment('slug')->unique();
             $table->string('name', 50)->comment('標籤名稱');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
