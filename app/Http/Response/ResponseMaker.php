@@ -1,5 +1,5 @@
 <?php
-namespace App\Support;
+namespace App\Http\Response;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;

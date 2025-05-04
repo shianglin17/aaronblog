@@ -6,7 +6,7 @@ use App\Models\Article;
 use App\Services\ArticleService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Article\ListArticlesRequest;
-use App\Support\ResponseMaker;
+use App\Http\Response\ResponseMaker as ResponseResponseMaker;
 
 class ArticleController extends Controller
 {
@@ -28,6 +28,6 @@ class ArticleController extends Controller
         $param = $request->validated();
         $articles = $this->article_service->getArticles($param);
 
-        return ResponseMaker::paginator($articles);
+        return ResponseResponseMaker::paginator($articles);
     }
 }
