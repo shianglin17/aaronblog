@@ -18,7 +18,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * 獲取文章列表
+     * 取得文章列表
      * @param ListArticlesRequest $request
      * 
      * @return JsonResponse

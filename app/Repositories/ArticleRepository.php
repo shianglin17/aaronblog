@@ -18,7 +18,7 @@ class ArticleRepository
         $articles = Article::query()
             ->selectRaw('user_id, category_id, title, content, created_at')
             ->orderBy($param['sort_by'], $param['sort_direction'])
-            ->paginate($param['page'], $param['per_page']);
+            ->paginate(page: $param['page'], perPage: $param['per_page']);
 
         return $articles;
     }
