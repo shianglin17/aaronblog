@@ -6,17 +6,21 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ResponseMaker
 {
+    private const SUCCESS_CODE = 200;
+    private const ERROR_CODE = 400;
+
     /**
      * 成功回應
      */
-    public static function success($data = null, string $message = '成功', int $code = 200): JsonResponse
+    public static function success($data = null, $meta = null, string $message = '成功'): JsonResponse
     {
         return response()->json([
             'status' => 'success',
-            'code' => $code,
+            'code' => self::SUCCESS_CODE,
             'message' => $message,
-            'data' => $data
-        ], $code);
+            'data' => $data,
+            'meta' => $meta
+        ], self::SUCCESS_CODE);
     }
 
     /**
@@ -24,26 +28,28 @@ class ResponseMaker
      */
     public static function paginator(LengthAwarePaginator $paginator): JsonResponse
     {
-        return self::success([
-            'items' => $paginator->items(),
-            'pagination' => [
-                'currentPage' => $paginator->currentPage(),
-                'totalPages' => $paginator->lastPage(),
-                'totalItems' => $paginator->total(),
-                'perPage' => $paginator->perPage()
+        return self::success(
+            $paginator->items(),
+            [
+                'pagination' => [
+                    'current_page' => $paginator->currentPage(),
+                    'total_pages' => $paginator->lastPage(),
+                    'total_items' => $paginator->total(),
+                    'per_page' => $paginator->perPage()
+                ]
             ]
-        ]);
+        );
     }
 
     /**
      * 錯誤回應
      */
-    public static function error(string $message, int $code = 400): JsonResponse
+    public static function error(string $message): JsonResponse
     {
         return response()->json([
             'status' => 'error',
-            'code' => $code,
+            'code' => self::ERROR_CODE,
             'message' => $message
-        ], $code);
+        ], self::ERROR_CODE);
     }
 }

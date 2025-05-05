@@ -6,15 +6,15 @@ use App\Models\Article;
 use App\Services\ArticleService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Article\ListArticlesRequest;
-use App\Http\Response\ResponseMaker as ResponseResponseMaker;
+use App\Http\Response\ResponseMaker;
 
 class ArticleController extends Controller
 {
-    protected readonly ArticleService $article_service;
+    protected readonly ArticleService $articleService;
 
-    public function __construct(ArticleService $article_service)
+    public function __construct(ArticleService $articleService)
     {
-        $this->article_service = $article_service;
+        $this->articleService = $articleService;
     }
 
     /**
@@ -26,8 +26,8 @@ class ArticleController extends Controller
     public function list(ListArticlesRequest $request): JsonResponse
     {
         $param = $request->validated();
-        $articles = $this->article_service->getArticles($param);
+        $articles = $this->articleService->getArticles($param);
 
-        return ResponseResponseMaker::paginator($articles);
+        return ResponseMaker::paginator($articles);
     }
 }
