@@ -1,0 +1,19 @@
+{
+  "id": "3a887542-7cbc-4f45-b16b-8c9a12d9b456",
+  "name": "Aaron Blog API - 生產環境",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.aaronblog.com",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+} 

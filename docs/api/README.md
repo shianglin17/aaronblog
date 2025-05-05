@@ -20,7 +20,11 @@
 
 我們提供了 Postman Collection 以便於測試 API：
 
-- [下載 Postman Collection](../postman/aaron_blog_api.json) (尚未實現，敬請期待)
+- [Postman Collection](../postman/aaron_blog_api.json) - 包含所有 API 請求的集合
+- [開發環境設定](../postman/aaron_blog_api_environment.json) - 開發環境變數設定
+- [生產環境設定](../postman/aaron_blog_api_production_environment.json) - 生產環境變數設定
+
+關於 Postman 的詳細使用說明，請參考 [Postman 使用指南](../postman/README.md)。
 
 ## API 版本歷史
 

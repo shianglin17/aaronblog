@@ -11,6 +11,7 @@
 - [API 通用規範](./api/common/README.md)
 - 文章 API
   - [取得文章列表](./api/article/list.md)
+- [Postman Collection](./postman/README.md)
 
 ## 為什麼進行這次變更？
 
@@ -18,5 +19,5 @@
 
 1. 每個 API 有獨立的文檔，便於專注和查找
 2. 減少單一文檔的體積，提高可讀性
-3. 便於未來與 Postman Collection 整合
+3. 便於與 Postman Collection 整合
 4. 支持團隊協作開發 

@@ -1,0 +1,19 @@
+{
+  "id": "eeff03b7-b9c2-4a89-94c5-5c86e774bfa3",
+  "name": "Aaron Blog API - 開發環境",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+} 

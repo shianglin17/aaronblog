@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "Aaron Blog API",
+    "description": "Aaron 個人部落格 API 文檔集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "文章",
+      "description": "文章相關的 API",
+      "item": [
+        {
+          "name": "獲取文章列表",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "article", "list"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "頁碼，必須大於等於 1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "每頁筆數，範圍 1-100"
+                },
+                {
+                  "key": "sort_by",
+                  "value": "created_at",
+                  "description": "排序欄位，可選值：created_at、updated_at、title"
+                },
+                {
+                  "key": "sort_direction",
+                  "value": "desc",
+                  "description": "排序方向，可選值：asc、desc"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "搜尋關鍵字，最多 255 字元"
+                }
+              ]
+            },
+            "description": "取得分頁的文章列表資料。"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n    \"status\": \"success\",\n    \"code\": 200,\n    \"message\": \"成功\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"title\": \"文章標題\",\n            \"content\": \"文章內容\",\n            \"created_at\": \"2024-03-20T12:00:00Z\",\n            \"updated_at\": \"2024-03-20T12:00:00Z\"\n        }\n    ],\n    \"meta\": {\n        \"pagination\": {\n            \"total\": 100,\n            \"per_page\": 15,\n            \"current_page\": 1,\n            \"last_page\": 7,\n            \"from\": 1,\n            \"to\": 15\n        }\n    }\n}"
+            },
+            {
+              "name": "驗證錯誤回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/article/list?page=0&per_page=15"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n    \"status\": \"error\",\n    \"code\": 422,\n    \"message\": \"驗證失敗\",\n    \"errors\": {\n        \"page\": [\"頁碼必須大於等於 1\"]\n    }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 
