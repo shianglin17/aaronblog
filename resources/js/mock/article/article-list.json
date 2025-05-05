@@ -1,31 +1,36 @@
 {
     "status": "success",
     "code": 200,
-    "message": "獲取成功",
-    "data": {
-        "items": [
-            {
-                "id": 1,
-                "date": "2021-01-01",
-                "authors": "John Doe",
-                "title": "Article 1",
-                "content": "Content 1",
-                "tags": ["tag1", "tag2", "tag3"]
-            },
-            {
-                "id": 2,
-                "date": "2021-01-02",
-                "authors": "Jane Smith",
-                "title": "Article 2",
-                "content": "Content 2",
-                "tags": ["tag4", "tag5", "tag6"]
-            }
-        ],
+    "message": "成功",
+    "data": [
+        {
+            "user_id": 1,
+            "category_id": 2,
+            "title": "測試文章 1",
+            "content": "這是測試文章 1 的內容。這裡可以放入一些較長的測試內容...",
+            "created_at": "2025-05-03T06:37:25.000000Z"
+        },
+        {
+            "user_id": 1,
+            "category_id": 1,
+            "title": "測試文章 2",
+            "content": "這是測試文章 2 的內容。這裡可以放入一些較長的測試內容...",
+            "created_at": "2025-05-03T06:37:25.000000Z"
+        },
+        {
+            "user_id": 1,
+            "category_id": 1,
+            "title": "測試文章 3",
+            "content": "這是測試文章 3 的內容。這裡可以放入一些較長的測試內容...",
+            "created_at": "2025-05-03T06:37:25.000000Z"
+        }
+    ],
+    "meta": {
         "pagination": {
-            "currentPage": 1,
-            "totalPages": 10,
-            "totalItems": 100,
-            "perPage": 10
+            "current_page": 1,
+            "total_pages": 2,
+            "total_items": 20,
+            "per_page": 15
         }
     }
 }
