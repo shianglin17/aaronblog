@@ -1,31 +1,44 @@
-# Laravel 認證流程詳解
+# Laravel Sanctum 認證流程詳解
 
 ## 概述
 
-本文檔詳細解釋 Laravel Sanctum 認證系統的內部工作原理，特別是用戶登入時的資料流程和 sessions 表的使用方式。
+本文檔解釋 Laravel Sanctum 認證系統的工作原理和使用方式，適用於本項目的 API 認證。
 
-## 認證流程圖
+## 認證流程圖（簡化版）
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌───────────────┐     ┌───────────────┐
-│  客戶端     │     │ AuthController│     │  Auth::attempt │     │   SessionGuard │
-│  (前端)     │────▶│   login()    │────▶│     (驗證)     │────▶│      login()    │
-└─────────────┘     └─────────────┘     └───────────────┘     └───────┬─────────┘
-                                                                       │
-                                                                       ▼
-┌─────────────┐     ┌─────────────┐     ┌───────────────┐     ┌───────────────┐
-│  客戶端     │     │   Response   │     │ Session中間件  │     │ DatabaseSession│
-│  (token)    │◀────│ (user+token) │◀────│    儲存        │◀────│     Handler    │
-└─────────────┘     └─────────────┘     └───────────────┘     └───────────────┘
+┌─────────────┐     ┌─────────────┐     ┌───────────────┐
+│  客戶端     │     │ AuthController│     │ Sanctum Token │
+│  (前端)     │────▶│   login()    │────▶│     創建       │
+└─────────────┘     └─────────────┘     └───────┬───────┘
+                                                 │
+                                                 ▼
+┌─────────────┐     ┌─────────────┐
+│  客戶端     │     │   Response   │
+│  (獲得token) │◀────│ (user+token) │
+└─────────────┘     └─────────────┘
 ```
 
-## 登入流程詳解
+## 登入流程
 
-### 1. 入口點 - AuthController@login
+### 1. 客戶端發送登入請求
 
-當使用者提交登入表單時，請求首先到達 `AuthController@login` 方法：
+```
+POST /api/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@example.com",
+    "password": "password"
+}
+```
+
+### 2. 伺服器驗證憑證
+
+AuthController 驗證用戶憑證，成功後創建 Sanctum token：
 
 ```php
+// 簡化示例
 public function login(LoginRequest $request)
 {
     $request->authenticate();  // 驗證憑證
@@ -41,121 +54,63 @@ public function login(LoginRequest $request)
 }
 ```
 
-### 2. 驗證流程 - Auth::attempt()
+### 3. 客戶端存儲並使用 Token
 
-在 `LoginRequest@authenticate` 中調用 `Auth::attempt()`：
+客戶端收到 Token 後，使用 Bearer 方式在後續 API 請求中提供：
+
+```
+GET /api/articles
+Authorization: Bearer 1|a1b2c3d4e5f6g7h8i9j0...
+```
+
+## Token 儲存與處理
+
+- Sanctum tokens 儲存在 `personal_access_tokens` 表中
+- 每個 token 都與特定用戶關聯
+- Tokens 可設定過期時間（目前系統未設定自動過期）
+
+## 登出流程
+
+使用者登出時，系統撤銷 token：
 
 ```php
-public function authenticate()
+// 簡化示例
+public function logout(Request $request)
 {
-    if (! Auth::attempt($this->only('email', 'password'))) {
-        throw ValidationException::withMessages([
-            'email' => __('auth.failed'),
-        ]);
-    }
+    // 移除當前 token
+    $request->user()->currentAccessToken()->delete();
+    
+    return response()->json(['message' => '登出成功']);
 }
 ```
 
-### 3. SessionGuard 的工作原理
+## 實用提示
 
-`Auth::attempt()` 實際上是調用 `SessionGuard@attempt`：
+### 1. 檢查 Token 是否有效
 
-```php
-public function attempt(array $credentials = [], $remember = false)
-{
-    // 驗證用戶憑證
-    if ($this->hasValidCredentials($user, $credentials)) {
-        $this->login($user, $remember);  // 登入用戶
-        return true;
-    }
-    return false;
-}
+可使用 `/api/auth/user` API 端點測試 token 是否有效：
+
+```
+GET /api/auth/user
+Authorization: Bearer 1|a1b2c3d4e5f6g7h8i9j0...
 ```
 
-### 4. session 更新機制
+成功回應表示 token 有效，否則需要重新登入。
 
-當用戶登入後，`SessionGuard@login` 會更新 session：
+### 2. Token 格式
 
-```php
-public function login(AuthenticatableContract $user, $remember = false)
-{
-    $this->updateSession($user->getAuthIdentifier());  // 更新 session 中的用戶 ID
-    
-    // 處理 "記住我" 功能
-    if ($remember) {
-        $this->ensureRememberTokenIsSet($user);
-        $this->queueRecallerCookie($user);
-    }
-    
-    $this->fireLoginEvent($user, $remember);
-    $this->setUser($user);
-}
-```
+Sanctum tokens 格式為 `{id}|{hash}`，例如 `1|a1b2c3d4e5...`：
+- id: token 在資料庫中的 ID
+- hash: 用於驗證的隨機字串（僅保存雜湊值）
 
-### 5. DatabaseSessionHandler 寫入 sessions 表
+### 3. 安全考量
 
-當 HTTP 請求結束時，Laravel 會透過 `DatabaseSessionHandler` 將 session 資料寫入 sessions 表：
+- 始終使用 HTTPS 傳輸 tokens
+- 請勿將 tokens 存儲在公開處
+- 不再使用時及時登出，撤銷 token
 
-```php
-public function write($sessionId, $data): bool
-{
-    $payload = $this->getDefaultPayload($data);
-    
-    // 判斷是更新還是插入操作
-    if ($this->exists) {
-        $this->performUpdate($sessionId, $payload);
-    } else {
-        $this->performInsert($sessionId, $payload);
-    }
-    
-    return $this->exists = true;
-}
-```
+## 故障排除
 
-### 6. sessions 表數據自動關聯到用戶
-
-session 資料會自動關聯到當前用戶：
-
-```php
-protected function getDefaultPayload($data)
-{
-    $payload = [
-        'payload' => base64_encode($data),  // session 資料
-        'last_activity' => $this->currentTime(),  // 最後活動時間
-    ];
-    
-    // 添加用戶信息和請求信息
-    return tap($payload, function (&$payload) {
-        $this->addUserInformation($payload)  // 添加用戶 ID
-            ->addRequestInformation($payload);  // 添加 IP 和 User Agent
-    });
-}
-```
-
-## sessions 表結構
-
-sessions 表包含以下欄位：
-- `id`: session ID，作為主鍵
-- `user_id`: 與用戶 ID 的外鍵關聯
-- `ip_address`: 用戶 IP 地址
-- `user_agent`: 用戶瀏覽器和設備信息
-- `payload`: 編碼後的 session 資料
-- `last_activity`: 最後活動時間戳
-
-## API Token 與 Session 的關係
-
-在基於 API 的認證中：
-1. 用戶登入時同時創建 Session 和 Sanctum API Token
-2. Session 用於網頁認證
-3. API Token 用於 API 認證
-
-## 後續請求處理
-
-1. 網頁請求：通過 Session Cookie 自動識別用戶
-2. API 請求：通過 Bearer Token 進行認證
-
-## 安全考量
-
-1. Session 資料使用 base64 編碼存儲
-2. Sessions 表中的用戶關聯使系統能追蹤用戶登入記錄
-3. 可設定 Session 和 Token 過期時間提高安全性 
+1. **Token 無效**：重新登入獲取新 token
+2. **Token 過期**：本系統目前未設定 token 自動過期
+3. **401 未授權**：檢查 token 傳輸格式，確保使用 `Bearer {token}` 
