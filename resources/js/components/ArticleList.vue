@@ -22,7 +22,20 @@
         </h2>
         
         <div class="article-meta">
-          <time :datetime="article.created_at">{{ formatDate(article.created_at) }}</time>
+          <span class="article-author">作者: {{ article.user_name }}</span>
+          <span class="article-category">分類: {{ article.category_name }}</span>
+          <time :datetime="article.created_at">發佈時間: {{ formatDate(article.created_at) }}</time>
+        </div>
+        
+        <div class="article-tags" v-if="article.tags && article.tags.length > 0">
+          <span class="tag-label">標籤:</span>
+          <span 
+            v-for="tag in article.tags" 
+            :key="tag.id" 
+            class="article-tag"
+          >
+            {{ tag.name }}
+          </span>
         </div>
         
         <div class="article-content">
@@ -110,6 +123,7 @@ function handlePageSizeChange(pageSize: number) {
 
 .article-item {
   border-bottom: 1px solid var(--border-color);
+  padding-bottom: 24px;
 }
 
 .article-item:last-child {
@@ -137,6 +151,31 @@ function handlePageSizeChange(pageSize: number) {
   font-size: 0.9rem;
   color: var(--text-secondary);
   margin-bottom: 14px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.article-tags {
+  margin-bottom: 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tag-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.article-tag {
+  background-color: var(--tag-bg, #f0f0f0);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
 }
 
 .article-content {
@@ -188,6 +227,11 @@ function handlePageSizeChange(pageSize: number) {
 
   .article-title {
     font-size: 1.4rem;
+  }
+
+  .article-meta {
+    flex-direction: column;
+    gap: 6px;
   }
 
   .pagination {

@@ -14,12 +14,10 @@ export interface ApiResponse<T> {
   };
 }
 
-// 分頁元數據
+// 分頁 meta
 export interface PaginationMeta {
   current_page: number;
   total_pages: number;
   total_items: number;
   per_page: number;
-  from?: number;
-  to?: number;
 } 

@@ -38,18 +38,32 @@ Authorization: Bearer {token}
             "id": 1,
             "title": "文章標題",
             "content": "文章內容",
+            "user_id": 1,
+            "user_name": "張三",
+            "category_id": 2,
+            "category_name": "技術分享",
             "created_at": "2024-03-20T12:00:00Z",
-            "updated_at": "2024-03-20T12:00:00Z"
+            "updated_at": "2024-03-20T12:00:00Z",
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "Laravel",
+                    "slug": "laravel"
+                },
+                {
+                    "id": 2,
+                    "name": "PHP",
+                    "slug": "php"
+                }
+            ]
         }
     ],
     "meta": {
         "pagination": {
-            "total": 100,
-            "per_page": 15,
             "current_page": 1,
-            "last_page": 7,
-            "from": 1,
-            "to": 15
+            "total_pages": 7,
+            "total_items": 100,
+            "per_page": 15
         }
     }
 }
