@@ -1,38 +1,159 @@
 <template>
-    <main class="home-page">
-        <div class="max-w-4xl mx-auto">
-            <h1>Welcome to my blog</h1>
-            <p>A simple and elegant reading space</p>
+  <div class="container">
+    <header class="header">
+      <h1 class="site-title">Aaron 的部落格</h1>
+      <p class="site-description">分享生活、想法與知識的空間</p>
+    </header>
 
-            <hr class="border-gray-200 my-8">
-            <ArticleList :articles="articlesListData"/>
-        </div>
-    </main>
+    <!-- 搜尋區域 -->
+    <div class="search-area">
+      <n-input-group>
+        <n-input 
+          v-model:value="searchQuery"
+          placeholder="搜尋文章..." 
+          @keydown.enter="searchArticles"
+          clearable
+        />
+        <n-button ghost @click="searchArticles">
+          <template #icon>
+            <n-icon><SearchOutline /></n-icon>
+          </template>
+        </n-button>
+      </n-input-group>
+    </div>
+  
+    <!-- 文章列表 -->
+    <n-spin :show="loading" description="載入中...">
+      <ArticleList 
+        :articles="articles" 
+        :error="error"
+        :pagination="pagination"
+        @page-change="changePage"
+      />
+    </n-spin>
+
+    <!-- 頁腳 -->
+    <footer class="footer">
+      <p>© {{ new Date().getFullYear() }} 個人部落格</p>
+    </footer>
+  </div>
 </template>
 
 <script setup lang="ts">
-import articleListMock from '../mock/article/article-list.json'
-import ArticleList from '../components/ArticleList.vue'
-const articlesListData = articleListMock.data.items
+import { ref, onMounted } from 'vue';
+import { SearchOutline } from '@vicons/ionicons5';
+import { NInput, NInputGroup, NButton, NSpin, NIcon } from 'naive-ui';
+import ArticleList from '../components/ArticleList.vue';
+import { getArticleList } from '../api/article';
+import type { Article, ArticleListParams } from '../types/article';
+import type { PaginationMeta } from '../types/common';
+import { DEFAULT_PAGINATION_PARAMS } from '../constants/pagination';
 
+// 狀態管理
+const articles = ref<Article[]>([]);
+const loading = ref(true);
+const error = ref('');
+const pagination = ref<PaginationMeta | undefined>(undefined);
+const searchQuery = ref('');
+const currentParams = ref<ArticleListParams>({
+  ...DEFAULT_PAGINATION_PARAMS
+});
+
+// 獲取文章列表
+async function fetchArticles() {
+  loading.value = true;
+  error.value = '';
+  
+  try {
+    const response = await getArticleList(currentParams.value);
+    articles.value = response.data;
+    pagination.value = response.meta?.pagination;
+  } catch (err) {
+    error.value = '獲取文章列表失敗，請稍後再試';
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+// 切換頁碼
+function changePage(page: number) {
+  currentParams.value.page = page;
+  fetchArticles();
+  // 頁面滾動到頂部
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 搜尋文章
+function searchArticles() {
+  currentParams.value.search = searchQuery.value;
+  currentParams.value.page = 1; // 重置頁碼
+  fetchArticles();
+}
+
+// 掛載時獲取文章
+onMounted(() => {
+  fetchArticles();
+});
 </script>
 
 <style scoped>
-.home-page {
-    padding: 2rem;
-    text-align: center;
-    font-family: 'Times New Roman', serif; /* 報紙風格字體 */
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: #2c3e50;
+.header {
+  text-align: center;
+  margin-bottom: 60px;
 }
 
-p {
-    font-size: 1.2rem;
-    color: #34495e;
-    line-height: 1.6;
+.site-title {
+  font-size: 2.2rem;
+  font-weight: 300;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  color: var(--text-color);
 }
-</style> 
+
+.site-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.search-area {
+  max-width: 500px;
+  margin: 0 auto 40px;
+}
+
+.footer {
+  margin-top: 80px;
+  padding-top: 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 16px;
+  }
+  
+  .header {
+    margin-bottom: 40px;
+  }
+  
+  .site-title {
+    font-size: 1.8rem;
+  }
+  
+  .search-area {
+    margin-bottom: 30px;
+  }
+}
+</style>
