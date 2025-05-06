@@ -35,6 +35,7 @@ const themeOverrides = {
 </script>
 
 <style>
+/* （:root 內）：這些在全站任何地方都可以通過 var() 函數訪問 */
 :root {
     --background-color: #f8f5f2;
     --text-color: #333333;

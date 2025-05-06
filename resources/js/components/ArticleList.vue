@@ -32,17 +32,19 @@
     </div>
       
     <!-- 分頁 -->
-    <div v-if="pagination && pagination.last_page > 1" class="pagination">
+    <div v-if="pagination" class="pagination">
       <n-pagination 
         v-model:page="currentPage"
-        :page-count="pagination.last_page" 
+        :page-size="pagination.per_page || 10"
+        :item-count="pagination.total_items || 0"
+        show-size-picker
         :page-sizes="[10, 20, 50]"
-        :page-size="pagination.per_page"
-        :item-count="pagination.total"
         size="medium"
         @update:page="handlePageChange"
+        @update:page-size="handlePageSizeChange"
       />
-      </div>
+      <div class="pagination-info">共 {{ pagination.total_items || 0 }} 條，{{ pagination.total_pages || 1 }} 頁</div>
+    </div>
   </div>
 </template>
 
@@ -61,7 +63,7 @@ const props = defineProps<{
 }>()
 
 // Emits
-const emit = defineEmits(['page-change'])
+const emit = defineEmits(['page-change', 'page-size-change'])
 
 // 當前頁面
 const currentPage = computed({
@@ -72,6 +74,11 @@ const currentPage = computed({
 // 處理頁面變更
 function handlePageChange(page: number) {
   emit('page-change', page)
+}
+
+// 處理頁面大小變更
+function handlePageSizeChange(pageSize: number) {
+  emit('page-size-change', pageSize)
 }
 </script>
 
@@ -102,7 +109,6 @@ function handlePageChange(page: number) {
 }
 
 .article-item {
-  padding-bottom: 30px;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -158,9 +164,16 @@ function handlePageChange(page: number) {
 }
 
 .pagination {
-  margin-top: 50px;
+  margin-top: 30px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-info {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
 /* 響應式設計 */
@@ -178,7 +191,6 @@ function handlePageChange(page: number) {
   }
 
   .pagination {
-    margin-top: 30px;
     overflow-x: auto;
     padding: 10px 0;
   }

@@ -16,10 +16,10 @@ export interface ApiResponse<T> {
 
 // 分頁元數據
 export interface PaginationMeta {
-  total: number;
-  per_page: number;
   current_page: number;
-  last_page: number;
+  total_pages: number;
+  total_items: number;
+  per_page: number;
   from?: number;
   to?: number;
 } 

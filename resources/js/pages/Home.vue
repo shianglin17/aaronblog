@@ -2,7 +2,7 @@
   <div class="container">
     <header class="header">
       <h1 class="site-title">Aaron 的部落格</h1>
-      <p class="site-description">分享生活、想法與知識的空間</p>
+      <p class="site-description">軟體開發紀錄、生活分享</p>
     </header>
 
     <!-- 搜尋區域 -->
@@ -29,6 +29,7 @@
         :error="error"
         :pagination="pagination"
         @page-change="changePage"
+        @page-size-change="changePageSize"
       />
     </n-spin>
 
@@ -84,6 +85,15 @@ function changePage(page: number) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// 切換每頁條數
+function changePageSize(pageSize: number) {
+  currentParams.value.per_page = pageSize;
+  currentParams.value.page = 1; // 重置頁碼
+  fetchArticles();
+  // 頁面滾動到頂部
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // 搜尋文章
 function searchArticles() {
   currentParams.value.search = searchQuery.value;
@@ -101,7 +111,7 @@ onMounted(() => {
 .container {
   max-width: 860px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 30px 20px;
 }
 
 .header {
