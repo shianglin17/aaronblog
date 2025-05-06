@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -25,6 +27,7 @@ class AuthController extends Controller
          }
  
          // 登入成功，取得用戶
+         /** @var User $user */
          $user = Auth::user();
          
          // 刪除所有現有的 token
@@ -48,7 +51,11 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         // 刪除當前用戶的 token
-        $request->user()->currentAccessToken()->delete();
+        /** @var User $user */
+        $user = $request->user();
+        /** @var PersonalAccessToken $token */
+        $token = $user->currentAccessToken();
+        $token->delete();
         
         return response()->json([
             'message' => '登出成功'
@@ -61,6 +68,7 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         // 獲取當前用戶
+        /** @var User $user */
         $user = $request->user();
         
         // 回傳用戶資料
