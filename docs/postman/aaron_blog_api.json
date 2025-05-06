@@ -27,38 +27,17 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "article", "list"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "頁碼，必須大於等於 1"
-                },
-                {
-                  "key": "per_page",
-                  "value": "15",
-                  "description": "每頁筆數，範圍 1-100"
-                },
-                {
-                  "key": "sort_by",
-                  "value": "created_at",
-                  "description": "排序欄位，可選值：created_at、updated_at、title"
-                },
-                {
-                  "key": "sort_direction",
-                  "value": "desc",
-                  "description": "排序方向，可選值：asc、desc"
-                },
-                {
-                  "key": "search",
-                  "value": "",
-                  "description": "搜尋關鍵字，最多 255 字元"
-                }
+              "raw": "{{baseUrl}}/api/article/list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "article",
+                "list"
               ]
             },
-            "description": "取得分頁的文章列表資料。"
+            "description": "獲取文章列表"
           },
           "response": [
             {
@@ -94,6 +73,158 @@
           ]
         }
       ]
+    },
+    {
+      "name": "認證",
+      "description": "認證相關的 API",
+      "item": [
+        {
+          "name": "登入",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.token) {",
+                  "    pm.environment.set('token', jsonData.token);",
+                  "    console.log('Token 已保存到環境變數');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "管理員登入系統"
+          }
+        },
+        {
+          "name": "登出",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "管理員登出系統"
+          }
+        },
+        {
+          "name": "獲取用戶資訊",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "user"
+              ]
+            },
+            "description": "獲取當前登入用戶的資訊"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@example.com",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "password",
+      "type": "string"
     }
   ]
 } 
