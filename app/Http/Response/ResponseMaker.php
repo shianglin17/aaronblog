@@ -24,12 +24,18 @@ class ResponseMaker
     }
 
     /**
-     * 處理分頁資料
+     * 使用 Transformer 處理分頁資料
+     *
+     * @param LengthAwarePaginator $paginator 分頁資料
+     * @param object $transformer 轉換器實例
+     * @return JsonResponse
      */
-    public static function paginator(LengthAwarePaginator $paginator): JsonResponse
+    public static function paginatorWithTransformer(LengthAwarePaginator $paginator, object $transformer): JsonResponse
     {
+        $items = collect($paginator->items());
+        
         return self::success(
-            $paginator->items(),
+            $transformer->transformCollection($items),
             [
                 'pagination' => [
                     'current_page' => $paginator->currentPage(),
