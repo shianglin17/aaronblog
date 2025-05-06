@@ -109,9 +109,13 @@ class ListArticlesRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        // 我這邊要設計一個機制，說如果前端沒有送參數的 key 我會幫她補上預設值，要怎麼做？
         $this->merge([
+            'page' => $this->input('page') ? $this->input('page') : $this->defaults['page'],
+            'per_page' => $this->input('per_page') ? $this->input('per_page') : $this->defaults['per_page'],
+            'sort_by' => $this->input('sort_by') ? $this->input('sort_by') : $this->defaults['sort_by'],
+            'sort_direction' => $this->input('sort_direction') ? $this->input('sort_direction') : $this->defaults['sort_direction'],
             'search' => $this->input('search') ? trim($this->input('search')) : null,
-            ...$this->defaults,
         ]);
     }
 }
