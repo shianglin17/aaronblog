@@ -27,13 +27,3 @@ export interface ArticleListParams {
   sort_direction?: 'asc' | 'desc';
   search?: string;
 }
-
-// 定義分頁資訊介面
-export interface Pagination {
-  total: number;
-  per_page: number;
-  current_page: number;
-  last_page: number;
-  from?: number;
-  to?: number;
-}
