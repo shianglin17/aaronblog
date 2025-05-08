@@ -31,4 +31,23 @@ class ArticleRepository
         ->orderBy($param['sort_by'], $param['sort_direction'])
         ->paginate(page: $param['page'], perPage: $param['per_page']);
     }
+
+    /**
+     * 獲取單篇文章
+     *
+     * @param int $id 文章ID
+     * @return Article|null
+     */
+    public function getArticleById(int $id): ?Article
+    {
+        return Article::select([
+            'id', 'title', 'content', 'user_id', 'category_id', 'created_at', 'updated_at'
+        ])
+        ->with([
+            'author:id,name',
+            'category:id,name',
+            'tags:id,name,slug'
+        ])
+        ->find($id);
+    }
 }

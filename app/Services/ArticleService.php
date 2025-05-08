@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Article;
 use App\Repositories\ArticleRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -29,5 +30,16 @@ class ArticleService
     public function getArticles(Array $param): LengthAwarePaginator
     {
         return $this->repository->getArticles($param);
+    }
+    
+    /**
+     * 獲取單篇文章詳情
+     *
+     * @param int $id 文章ID
+     * @return Article|null
+     */
+    public function getArticleById(int $id): ?Article
+    {
+        return $this->repository->getArticleById($id);
     }
 } 

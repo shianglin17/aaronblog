@@ -71,6 +71,69 @@
               "body": "{\n    \"status\": \"error\",\n    \"code\": 422,\n    \"message\": \"驗證失敗\",\n    \"errors\": {\n        \"page\": [\"頁碼必須大於等於 1\"]\n    }\n}"
             }
           ]
+        },
+        {
+          "name": "獲取單篇文章",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/article/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "article",
+                "1"
+              ]
+            },
+            "description": "獲取單篇文章詳情"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/article/1"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n    \"status\": \"success\",\n    \"code\": 200,\n    \"message\": \"成功\",\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"文章標題\",\n        \"content\": \"文章內容\",\n        \"user_id\": 1,\n        \"user_name\": \"張三\",\n        \"category_id\": 2,\n        \"category_name\": \"技術分享\",\n        \"created_at\": \"2024-03-20T12:00:00Z\",\n        \"updated_at\": \"2024-03-20T12:00:00Z\",\n        \"tags\": [\n            {\n                \"id\": 1,\n                \"name\": \"Laravel\",\n                \"slug\": \"laravel\"\n            },\n            {\n                \"id\": 2,\n                \"name\": \"PHP\",\n                \"slug\": \"php\"\n            }\n        ]\n    }\n}"
+            },
+            {
+              "name": "資源不存在回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/article/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n    \"status\": \"error\",\n    \"code\": 404,\n    \"message\": \"文章不存在\"\n}"
+            }
+          ]
         }
       ]
     },

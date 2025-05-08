@@ -11,6 +11,7 @@ Route::get('/', function() {
 });
 
 Route::get('/article/list', [ArticleController::class, 'list']);
+Route::get('/article/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+');
 
 // 認證相關路由
 Route::prefix('auth')->group(function () {
