@@ -47,9 +47,13 @@ public function login(LoginRequest $request)
     $token = $user->createToken('api-token')->plainTextToken;  // 建立 Sanctum token
     
     return response()->json([
+        'status' => 'success',
+        'code' => 200,
         'message' => '登入成功',
-        'user' => $user,
-        'token' => $token
+        'data' => [
+            'user' => $user,
+            'token' => $token
+        ]
     ]);
 }
 ```
@@ -80,7 +84,12 @@ public function logout(Request $request)
     // 移除當前 token
     $request->user()->currentAccessToken()->delete();
     
-    return response()->json(['message' => '登出成功']);
+    return response()->json([
+        'status' => 'success',
+        'code' => 200,
+        'message' => '登出成功',
+        'data' => null
+    ]);
 }
 ```
 

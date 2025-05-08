@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
+use App\Http\Response\ResponseMaker;
 
 class AuthController extends Controller
 {
@@ -38,10 +39,9 @@ class AuthController extends Controller
          $token = $user->createToken('auth-token')->plainTextToken;
          
          // 回傳成功訊息、用戶資料和 token
-         return response()->json([
-             'message' => '登入成功',
-             'user' => $user,
-             'token' => $token
+         return ResponseMaker::success([
+            'user' => $user,
+            'token' => $token
          ]);
     }
 
@@ -57,9 +57,7 @@ class AuthController extends Controller
         $token = $user->currentAccessToken();
         $token->delete();
         
-        return response()->json([
-            'message' => '登出成功'
-        ]);
+        return ResponseMaker::success(null, message:'登出成功');
     }
 
     /**
@@ -72,8 +70,6 @@ class AuthController extends Controller
         $user = $request->user();
         
         // 回傳用戶資料
-        return response()->json([
-            'user' => $user
-        ]);
+        return ResponseMaker::success($user, message:'登出成功');
     }
 }

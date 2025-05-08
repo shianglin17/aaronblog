@@ -25,13 +25,18 @@
 
 ```json
 {
-  "user": {
-    "id": 1,
-    "name": "Aaron",
-    "email": "leishianglin@gmail.com",
-    "email_verified_at": "2024-05-10T10:00:00.000000Z",
-    "created_at": "2024-05-10T10:00:00.000000Z",
-    "updated_at": "2024-05-10T10:00:00.000000Z"
+  "status": "success",
+  "code": 200,
+  "message": "成功",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Aaron",
+      "email": "leishianglin@gmail.com",
+      "email_verified_at": "2024-05-10T10:00:00.000000Z",
+      "created_at": "2024-05-10T10:00:00.000000Z",
+      "updated_at": "2024-05-10T10:00:00.000000Z"
+    }
   }
 }
 ```
@@ -40,7 +45,10 @@
 
 ```json
 {
-  "message": "Unauthenticated."
+  "status": "error",
+  "code": 401,
+  "message": "未授權",
+  "data": null
 }
 ```
 

@@ -25,7 +25,10 @@
 
 ```json
 {
-  "message": "登出成功"
+  "status": "success",
+  "code": 200,
+  "message": "登出成功",
+  "data": null
 }
 ```
 
@@ -33,7 +36,10 @@
 
 ```json
 {
-  "message": "Unauthenticated."
+  "status": "error",
+  "code": 401,
+  "message": "未授權",
+  "data": null
 }
 ```
 
