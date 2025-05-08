@@ -18,7 +18,9 @@
         class="article-item"
       >
         <h2 class="article-title">
-          {{ article.title }}
+          <router-link :to="`/article/${article.id}`">
+            {{ article.title }}
+          </router-link>
         </h2>
         
         <div class="article-meta">

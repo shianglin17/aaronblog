@@ -12,3 +12,14 @@ export async function getArticleList(params: ArticleListParams = {}): Promise<Ap
     throw error;
   }
 }
+
+// 獲取單篇文章
+export async function getArticleById(id: number): Promise<ApiResponse<Article>> {
+  try {
+    const response = await http.get(`/article/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`獲取文章 ID:${id} 失敗:`, error);
+    throw error;
+  }
+}
