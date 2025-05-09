@@ -27,7 +27,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=",
+              "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=&status=published",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -61,6 +61,11 @@
                   "key": "search",
                   "value": "",
                   "description": "選填 - String - 搜尋關鍵字，最多 255 字元"
+                },
+                {
+                  "key": "status",
+                  "value": "published",
+                  "description": "選填 - String - 文章狀態篩選，可選值：draft（草稿）、published（已發佈）。未登入用戶強制為 published，已登入用戶若不指定則不篩選"
                 }
               ]
             },

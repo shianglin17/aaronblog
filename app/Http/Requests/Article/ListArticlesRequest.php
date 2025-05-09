@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Article;
 
+use App\Models\Article;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ListArticlesRequest extends FormRequest
 {
@@ -28,6 +30,16 @@ class ListArticlesRequest extends FormRequest
     ];
 
     /**
+     * 允許的文章狀態
+     * 
+     * @var array<string>
+     */
+    protected array $allowedStatus = [
+        Article::STATUS_DRAFT,
+        Article::STATUS_PUBLISHED,
+    ];
+
+    /**
      * 預設值設定
      *
      * @var array<string, mixed>
@@ -37,7 +49,8 @@ class ListArticlesRequest extends FormRequest
         'per_page' => 15,
         'sort_by' => 'created_at',
         'sort_direction' => 'desc',
-        'search' => ''
+        'search' => '',
+        'status' => null
     ];
 
     /**
@@ -81,6 +94,11 @@ class ListArticlesRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:255'
+            ],
+            'status' => [
+                'nullable',
+                'string',
+                'in:' . implode(',', $this->allowedStatus)
             ]
         ];
     }
@@ -100,22 +118,41 @@ class ListArticlesRequest extends FormRequest
             'per_page.max' => '每頁筆數不能超過 100',
             'sort_by.in' => '排序欄位必須是 ' . implode(', ', $this->allowedSortFields) . ' 其中之一',
             'sort_direction.in' => '排序方向必須是 ' . implode(', ', $this->allowedSortDirections) . ' 其中之一',
-            'search.max' => '搜尋關鍵字不能超過 255 個字元'
+            'search.max' => '搜尋關鍵字不能超過 255 個字元',
+            'status.in' => '文章狀態必須是 ' . implode(', ', $this->allowedStatus) . ' 其中之一'
         ];
     }
 
     /**
      * 前置處理請求資料
+     * 
+     * 實作權限感知參數處理：
+     * 1. 非登入用戶只能看到已發佈的文章
+     * 2. 登入用戶若未明確指定狀態，則可以看到所有狀態的文章
+     * 3. 登入用戶可以明確指定要查看的文章狀態
      */
     protected function prepareForValidation(): void
     {
-        // 我這邊要設計一個機制，說如果前端沒有送參數的 key 我會幫她補上預設值，要怎麼做？
-        $this->merge([
-            'page' => $this->input('page') ? $this->input('page') : $this->defaults['page'],
-            'per_page' => $this->input('per_page') ? $this->input('per_page') : $this->defaults['per_page'],
-            'sort_by' => $this->input('sort_by') ? $this->input('sort_by') : $this->defaults['sort_by'],
-            'sort_direction' => $this->input('sort_direction') ? $this->input('sort_direction') : $this->defaults['sort_direction'],
-            'search' => $this->input('search') ? trim($this->input('search')) : null,
-        ]);
+        $mergeData = [
+            'page' => $this->input('page') ?: $this->defaults['page'],
+            'per_page' => $this->input('per_page') ?: $this->defaults['per_page'],
+            'sort_by' => $this->input('sort_by') ?: $this->defaults['sort_by'],
+            'sort_direction' => $this->input('sort_direction') ?: $this->defaults['sort_direction'],
+            'search' => $this->has('search') ? trim($this->input('search')) : null,
+        ];
+        
+        // 權限感知參數處理
+        if (!Auth::check()) {
+            // 非登入用戶只能看已發佈的文章
+            $mergeData['status'] = Article::STATUS_PUBLISHED;
+        } else if (!$this->has('status')) {
+            // 登入用戶若未指定狀態，則不限狀態
+            $mergeData['status'] = null;
+        } else {
+            // 登入用戶可以指定要查詢的狀態
+            $mergeData['status'] = $this->input('status');
+        }
+        
+        $this->merge($mergeData);
     }
 }
