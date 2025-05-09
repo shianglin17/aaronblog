@@ -87,8 +87,7 @@ public function logout(Request $request)
     return response()->json([
         'status' => 'success',
         'code' => 200,
-        'message' => '登出成功',
-        'data' => null
+        'message' => '登出成功'
     ]);
 }
 ```

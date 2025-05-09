@@ -47,10 +47,8 @@
       </div>
     </n-spin>
     
-    <!-- 頁腳 -->
-    <footer class="footer">
-      <p>© {{ new Date().getFullYear() }} 個人部落格</p>
-    </footer>
+    <!-- 使用 Footer 元件 -->
+    <Footer />
   </div>
 </template>
 
@@ -59,6 +57,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NSpin, NIcon, NButton } from 'naive-ui';
 import { ArrowBackOutline } from '@vicons/ionicons5';
+import Footer from '../components/Footer.vue';
 import { getArticleById } from '../api/article';
 import type { Article } from '../types/article';
 import { formatDate } from '../utils/date';
@@ -184,15 +183,6 @@ onMounted(() => {
   padding: 40px 0;
   text-align: center;
   color: var(--text-secondary);
-}
-
-.footer {
-  margin-top: 80px;
-  padding-top: 20px;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  border-top: 1px solid var(--border-color);
 }
 
 /* 響應式設計 */

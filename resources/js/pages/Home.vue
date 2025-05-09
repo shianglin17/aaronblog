@@ -33,10 +33,8 @@
       />
     </n-spin>
 
-    <!-- 頁腳 -->
-    <footer class="footer">
-      <p>© {{ new Date().getFullYear() }} 個人部落格</p>
-    </footer>
+    <!-- 使用 Footer 元件 -->
+    <Footer />
   </div>
 </template>
 
@@ -45,6 +43,7 @@ import { ref, onMounted } from 'vue';
 import { SearchOutline } from '@vicons/ionicons5';
 import { NInput, NInputGroup, NButton, NSpin, NIcon } from 'naive-ui';
 import ArticleList from '../components/ArticleList.vue';
+import Footer from '../components/Footer.vue';
 import { getArticleList } from '../api/article';
 import type { Article, ArticleListParams } from '../types/article';
 import type { PaginationMeta } from '../types/common';
@@ -137,15 +136,6 @@ onMounted(() => {
 .search-area {
   max-width: 500px;
   margin: 0 auto 40px;
-}
-
-.footer {
-  margin-top: 80px;
-  padding-top: 20px;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  border-top: 1px solid var(--border-color);
 }
 
 /* 響應式設計 */

@@ -41,15 +41,15 @@
   "code": 200,
   "message": "登入成功",
   "data": {
-    "user": {
-      "id": 1,
-      "name": "Aaron",
-      "email": "leishianglin@gmail.com",
-      "email_verified_at": "2024-05-10T10:00:00.000000Z",
-      "created_at": "2024-05-10T10:00:00.000000Z",
-      "updated_at": "2024-05-10T10:00:00.000000Z"
-    },
-    "token": "1|laravel_sanctum_vGkjdhf76..."
+  "user": {
+    "id": 1,
+    "name": "Aaron",
+    "email": "leishianglin@gmail.com",
+    "email_verified_at": "2024-05-10T10:00:00.000000Z",
+    "created_at": "2024-05-10T10:00:00.000000Z",
+    "updated_at": "2024-05-10T10:00:00.000000Z"
+  },
+  "token": "1|laravel_sanctum_vGkjdhf76..."
   }
 }
 ```
@@ -74,13 +74,13 @@
   "message": "給定的數據無效。",
   "data": null,
   "meta": {
-    "errors": {
-      "email": [
-        "電子郵件欄位為必填項。"
-      ],
-      "password": [
-        "密碼欄位為必填項。"
-      ]
+  "errors": {
+    "email": [
+      "電子郵件欄位為必填項。"
+    ],
+    "password": [
+      "密碼欄位為必填項。"
+    ]
     }
   }
 }
