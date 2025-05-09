@@ -32,13 +32,18 @@ Authorization: Bearer {token}
     "data": {
         "id": 1,
         "title": "文章標題",
+        "slug": "article-title",
         "content": "文章內容",
-        "user_id": 1,
-        "user_name": "張三",
-        "category_id": 2,
-        "category_name": "技術分享",
-        "created_at": "2024-03-20T12:00:00Z",
-        "updated_at": "2024-03-20T12:00:00Z",
+        "status": "published",
+        "author": {
+            "id": 1,
+            "name": "張三"
+        },
+        "category": {
+            "id": 2,
+            "name": "技術分享",
+            "slug": "technology-sharing"
+        },
         "tags": [
             {
                 "id": 1,
@@ -50,7 +55,9 @@ Authorization: Bearer {token}
                 "name": "PHP",
                 "slug": "php"
             }
-        ]
+        ],
+        "created_at": "2024-03-20T12:00:00Z",
+        "updated_at": "2024-03-20T12:00:00Z"
     }
 }
 ```
@@ -62,7 +69,8 @@ Authorization: Bearer {token}
 {
     "status": "error",
     "code": 404,
-    "message": "文章不存在"
+    "message": "文章不存在",
+    "meta": {}
 }
 ```
 
@@ -71,7 +79,8 @@ Authorization: Bearer {token}
 {
     "status": "error",
     "code": 400,
-    "message": "無效的請求"
+    "message": "無效的請求",
+    "meta": {}
 }
 ```
 
@@ -80,7 +89,8 @@ Authorization: Bearer {token}
 {
     "status": "error",
     "code": 401,
-    "message": "未授權或授權已過期"
+    "message": "未授權或授權已過期",
+    "meta": {}
 }
 ```
 
@@ -89,6 +99,7 @@ Authorization: Bearer {token}
 {
     "status": "error",
     "code": 500,
-    "message": "伺服器內部錯誤"
+    "message": "伺服器內部錯誤",
+    "meta": {}
 }
 ``` 

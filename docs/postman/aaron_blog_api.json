@@ -27,7 +27,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/article/list",
+              "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -35,6 +35,33 @@
                 "api",
                 "article",
                 "list"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "選填 - Integer - 頁碼，必須大於等於 1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "選填 - Integer - 每頁筆數，範圍 1-100"
+                },
+                {
+                  "key": "sort_by",
+                  "value": "created_at",
+                  "description": "選填 - String - 排序欄位，可選值：created_at、updated_at、title"
+                },
+                {
+                  "key": "sort_direction",
+                  "value": "desc",
+                  "description": "選填 - String - 排序方向，可選值：asc（升序）、desc（降序）"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "選填 - String - 搜尋關鍵字，最多 255 字元"
+                }
               ]
             },
             "description": "獲取文章列表"
@@ -53,7 +80,7 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n    \"status\": \"success\",\n    \"code\": 200,\n    \"message\": \"成功\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"title\": \"文章標題\",\n            \"content\": \"文章內容\",\n            \"created_at\": \"2024-03-20T12:00:00Z\",\n            \"updated_at\": \"2024-03-20T12:00:00Z\"\n        }\n    ],\n    \"meta\": {\n        \"pagination\": {\n            \"total\": 100,\n            \"per_page\": 15,\n            \"current_page\": 1,\n            \"last_page\": 7,\n            \"from\": 1,\n            \"to\": 15\n        }\n    }\n}"
+              "body": "{\n    \"status\": \"success\",\n    \"code\": 200,\n    \"message\": \"成功\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"title\": \"文章標題\",\n            \"slug\": \"article-title\",\n            \"content\": \"文章內容\",\n            \"status\": \"published\",\n            \"author\": {\n                \"id\": 1,\n                \"name\": \"張三\"\n            },\n            \"category\": {\n                \"id\": 2,\n                \"name\": \"技術分享\",\n                \"slug\": \"technology-sharing\"\n            },\n            \"tags\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"Laravel\",\n                    \"slug\": \"laravel\"\n                },\n                {\n                    \"id\": 2,\n                    \"name\": \"PHP\",\n                    \"slug\": \"php\"\n                }\n            ],\n            \"created_at\": \"2024-03-20T12:00:00Z\",\n            \"updated_at\": \"2024-03-20T12:00:00Z\"\n        }\n    ],\n    \"meta\": {\n        \"pagination\": {\n            \"current_page\": 1,\n            \"total_pages\": 7,\n            \"total_items\": 100,\n            \"per_page\": 15\n        }\n    }\n}"
             },
             {
               "name": "驗證錯誤回應範例",
@@ -68,7 +95,7 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n    \"status\": \"error\",\n    \"code\": 422,\n    \"message\": \"驗證失敗\",\n    \"errors\": {\n        \"page\": [\"頁碼必須大於等於 1\"]\n    }\n}"
+              "body": "{\n    \"status\": \"error\",\n    \"code\": 422,\n    \"message\": \"驗證錯誤\",\n    \"meta\": {\n        \"errors\": {\n            \"page\": [\"頁碼必須大於等於 1\"]\n        }\n    }\n}"
             }
           ]
         },
@@ -90,14 +117,21 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/article/1",
+              "raw": "{{baseUrl}}/api/article/:id",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "article",
-                "1"
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "必填 - Integer - 文章 ID，必須大於 0"
+                }
               ]
             },
             "description": "獲取單篇文章詳情"
@@ -116,7 +150,7 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n    \"status\": \"success\",\n    \"code\": 200,\n    \"message\": \"成功\",\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"文章標題\",\n        \"content\": \"文章內容\",\n        \"user_id\": 1,\n        \"user_name\": \"張三\",\n        \"category_id\": 2,\n        \"category_name\": \"技術分享\",\n        \"created_at\": \"2024-03-20T12:00:00Z\",\n        \"updated_at\": \"2024-03-20T12:00:00Z\",\n        \"tags\": [\n            {\n                \"id\": 1,\n                \"name\": \"Laravel\",\n                \"slug\": \"laravel\"\n            },\n            {\n                \"id\": 2,\n                \"name\": \"PHP\",\n                \"slug\": \"php\"\n            }\n        ]\n    }\n}"
+              "body": "{\n    \"status\": \"success\",\n    \"code\": 200,\n    \"message\": \"成功\",\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"文章標題\",\n        \"slug\": \"article-title\",\n        \"content\": \"文章內容\",\n        \"status\": \"published\",\n        \"author\": {\n            \"id\": 1,\n            \"name\": \"張三\"\n        },\n        \"category\": {\n            \"id\": 2,\n            \"name\": \"技術分享\",\n            \"slug\": \"technology-sharing\"\n        },\n        \"tags\": [\n            {\n                \"id\": 1,\n                \"name\": \"Laravel\",\n                \"slug\": \"laravel\"\n            },\n            {\n                \"id\": 2,\n                \"name\": \"PHP\",\n                \"slug\": \"php\"\n            }\n        ],\n        \"created_at\": \"2024-03-20T12:00:00Z\",\n        \"updated_at\": \"2024-03-20T12:00:00Z\"\n    }\n}"
             },
             {
               "name": "資源不存在回應範例",
@@ -131,7 +165,425 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n    \"status\": \"error\",\n    \"code\": 404,\n    \"message\": \"文章不存在\"\n}"
+              "body": "{\n    \"status\": \"error\",\n    \"code\": 404,\n    \"message\": \"文章不存在\",\n    \"meta\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "創建文章",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"新文章標題\",\n  \"content\": \"這是新文章的內容...\",\n  \"category_id\": 1,\n  \"status\": \"draft\",\n  \"tags\": [1, 2]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/article",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "article"
+              ]
+            },
+            "description": "創建新文章。請求體參數說明：\n- title: 必填 - String - 文章標題，不超過 255 個字符\n- content: 必填 - String - 文章內容\n- category_id: 選填 - Integer - 分類 ID\n- status: 選填 - String - 文章狀態，可選值：draft（草稿）、published（已發佈），默認為 draft\n- tags: 選填 - Array<Integer> - 標籤 ID 數組"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"新文章標題\",\n  \"content\": \"這是新文章的內容...\",\n  \"category_id\": 1,\n  \"status\": \"draft\",\n  \"tags\": [1, 2]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 201,\n  \"message\": \"文章創建成功\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"新文章標題\",\n    \"slug\": \"new-article-title\",\n    \"content\": \"這是新文章的內容...\",\n    \"status\": \"draft\",\n    \"author\": {\n      \"id\": 1,\n      \"name\": \"管理員\"\n    },\n    \"category\": {\n      \"id\": 1,\n      \"name\": \"技術分享\",\n      \"slug\": \"technology-sharing\"\n    },\n    \"tags\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laravel\",\n        \"slug\": \"laravel\"\n      },\n      {\n        \"id\": 2,\n        \"name\": \"Vue.js\",\n        \"slug\": \"vue-js\"\n      }\n    ],\n    \"created_at\": \"2023-05-09T12:34:56.000000Z\",\n    \"updated_at\": \"2023-05-09T12:34:56.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "驗證錯誤回應範例",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"content\": \"這是新文章的內容...\",\n  \"category_id\": 1,\n  \"tags\": [1, 2]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 422,\n  \"message\": \"驗證錯誤\",\n  \"meta\": {\n    \"errors\": {\n      \"title\": [\n        \"標題不能為空\"\n      ]\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "更新文章",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"更新後的文章標題\",\n  \"content\": \"這是更新後的文章內容...\",\n  \"category_id\": 2,\n  \"status\": \"published\",\n  \"tags\": [1, 3]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/article/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "article",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "必填 - Integer - 文章 ID"
+                }
+              ]
+            },
+            "description": "更新現有文章。請求體參數說明：\n- title: 選填 - String - 文章標題，不超過 255 個字符\n- content: 選填 - String - 文章內容\n- category_id: 選填 - Integer - 分類 ID\n- status: 選填 - String - 文章狀態，可選值：draft（草稿）、published（已發佈）\n- tags: 選填 - Array<Integer> - 標籤 ID 數組"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"更新後的文章標題\",\n  \"content\": \"這是更新後的文章內容...\",\n  \"category_id\": 2,\n  \"status\": \"published\",\n  \"tags\": [1, 3]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/1"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"文章更新成功\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"更新後的文章標題\",\n    \"slug\": \"updated-article-title\",\n    \"content\": \"這是更新後的文章內容...\",\n    \"status\": \"published\",\n    \"author\": {\n      \"id\": 1,\n      \"name\": \"管理員\"\n    },\n    \"category\": {\n      \"id\": 2,\n      \"name\": \"心得分享\",\n      \"slug\": \"experience-sharing\"\n    },\n    \"tags\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laravel\",\n        \"slug\": \"laravel\"\n      },\n      {\n        \"id\": 3,\n        \"name\": \"PHP\",\n        \"slug\": \"php\"\n      }\n    ],\n    \"created_at\": \"2023-05-09T12:34:56.000000Z\",\n    \"updated_at\": \"2023-05-09T13:45:23.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "驗證錯誤回應範例",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"已存在的文章標題\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/1"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 422,\n  \"message\": \"驗證錯誤\",\n  \"meta\": {\n    \"errors\": {\n      \"title\": [\n        \"標題已存在\"\n      ]\n    }\n  }\n}"
+            },
+            {
+              "name": "文章不存在回應範例",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"更新後的文章標題\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"文章不存在\",\n  \"meta\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "刪除文章",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/article/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "article",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "必填 - Integer - 文章 ID"
+                }
+              ]
+            },
+            "description": "刪除指定的文章（軟刪除）"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/1"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"文章刪除成功\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "文章不存在回應範例",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"文章不存在\",\n  \"meta\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "發佈文章",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/article/:id/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "article",
+                ":id",
+                "publish"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "必填 - Integer - 文章 ID"
+                }
+              ]
+            },
+            "description": "將指定文章狀態設為「已發佈」"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/1/publish"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"文章已發佈\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"測試文章\",\n    \"slug\": \"test-article\",\n    \"content\": \"這是一篇測試文章的內容...\",\n    \"status\": \"published\",\n    \"author\": {\n      \"id\": 1,\n      \"name\": \"管理員\"\n    },\n    \"category\": {\n      \"id\": 1,\n      \"name\": \"技術分享\",\n      \"slug\": \"technology-sharing\"\n    },\n    \"tags\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laravel\",\n        \"slug\": \"laravel\"\n      }\n    ],\n    \"created_at\": \"2023-05-09T12:34:56.000000Z\",\n    \"updated_at\": \"2023-05-09T14:23:45.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "文章不存在回應範例",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/999/publish"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"文章不存在\",\n  \"meta\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "設為草稿",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/article/:id/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "article",
+                ":id",
+                "draft"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "必填 - Integer - 文章 ID"
+                }
+              ]
+            },
+            "description": "將指定文章狀態設為「草稿」"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/1/draft"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"文章已設為草稿\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"測試文章\",\n    \"slug\": \"test-article\",\n    \"content\": \"這是一篇測試文章的內容...\",\n    \"status\": \"draft\",\n    \"author\": {\n      \"id\": 1,\n      \"name\": \"管理員\"\n    },\n    \"category\": {\n      \"id\": 1,\n      \"name\": \"技術分享\",\n      \"slug\": \"technology-sharing\"\n    },\n    \"tags\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laravel\",\n        \"slug\": \"laravel\"\n      }\n    ],\n    \"created_at\": \"2023-05-09T12:34:56.000000Z\",\n    \"updated_at\": \"2023-05-09T14:23:45.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "文章不存在回應範例",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/article/999/draft"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"文章不存在\",\n  \"meta\": {}\n}"
             }
           ]
         }
@@ -228,7 +680,7 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n  \"status\": \"error\",\n  \"code\": 401,\n  \"message\": \"提供的憑證不正確。\",\n  \"data\": null\n}"
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 401,\n  \"message\": \"提供的憑證不正確。\",\n  \"meta\": {}\n}"
             }
           ]
         },

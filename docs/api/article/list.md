@@ -37,13 +37,18 @@ Authorization: Bearer {token}
         {
             "id": 1,
             "title": "文章標題",
+            "slug": "article-title",
             "content": "文章內容",
-            "user_id": 1,
-            "user_name": "張三",
-            "category_id": 2,
-            "category_name": "技術分享",
-            "created_at": "2024-03-20T12:00:00Z",
-            "updated_at": "2024-03-20T12:00:00Z",
+            "status": "published",
+            "author": {
+                "id": 1,
+                "name": "張三"
+            },
+            "category": {
+                "id": 2,
+                "name": "技術分享",
+                "slug": "technology-sharing"
+            },
             "tags": [
                 {
                     "id": 1,
@@ -55,7 +60,9 @@ Authorization: Bearer {token}
                     "name": "PHP",
                     "slug": "php"
                 }
-            ]
+            ],
+            "created_at": "2024-03-20T12:00:00Z",
+            "updated_at": "2024-03-20T12:00:00Z"
         }
     ],
     "meta": {
@@ -76,13 +83,15 @@ Authorization: Bearer {token}
 {
     "status": "error",
     "code": 422,
-    "message": "驗證失敗",
-    "errors": {
-        "page": ["頁碼必須大於等於 1"],
-        "per_page": ["每頁筆數必須介於 1 到 100 之間"],
-        "sort_by": ["排序欄位不在允許的選項中"],
-        "sort_direction": ["排序方向必須是 asc 或 desc"],
-        "search": ["搜尋關鍵字不可超過 255 字元"]
+    "message": "驗證錯誤",
+    "meta": {
+        "errors": {
+            "page": ["頁碼必須大於等於 1"],
+            "per_page": ["每頁筆數必須介於 1 到 100 之間"],
+            "sort_by": ["排序欄位不在允許的選項中"],
+            "sort_direction": ["排序方向必須是 asc 或 desc"],
+            "search": ["搜尋關鍵字不可超過 255 字元"]
+        }
     }
 }
 ```
@@ -92,7 +101,8 @@ Authorization: Bearer {token}
 {
     "status": "error",
     "code": 401,
-    "message": "未授權或授權已過期"
+    "message": "未授權或授權已過期",
+    "meta": {}
 }
 ```
 
@@ -101,6 +111,7 @@ Authorization: Bearer {token}
 {
     "status": "error",
     "code": 500,
-    "message": "伺服器內部錯誤"
+    "message": "伺服器內部錯誤",
+    "meta": {}
 }
 ``` 
