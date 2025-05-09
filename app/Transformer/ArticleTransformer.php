@@ -18,14 +18,21 @@ class ArticleTransformer
         return [
             'id' => $article->id,
             'title' => $article->title,
+            'slug' => $article->slug,
             'content' => $article->content,
+            'status' => $article->status,
+            'author' => [
+                'id' => $article->user_id,
+                'name' => $article->author->name
+            ],
+            'category' => [
+                'id' => $article->category_id,
+                'name' => $article->category->name,
+                'slug' => $article->category->slug
+            ],
+            'tags' => $this->transformTags($article->tags),
             'created_at' => $article->created_at,
             'updated_at' => $article->updated_at,
-            'user_id' => $article->user_id,
-            'user_name' => $article->author->name,
-            'category_id' => $article->category_id,
-            'category_name' => $article->category->name,
-            'tags' => $this->transformTags($article->tags),
         ];
     }
 

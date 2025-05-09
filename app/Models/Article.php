@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string $title 文章標題
  * @property string $content 文章內容
+ * @property string $status 文章狀態: draft(草稿), published(已發佈)
  * @property int $category_id 分類 ID
  * @property int $user_id 作者 ID
  * @property \Carbon\Carbon $created_at
@@ -29,6 +30,16 @@ class Article extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * 文章狀態：草稿
+     */
+    public const STATUS_DRAFT = 'draft';
+
+    /**
+     * 文章狀態：已發佈
+     */
+    public const STATUS_PUBLISHED = 'published';
+
+    /**
      * 可批量賦值的屬性
      *
      * @var array<string>
@@ -37,6 +48,7 @@ class Article extends Model
         'title',
         'slug',
         'content',
+        'status',
         'category_id',
         'user_id',
     ];
@@ -75,5 +87,21 @@ class Article extends Model
     {
         return $this->belongsToMany(Tag::class, 'article_tag')
             ->withTimestamps();
+    }
+
+    /**
+     * 檢查文章是否為草稿
+     */
+    public function isDraft(): bool
+    {
+        return $this->status === self::STATUS_DRAFT;
+    }
+
+    /**
+     * 檢查文章是否已發佈
+     */
+    public function isPublished(): bool
+    {
+        return $this->status === self::STATUS_PUBLISHED;
     }
 }

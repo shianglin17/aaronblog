@@ -14,22 +14,23 @@ class ResponseMaker
      * @param mixed|null $data 回應資料
      * @param mixed|null $meta 元資料
      * @param string $message 回應訊息
+     * @param int $code HTTP 狀態碼
      * @return JsonResponse
      */
-    public static function success($data = null, $meta = null, string $message = '成功'): JsonResponse
+    public static function success($data = null, $meta = null, string $message = '成功', int $code = self::SUCCESS_CODE): JsonResponse
     {
         return response()->json(
             array_filter(
                 [
                     'status' => 'success',
-                    'code' => self::SUCCESS_CODE,
+                    'code' => $code,
                     'message' => $message,
                     'data' => $data,
                     'meta' => $meta
                 ],
                 fn ($value) => $value !== null
             ),
-            self::SUCCESS_CODE
+            $code
         );
     }
 
@@ -62,14 +63,22 @@ class ResponseMaker
      * 
      * @param string $message 錯誤訊息
      * @param int $code HTTP 狀態碼
+     * @param mixed|null $meta 元資料
      * @return JsonResponse
      */
-    public static function error(string $message, int $code = 400): JsonResponse
+    public static function error(string $message, int $code = 400, $meta = null): JsonResponse
     {
-        return response()->json([
-            'status' => 'error',
-            'code' => $code,
-            'message' => $message
-        ], $code);
+        return response()->json(
+            array_filter(
+                [
+                    'status' => 'error',
+                    'code' => $code,
+                    'message' => $message,
+                    'meta' => $meta
+                ],
+                fn ($value) => $value !== null
+            ), 
+            $code
+        );
     }
 }

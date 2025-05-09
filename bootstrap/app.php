@@ -1,8 +1,11 @@
 <?php
 
+use App\Exceptions\Handler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -29,5 +32,22 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // 使用自定義異常處理程序
+        $exceptions->dontReport([
+            // 這裡可以添加不需要報告的異常類型
+        ]);
+
+        // 處理驗證異常
+        $exceptions->render(function (ValidationException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'code' => 422,
+                    'message' => '驗證錯誤',
+                    'meta' => [
+                        'errors' => $e->errors()
+                    ]
+                ], 422);
+            }
+        });
     })->create();
