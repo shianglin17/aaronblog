@@ -12,9 +12,14 @@ export async function login(params: LoginParams): Promise<ApiResponse<AuthRespon
   try {
     const response = await http.post(API_ROUTES.AUTH.LOGIN, params);
     
-    // 如果登入成功，保存 token
+    // 如果登入成功，保存 token 和用戶資料
     if (response.data.status === 'success' && response.data.data.token) {
       localStorage.setItem('auth_token', response.data.data.token);
+      
+      // 保存用戶資料
+      if (response.data.data.user) {
+        localStorage.setItem('user_data', JSON.stringify(response.data.data.user));
+      }
     }
     
     return response.data;
@@ -53,15 +58,17 @@ export async function logout(): Promise<ApiResponse<null>> {
   try {
     const response = await http.post(API_ROUTES.AUTH.LOGOUT);
     
-    // 登出時移除 token
+    // 登出時移除 token 和用戶資料
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
     
     return response.data;
   } catch (error) {
     console.error('登出失敗:', error);
     
-    // 即使 API 請求失敗，也清除本地 token
+    // 即使 API 請求失敗，也清除本地 token 和用戶資料
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
     
     throw error;
   }
