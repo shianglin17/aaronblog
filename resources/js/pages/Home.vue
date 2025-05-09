@@ -56,7 +56,8 @@ const error = ref('');
 const pagination = ref<PaginationMeta | undefined>(undefined);
 const searchQuery = ref('');
 const currentParams = ref<ArticleListParams>({
-  ...DEFAULT_PAGINATION_PARAMS
+  ...DEFAULT_PAGINATION_PARAMS,
+  status: 'published'
 });
 
 // 獲取文章列表
@@ -65,7 +66,13 @@ async function fetchArticles() {
   error.value = '';
   
   try {
-    const response = await getArticleList(currentParams.value);
+    // 確保請求參數中總是包含 status=published
+    const params: ArticleListParams = {
+      ...currentParams.value,
+      status: 'published' // 強制覆蓋，確保前台只顯示已發布文章
+    };
+    
+    const response = await getArticleList(params);
     articles.value = response.data;
     pagination.value = response.meta?.pagination;
   } catch (err) {

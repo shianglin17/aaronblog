@@ -24,13 +24,22 @@
         </h2>
         
         <div class="article-meta">
-          <span class="article-author">作者: {{ article.user_name }}</span>
-          <span class="article-category">分類: {{ article.category_name }}</span>
-          <time :datetime="article.created_at">發佈時間: {{ formatDate(article.created_at) }}</time>
+          <span class="article-author">
+            <n-icon size="16" class="meta-icon"><PersonOutline /></n-icon>
+            {{ article.author.name }}
+          </span>
+          <span class="article-category">
+            <n-icon size="16" class="meta-icon"><FolderOutline /></n-icon>
+            {{ article.category.name }}
+          </span>
+          <time :datetime="article.created_at">
+            <n-icon size="16" class="meta-icon"><TimeOutline /></n-icon>
+            {{ formatDate(article.created_at) }}
+          </time>
         </div>
         
         <div class="article-tags" v-if="article.tags && article.tags.length > 0">
-          <span class="tag-label">標籤:</span>
+          <n-icon size="16" class="meta-icon tag-label"><PricetagOutline /></n-icon>
           <span 
             v-for="tag in article.tags" 
             :key="tag.id" 
@@ -47,74 +56,77 @@
     </div>
       
     <!-- 分頁 -->
-    <div v-if="pagination" class="pagination">
-      <n-pagination 
+    <div v-if="pagination && articles.length > 0" class="pagination">
+      <n-pagination
         v-model:page="currentPage"
-        :page-size="pagination.per_page || 10"
-        :item-count="pagination.total_items || 0"
-        show-size-picker
-        :page-sizes="[10, 20, 50]"
-        size="medium"
-        @update:page="handlePageChange"
-        @update:page-size="handlePageSizeChange"
+        :page-count="pagination.total_pages"
+        :on-update:page="handlePageChange"
       />
-      <div class="pagination-info">共 {{ pagination.total_items || 0 }} 條，{{ pagination.total_pages || 1 }} 頁</div>
+      <div class="pagination-info">
+        顯示 {{ (pagination.current_page - 1) * pagination.per_page + 1 }} - 
+        {{ Math.min(pagination.current_page * pagination.per_page, pagination.total_items) }} 筆，
+        共 {{ pagination.total_items }} 筆
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { NPagination } from 'naive-ui'
-import type { Article } from '../types/article'
-import type { PaginationMeta } from '../types/common'
-import { formatDate } from '../utils/date'
+import { ref, defineProps, defineEmits, onMounted, computed } from 'vue';
+import { 
+  NPagination, 
+  NIcon 
+} from 'naive-ui';
+import { 
+  PersonOutline, 
+  TimeOutline, 
+  FolderOutline, 
+  PricetagOutline 
+} from '@vicons/ionicons5';
+import type { Article } from '../types/article';
+import type { PaginationMeta } from '../types/common';
+import { useRouter } from 'vue-router';
+import { withDefaults } from 'vue';
 
-// Props
 const props = defineProps<{
-  articles: Article[]
-  pagination?: PaginationMeta
-  error?: string
-}>()
+  articles: Article[];
+  error?: string;
+  pagination?: PaginationMeta;
+}>();
 
-// Emits
-const emit = defineEmits(['page-change', 'page-size-change'])
+const emit = defineEmits(['page-change', 'page-size-change']);
+const router = useRouter();
+const currentPage = ref(1);
 
-// 當前頁面
-const currentPage = computed({
-  get: () => props.pagination?.current_page || 1,
-  set: (val) => emit('page-change', val)
-})
+// 初始化
+onMounted(() => {
+  if (props.pagination) {
+    currentPage.value = props.pagination.current_page;
+  }
+});
 
-// 處理頁面變更
-function handlePageChange(page: number) {
-  emit('page-change', page)
-}
+// 處理分頁變更
+const handlePageChange = (page: number) => {
+  emit('page-change', page);
+};
 
-// 處理頁面大小變更
-function handlePageSizeChange(pageSize: number) {
-  emit('page-size-change', pageSize)
-}
+// 格式化日期
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('zh-TW', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
 </script>
 
 <style scoped>
 .article-list {
   width: 100%;
-}
-
-.error-message {
-  padding: 20px;
-  color: #e74c3c;
-  text-align: center;
-  border: 1px solid #f9e4e4;
-  border-radius: 4px;
-  background-color: #fdf2f2;
-}
-
-.empty-message {
-  padding: 40px 0;
-  text-align: center;
-  color: var(--text-secondary);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
 .articles {
@@ -124,19 +136,16 @@ function handlePageSizeChange(pageSize: number) {
 }
 
 .article-item {
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 24px;
-}
-
-.article-item:last-child {
-  border-bottom: none;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  padding-bottom: 30px;
 }
 
 .article-title {
-  margin: 0 0 12px;
   font-size: 1.6rem;
-  font-weight: 400;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-color);
+  line-height: 1.4;
 }
 
 .article-title a {
@@ -156,6 +165,14 @@ function handlePageSizeChange(pageSize: number) {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.meta-icon {
+  margin-right: 4px;
+  color: var(--text-secondary);
+  display: inline-flex;
+  transform: translateY(1px);
 }
 
 .article-tags {
@@ -167,7 +184,6 @@ function handlePageSizeChange(pageSize: number) {
 }
 
 .tag-label {
-  font-size: 0.9rem;
   color: var(--text-secondary);
 }
 
@@ -178,6 +194,12 @@ function handlePageSizeChange(pageSize: number) {
   padding: 2px 8px;
   border-radius: 12px;
   display: inline-block;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.article-tag:hover {
+  background-color: var(--primary-color, #7d6e5d);
+  color: white;
 }
 
 .article-content {
@@ -234,6 +256,7 @@ function handlePageSizeChange(pageSize: number) {
   .article-meta {
     flex-direction: column;
     gap: 6px;
+    align-items: flex-start;
   }
 
   .pagination {

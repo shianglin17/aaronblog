@@ -20,13 +20,26 @@
         <h1 class="article-title">{{ article.title }}</h1>
         
         <div class="article-meta">
-          <span class="article-author">作者: {{ article.user_name }}</span>
-          <span class="article-category">分類: {{ article.category_name }}</span>
-          <time :datetime="article.created_at">發佈時間: {{ formatDate(article.created_at) }}</time>
+          <span class="article-author">
+            <n-icon size="16" class="meta-icon"><PersonOutline /></n-icon>
+            {{ article.author.name }}
+          </span>
+          <span class="article-category">
+            <n-icon size="16" class="meta-icon"><FolderOutline /></n-icon>
+            {{ article.category.name }}
+          </span>
+          <time :datetime="article.created_at">
+            <n-icon size="16" class="meta-icon"><TimeOutline /></n-icon>
+            {{ formatDate(article.created_at) }}
+          </time>
+          <!-- 文章狀態只在後台顯示 -->
+          <span v-if="isAdmin" class="article-status" :class="article.status">
+            {{ article.status === 'published' ? '已發佈' : '草稿' }}
+          </span>
         </div>
         
         <div class="article-tags" v-if="article.tags && article.tags.length > 0">
-          <span class="tag-label">標籤:</span>
+          <n-icon size="16" class="meta-icon tag-label"><PricetagOutline /></n-icon>
           <span 
             v-for="tag in article.tags" 
             :key="tag.id" 
@@ -53,104 +66,109 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NSpin, NIcon, NButton } from 'naive-ui';
-import { ArrowBackOutline } from '@vicons/ionicons5';
+import { 
+  ArrowBackOutline,
+  PersonOutline, 
+  TimeOutline, 
+  FolderOutline, 
+  PricetagOutline 
+} from '@vicons/ionicons5';
 import Footer from '../components/Footer.vue';
 import { getArticleById } from '../api/article';
 import type { Article } from '../types/article';
-import { formatDate } from '../utils/date';
 
-// 路由
 const route = useRoute();
 const router = useRouter();
-
-// 狀態管理
 const article = ref<Article | null>(null);
 const loading = ref(true);
 const error = ref('');
+const isAdmin = computed(() => {
+  // 從本地儲存檢查是否為管理員
+  // 這裡可以根據實際的驗證方式調整
+  return localStorage.getItem('is_admin') === 'true';
+});
 
-// 獲取文章詳情
-async function fetchArticleDetail() {
-  loading.value = true;
-  error.value = '';
-  
+onMounted(async () => {
   try {
-    // 從路由參數獲取文章 ID
-    const articleId = parseInt(route.params.id as string);
-    
-    if (isNaN(articleId)) {
-      throw new Error('無效的文章 ID');
-    }
-    
-    const response = await getArticleById(articleId);
+    const id = route.params.id as string;
+    const response = await getArticleById(parseInt(id));
     article.value = response.data;
-  } catch (err: any) {
-    if (err.response && err.response.status === 404) {
-      error.value = '文章不存在';
-    } else {
-      error.value = '獲取文章詳情失敗，請稍後再試';
-    }
-    console.error(err);
+  } catch (err) {
+    error.value = '無法載入文章，請稍後再試';
+    console.error('文章載入錯誤:', err);
   } finally {
     loading.value = false;
   }
-}
-
-// 返回文章列表
-function goBack() {
-  router.push('/');
-}
-
-// 掛載時獲取文章詳情
-onMounted(() => {
-  fetchArticleDetail();
 });
+
+// 返回上一頁
+const goBack = () => {
+  router.back();
+};
+
+// 格式化日期
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('zh-TW', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
 </script>
 
 <style scoped>
 .container {
-  max-width: 860px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 0 16px;
 }
 
 .article-back {
-  margin-bottom: 24px;
+  margin: 20px 0;
 }
 
 .article-detail {
-  padding-bottom: 40px;
+  padding: 20px 0;
 }
 
 .article-title {
   font-size: 2rem;
-  font-weight: 400;
+  font-weight: 700;
   margin-bottom: 16px;
-  letter-spacing: 0.5px;
-  line-height: 1.4;
+  line-height: 1.3;
+  color: var(--text-color);
 }
 
 .article-meta {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 14px;
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  align-items: center;
+}
+
+.meta-icon {
+  margin-right: 4px;
+  color: var(--text-secondary);
+  display: inline-flex;
+  transform: translateY(1px);
 }
 
 .article-tags {
-  margin-bottom: 24px;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 20px;
   align-items: center;
 }
 
 .tag-label {
-  font-size: 0.9rem;
   color: var(--text-secondary);
 }
 
@@ -161,13 +179,19 @@ onMounted(() => {
   padding: 2px 8px;
   border-radius: 12px;
   display: inline-block;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.article-tag:hover {
+  background-color: var(--primary-color, #7d6e5d);
+  color: white;
 }
 
 .article-content {
   line-height: 1.8;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--text-color);
-  white-space: pre-wrap;
+  white-space: pre-line;
 }
 
 .error-message {
@@ -180,24 +204,39 @@ onMounted(() => {
 }
 
 .empty-message {
-  padding: 40px 0;
+  padding: 50px 0;
   text-align: center;
   color: var(--text-secondary);
 }
 
+.article-status {
+  background-color: var(--tag-bg, #f0f0f0);
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.article-status.published {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+}
+
+.article-status.draft {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
 /* 響應式設計 */
 @media (max-width: 768px) {
-  .container {
-    padding: 20px 16px;
-  }
-  
   .article-title {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
   }
   
   .article-meta {
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
+    align-items: flex-start;
   }
   
   .article-content {
