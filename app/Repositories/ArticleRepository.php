@@ -17,16 +17,17 @@ class ArticleRepository
     public function getArticles(Array $param): LengthAwarePaginator
     {
         return Article::select([
-            'id', 'title', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
+            'id', 'title', 'slug', 'description', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
         ])
         ->with([
             'author:id,name',
-            'category:id,name',
+            'category:id,name,slug',
             'tags:id,name,slug'
         ])
         ->when(!empty($param['search']), function($query) use ($param) {
             return $query->where('title', 'like', "%{$param['search']}%")
-                         ->orWhere('content', 'like', "%{$param['search']}%");
+                         ->orWhere('content', 'like', "%{$param['search']}%")
+                         ->orWhere('description', 'like', "%{$param['search']}%");
         })
         ->when(isset($param['status']), function($query) use ($param) {
             return $query->where('status', $param['status']);
@@ -44,11 +45,11 @@ class ArticleRepository
     public function getArticleById(int $id): ?Article
     {
         return Article::select([
-            'id', 'title', 'slug', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
+            'id', 'title', 'slug', 'description', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
         ])
         ->with([
             'author:id,name',
-            'category:id,name',
+            'category:id,name,slug',
             'tags:id,name,slug'
         ])
         ->find($id);

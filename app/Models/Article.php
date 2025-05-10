@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property int $id
  * @property string $title 文章標題
+ * @property string|null $description 文章描述
  * @property string $content 文章內容
  * @property string $status 文章狀態: draft(草稿), published(已發佈)
  * @property int $category_id 分類 ID
@@ -47,6 +48,7 @@ class Article extends Model
     protected $fillable = [
         'title',
         'slug',
+        'description',
         'content',
         'status',
         'category_id',

@@ -22,7 +22,8 @@
 | 參數名 | 必填 | 類型 | 說明 |
 | --- | --- | --- | --- |
 | title | 是 | string | 文章標題，不超過 255 個字符 |
-| content | 是 | string | 文章內容 |
+| description | 否 | string | 文章摘要，顯示於列表頁，建議 150-200 字內 |
+| content | 是 | string | 文章完整內容 |
 | category_id | 否 | integer | 分類 ID |
 | status | 否 | string | 文章狀態，可選值：draft（草稿）、published（已發佈），默認為 draft |
 | tags | 否 | array | 標籤 ID 數組 |
@@ -40,6 +41,7 @@
     "id": 1,
     "title": "測試文章",
     "slug": "test-article",
+    "description": "這是一篇測試文章的摘要...",
     "content": "這是一篇測試文章的內容...",
     "status": "draft",
     "author": {

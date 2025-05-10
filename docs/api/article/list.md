@@ -51,6 +51,7 @@ API 會根據用戶的登入狀態自動調整請求參數：
             "id": 1,
             "title": "文章標題",
             "slug": "article-title",
+            "description": "這是文章摘要...",
             "content": "文章內容",
             "status": "published",
             "author": {
@@ -88,6 +89,8 @@ API 會根據用戶的登入狀態自動調整請求參數：
     }
 }
 ```
+
+> `description` 欄位為文章摘要，顯示於列表頁；`content` 為完整內容。
 
 ## 錯誤回應
 
