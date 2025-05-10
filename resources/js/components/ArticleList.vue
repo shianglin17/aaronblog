@@ -16,41 +16,46 @@
         v-for="article in articles"
         :key="article.id"
         class="article-item"
+        @click="router.push(`/article/${article.id}`)"
+        tabindex="0"
+        @keydown.enter="router.push(`/article/${article.id}`)"
       >
         <h2 class="article-title">
-          <router-link :to="`/article/${article.id}`">
-            {{ article.title }}
-          </router-link>
+          {{ article.title }}
         </h2>
         
-        <div class="article-meta">
-          <span class="article-author">
-            <n-icon size="16" class="meta-icon"><PersonOutline /></n-icon>
-            {{ article.author.name }}
-          </span>
-          <span class="article-category">
-            <n-icon size="16" class="meta-icon"><FolderOutline /></n-icon>
-            {{ article.category.name }}
-          </span>
-          <time :datetime="article.created_at">
-            <n-icon size="16" class="meta-icon"><TimeOutline /></n-icon>
-            {{ formatDate(article.created_at) }}
-          </time>
+        <!-- 文章元數據區塊 -->
+        <div class="article-meta-wrapper">
+          <div class="article-meta">
+            <span class="article-author">
+              <n-icon size="16" class="meta-icon"><PersonOutline /></n-icon>
+              {{ article.author.name }}
+            </span>
+            <span class="article-category">
+              <n-icon size="16" class="meta-icon"><FolderOutline /></n-icon>
+              {{ article.category.name }}
+            </span>
+            <time :datetime="article.created_at">
+              <n-icon size="16" class="meta-icon"><TimeOutline /></n-icon>
+              {{ formatDate(article.created_at) }}
+            </time>
+          </div>
+          
+          <div class="article-tags" v-if="article.tags && article.tags.length > 0">
+            <n-icon size="16" class="meta-icon tag-label"><PricetagOutline /></n-icon>
+            <span 
+              v-for="tag in article.tags" 
+              :key="tag.id" 
+              class="article-tag"
+            >
+              {{ tag.name }}
+            </span>
+          </div>
         </div>
         
-        <div class="article-tags" v-if="article.tags && article.tags.length > 0">
-          <n-icon size="16" class="meta-icon tag-label"><PricetagOutline /></n-icon>
-          <span 
-            v-for="tag in article.tags" 
-            :key="tag.id" 
-            class="article-tag"
-          >
-            {{ tag.name }}
-          </span>
-        </div>
-        
-        <div class="article-content">
-          {{ article.content.substring(0, 150) }}{{ article.content.length > 150 ? '...' : '' }}
+        <!-- 文章描述 -->
+        <div v-if="article.description" class="article-description">
+          {{ article.description }}
         </div>
       </article>
     </div>
@@ -81,7 +86,8 @@ import {
   PersonOutline, 
   TimeOutline, 
   FolderOutline, 
-  PricetagOutline 
+  PricetagOutline,
+  ArrowForwardOutline
 } from '@vicons/ionicons5';
 import type { Article } from '../types/article';
 import type { PaginationMeta } from '../types/common';
@@ -132,18 +138,24 @@ const formatDate = (dateString: string) => {
 .articles {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 20px;
 }
 
 .article-item {
   border-bottom: 1px solid var(--border-color, #e0e0e0);
-  padding-bottom: 30px;
+  padding: 20px 28px 30px 28px;
+  background: var(--background-color); /* 與主背景一致，最佳實踐 */
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: box-shadow 0.22s cubic-bezier(.4,0,.2,1), background 0.22s cubic-bezier(.4,0,.2,1), transform 0.18s cubic-bezier(.4,0,.2,1);
+  box-shadow: none;
+  cursor: pointer;
 }
 
 .article-title {
   font-size: 1.6rem;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   color: var(--text-color);
   line-height: 1.4;
 }
@@ -158,10 +170,14 @@ const formatDate = (dateString: string) => {
   color: var(--primary-color, #7d6e5d);
 }
 
+.article-meta-wrapper {
+  margin-bottom: 20px;
+}
+
 .article-meta {
   font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 14px;
+  color: var(--text-secondary, #666);
+  margin-bottom: 10px;
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
@@ -176,7 +192,7 @@ const formatDate = (dateString: string) => {
 }
 
 .article-tags {
-  margin-bottom: 14px;
+  margin-bottom: 0;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -202,32 +218,35 @@ const formatDate = (dateString: string) => {
   color: white;
 }
 
-.article-content {
+.article-description {
   line-height: 1.75;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: var(--text-color);
   font-size: 1rem;
+  position: relative;
+  padding-right: 24px;
 }
 
-.article-actions {
-  margin-top: 16px;
-}
-
-.read-more {
-  display: inline-block;
-  font-size: 0.95rem;
+.read-more-link {
+  display: inline-flex;
+  align-items: center;
   color: var(--primary-color, #7d6e5d);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s;
+  margin-left: 6px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
-.read-more:hover {
-  border-color: currentColor;
+.read-more-icon {
+  transition: transform 0.2s;
+}
+
+.read-more-link:hover .read-more-icon {
+  transform: translateX(3px);
 }
 
 .pagination {
-  margin-top: 30px;
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -239,29 +258,48 @@ const formatDate = (dateString: string) => {
   color: var(--text-secondary);
 }
 
+.error-message {
+  padding: 20px;
+  color: #e74c3c;
+  text-align: center;
+  border: 1px solid #f9e4e4;
+  border-radius: 4px;
+  background-color: #fdf2f2;
+}
+
+.empty-message {
+  padding: 50px 0;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
 /* 響應式設計 */
 @media (max-width: 768px) {
   .articles {
-    gap: 30px;
+    gap: 12px;
   }
 
   .article-item {
-    padding-bottom: 20px;
+    padding-bottom: 25px;
   }
-
+  
   .article-title {
     font-size: 1.4rem;
+    margin-bottom: 14px;
   }
-
+  
   .article-meta {
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     align-items: flex-start;
   }
+}
 
-  .pagination {
-    overflow-x: auto;
-    padding: 10px 0;
-  }
+/* 新增可點擊卡片的互動樣式 */
+.article-item:hover, .article-item:focus {
+  background: #f3f1ef; /* hover 時更細膩的低調變化 */
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.06); /* hover 時陰影略明顯但仍低調 */
+  outline: none;
+  transform: scale(1.01);
 }
 </style>

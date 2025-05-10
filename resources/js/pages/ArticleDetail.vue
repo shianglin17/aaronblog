@@ -19,6 +19,8 @@
         
         <h1 class="article-title">{{ article.title }}</h1>
         
+        <!-- 文章元數據區塊 -->
+        <div class="article-meta-wrapper">
         <div class="article-meta">
           <span class="article-author">
             <n-icon size="16" class="meta-icon"><PersonOutline /></n-icon>
@@ -47,6 +49,7 @@
           >
             {{ tag.name }}
           </span>
+          </div>
         </div>
         
         <div class="article-content">
@@ -136,20 +139,24 @@ const formatDate = (dateString: string) => {
 }
 
 .article-title {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 16px;
   line-height: 1.3;
   color: var(--text-color);
 }
 
+.article-meta-wrapper {
+  margin-bottom: 28px;
+}
+
 .article-meta {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary, #666);
   align-items: center;
 }
 
@@ -164,7 +171,6 @@ const formatDate = (dateString: string) => {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
   align-items: center;
 }
 
@@ -192,6 +198,7 @@ const formatDate = (dateString: string) => {
   font-size: 1.05rem;
   color: var(--text-color);
   white-space: pre-line;
+  margin-top: 10px;
 }
 
 .error-message {
@@ -231,6 +238,7 @@ const formatDate = (dateString: string) => {
 @media (max-width: 768px) {
   .article-title {
     font-size: 1.8rem;
+    margin-bottom: 14px;
   }
   
   .article-meta {
