@@ -53,7 +53,10 @@ class ArticleController extends Controller
             return ResponseMaker::error('文章不存在', 404);
         }
 
-        return ResponseMaker::success($this->articleTransformer->transform($article));
+        return ResponseMaker::success(
+            data: $this->articleTransformer->transform($article),
+            message: '文章詳情'
+        );
     }
 
     /**
@@ -69,9 +72,8 @@ class ArticleController extends Controller
 
         return ResponseMaker::success(
             $this->articleTransformer->transform($article),
-            null,
-            '文章創建成功',
-            201
+            message: '文章創建成功',
+            code: 201
         );
     }
 
@@ -92,9 +94,8 @@ class ArticleController extends Controller
         }
 
         return ResponseMaker::success(
-            $this->articleTransformer->transform($article),
-            null,
-            '文章更新成功'
+            data: $this->articleTransformer->transform($article),
+            message: '文章更新成功'
         );
     }
 
@@ -112,7 +113,7 @@ class ArticleController extends Controller
             return ResponseMaker::error('文章不存在', 404);
         }
 
-        return ResponseMaker::success(null, null, '文章刪除成功');
+        return ResponseMaker::success(message: '文章刪除成功');
     }
 
     /**
@@ -130,9 +131,8 @@ class ArticleController extends Controller
         }
 
         return ResponseMaker::success(
-            $this->articleTransformer->transform($article),
-            null,
-            '文章已發佈'
+            data: $this->articleTransformer->transform($article),
+            message: '文章已發佈'
         );
     }
 
@@ -151,9 +151,8 @@ class ArticleController extends Controller
         }
 
         return ResponseMaker::success(
-            $this->articleTransformer->transform($article),
-            null,
-            '文章已設為草稿'
+            data: $this->articleTransformer->transform($article),
+            message: '文章已設為草稿'
         );
     }
 }

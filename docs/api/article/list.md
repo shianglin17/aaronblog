@@ -25,6 +25,8 @@ Authorization: Bearer {token}  // 選填，若要訪問草稿文章則必填
 | sort_direction| string  | 否    | desc       | 排序方向，可選值：asc（升序）、desc（降序）                  |
 | search       | string  | 否    | ''         | 搜尋關鍵字，最多 255 字元                               |
 | status       | string  | 否    | 特殊       | 文章狀態篩選，可選值：draft（草稿）、published（已發佈）。備註：未登入用戶強制為 published，已登入用戶若不指定則不篩選 |
+| category     | string  | 否    | ''         | 分類篩選，使用分類的 slug 值                            |
+| tags         | string  | 否    | ''         | 標籤篩選，使用標籤的 slug 值，多個標籤使用逗號分隔，例如 "laravel,php,vue" |
 
 ## 權限感知參數處理
 
@@ -90,7 +92,7 @@ API 會根據用戶的登入狀態自動調整請求參數：
 }
 ```
 
-> `description` 欄位為文章摘要，顯示於列表頁；`content` 為完整內容。
+> `description` 欄位為文章摘要，顯示於列表頁，也是 SEO 的重要元素；`content` 為完整內容。
 
 ## 錯誤回應
 
@@ -107,7 +109,9 @@ API 會根據用戶的登入狀態自動調整請求參數：
             "sort_by": ["排序欄位不在允許的選項中"],
             "sort_direction": ["排序方向必須是 asc 或 desc"],
             "search": ["搜尋關鍵字不可超過 255 字元"],
-            "status": ["文章狀態必須是 draft 或 published 其中之一"]
+            "status": ["文章狀態必須是 draft 或 published 其中之一"],
+            "category": ["分類不存在"],
+            "tags": ["標籤格式無效"]
         }
     }
 }

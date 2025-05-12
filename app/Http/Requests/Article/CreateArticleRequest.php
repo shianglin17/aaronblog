@@ -24,7 +24,8 @@ class CreateArticleRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255', 'unique:articles,title'],
-            'description' => ['nullable', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:articles,slug', 'alpha_dash'],
+            'description' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'status' => ['nullable', 'string', 'in:' . Article::STATUS_DRAFT . ',' . Article::STATUS_PUBLISHED],
@@ -44,6 +45,11 @@ class CreateArticleRequest extends FormRequest
             'title.required' => '標題不能為空',
             'title.max' => '標題不能超過255個字符',
             'title.unique' => '標題已存在',
+            'slug.required' => 'Slug不能為空',
+            'slug.max' => 'Slug不能超過255個字符',
+            'slug.unique' => 'Slug已存在',
+            'slug.alpha_dash' => 'Slug只能包含字母、數字、連字符和底線',
+            'description.required' => '文章描述不能為空',
             'description.max' => '描述不能超過255個字符',
             'content.required' => '內容不能為空',
             'category_id.exists' => '所選分類不存在',

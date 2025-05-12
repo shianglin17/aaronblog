@@ -27,7 +27,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=&status=published",
+              "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=&status=published&category=technology&tags[]=laravel&tags[]=php",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -66,10 +66,25 @@
                   "key": "status",
                   "value": "published",
                   "description": "選填 - String - 文章狀態篩選，可選值：draft（草稿）、published（已發佈）。未登入用戶強制為 published，已登入用戶若不指定則不篩選"
+                },
+                {
+                  "key": "category",
+                  "value": "technology",
+                  "description": "選填 - String - 分類篩選，使用分類的 slug"
+                },
+                {
+                  "key": "tags[]",
+                  "value": "laravel",
+                  "description": "選填 - Array - 標籤篩選，使用陣列格式 tags[]=laravel&tags[]=php。使用標籤的 slug 值。推薦使用此陣列格式"
+                },
+                {
+                  "key": "tags[]",
+                  "value": "php",
+                  "description": "選填 - Array - 標籤篩選的第二個值"
                 }
               ]
             },
-            "description": "獲取文章列表"
+            "description": "獲取文章列表，支援分頁、排序、搜尋、分類和標籤篩選"
           },
           "response": [
             {
@@ -135,11 +150,11 @@
                 {
                   "key": "id",
                   "value": "1",
-                  "description": "必填 - Integer - 文章 ID，必須大於 0"
+                  "description": "必填 - Integer - 文章 ID，必須使用 ID 而非 slug 進行操作"
                 }
               ]
             },
-            "description": "獲取單篇文章詳情"
+            "description": "獲取單篇文章詳情。本 API 使用 ID 作為資源識別符以提高查詢效能，但前端路由建議使用 slug 以增強使用者體驗和 SEO 效果"
           },
           "response": [
             {
@@ -215,7 +230,7 @@
                 "article"
               ]
             },
-            "description": "創建新文章。請求體參數說明：\n- title: 必填 - String - 文章標題，不超過 255 個字符\n- content: 必填 - String - 文章內容\n- category_id: 選填 - Integer - 分類 ID\n- status: 選填 - String - 文章狀態，可選值：draft（草稿）、published（已發佈），默認為 draft\n- tags: 選填 - Array<Integer> - 標籤 ID 數組"
+            "description": "創建新文章。請求體參數說明：\n- title: 必填 - String - 文章標題，不超過 255 個字符\n- content: 必填 - String - 文章內容\n- category_id: 選填 - Integer - 分類 ID\n- description: 選填 - String - 文章摘要\n- status: 選填 - String - 文章狀態，可選值：draft（草稿）、published（已發佈），默認為 draft\n- tags: 選填 - Array<Integer> - 標籤 ID 數組，必須使用陣列格式 [1, 2, 3]"
           },
           "response": [
             {
@@ -306,11 +321,11 @@
                 {
                   "key": "id",
                   "value": "1",
-                  "description": "必填 - Integer - 文章 ID"
+                  "description": "必填 - Integer - 文章 ID，必須使用 ID 而非 slug 進行操作"
                 }
               ]
             },
-            "description": "更新現有文章。請求體參數說明：\n- title: 選填 - String - 文章標題，不超過 255 個字符\n- content: 選填 - String - 文章內容\n- category_id: 選填 - Integer - 分類 ID\n- status: 選填 - String - 文章狀態，可選值：draft（草稿）、published（已發佈）\n- tags: 選填 - Array<Integer> - 標籤 ID 數組"
+            "description": "更新現有文章。請求體參數說明：\n- title: 選填 - String - 文章標題，不超過 255 個字符\n- content: 選填 - String - 文章內容\n- category_id: 選填 - Integer - 分類 ID\n- description: 選填 - String - 文章摘要\n- status: 選填 - String - 文章狀態，可選值：draft（草稿）、published（已發佈）\n- tags: 選填 - Array<Integer> - 標籤 ID 數組，必須使用陣列格式 [1, 2, 3]"
           },
           "response": [
             {
@@ -407,7 +422,7 @@
                 {
                   "key": "id",
                   "value": "1",
-                  "description": "必填 - Integer - 文章 ID"
+                  "description": "必填 - Integer - 文章 ID，必須使用 ID 而非 slug 進行操作"
                 }
               ]
             },
@@ -480,7 +495,7 @@
                 {
                   "key": "id",
                   "value": "1",
-                  "description": "必填 - Integer - 文章 ID"
+                  "description": "必填 - Integer - 文章 ID，必須使用 ID 而非 slug 進行操作"
                 }
               ]
             },
@@ -553,7 +568,7 @@
                 {
                   "key": "id",
                   "value": "1",
-                  "description": "必填 - Integer - 文章 ID"
+                  "description": "必填 - Integer - 文章 ID，必須使用 ID 而非 slug 進行操作"
                 }
               ]
             },

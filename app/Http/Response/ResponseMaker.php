@@ -44,7 +44,7 @@ class ResponseMaker
     public static function paginatorWithTransformer(LengthAwarePaginator $paginator, object $transformer): JsonResponse
     {
         $items = collect($paginator->items());
-        
+
         return self::success(
             $transformer->transformCollection($items),
             [

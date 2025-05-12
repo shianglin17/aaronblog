@@ -8,6 +8,8 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ArticleSeeder extends Seeder
 {
@@ -16,6 +18,10 @@ class ArticleSeeder extends Seeder
      */
     public function run(): void
     {
+        // 先清空所有現有文章和關聯
+        Article::query()->forceDelete();
+        DB::table('article_tag')->truncate();
+
         // 取得所有分類和標籤
         $users = User::all();
         $categories = Category::all();
@@ -26,6 +32,7 @@ class ArticleSeeder extends Seeder
             $article = Article::create([
                 'title' => "測試文章 {$i}",
                 'slug' => "test-article-{$i}",
+                'description' => "這是測試文章 {$i} 的簡短描述，概括了文章的主要內容和關鍵點。",
                 'user_id' => $users->random()->id,
                 'content' => "這是測試文章 {$i} 的內容。這裡可以放入一些較長的測試內容...",
                 'category_id' => $categories->random()->id

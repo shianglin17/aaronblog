@@ -50,7 +50,28 @@
 目前這個 Collection 包含以下 API：
 
 1. **文章相關**
-   - 獲取文章列表 (`GET /api/article/list`) - 支援分頁、排序和搜尋功能
+   - 獲取文章列表 (`GET /api/article/list`) - 支援分頁、排序、搜尋、分類及標籤篩選功能
+   - 獲取單篇文章 (`GET /api/article/:id`) - 使用文章 ID 獲取詳細內容
+
+## 文章標籤篩選格式
+
+API 標準化使用陣列格式進行標籤篩選：
+
+```
+GET /api/article/list?tags[]=laravel&tags[]=php
+```
+
+這種格式更清晰表達了多標籤的語義，並能正確處理包含特殊字元的標籤名稱。
+
+## ID 與 Slug 使用策略
+
+為了平衡系統效能與使用者體驗，我們採用以下策略：
+
+1. **API 請求**：所有 API 使用 ID 作為資源識別符，確保最佳查詢效能
+2. **前端路由**：建議前端使用 slug 呈現 URL，如 `/articles/how-to-build-laravel-app`
+3. **映射機制**：前端應在內部維護 ID 與 slug 的映射關係
+
+這種混合策略兼顧了系統效能與 SEO/使用者體驗。
 
 ## 更新 Collection
 

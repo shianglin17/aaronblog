@@ -53,11 +53,6 @@ class ArticleService
      */
     public function createArticle(array $data): Article
     {
-        // 生成 slug
-        if (!isset($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
-
         // 如果未設定狀態，預設為草稿
         if (!isset($data['status'])) {
             $data['status'] = Article::STATUS_DRAFT;
@@ -91,11 +86,6 @@ class ArticleService
         $article = $this->getArticleById($id);
         if (!$article) {
             return null;
-        }
-
-        // 如果標題變更，重新生成 slug
-        if (isset($data['title']) && $data['title'] !== $article->title && !isset($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
         }
 
         // 更新文章

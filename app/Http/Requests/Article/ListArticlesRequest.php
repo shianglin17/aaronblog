@@ -50,7 +50,9 @@ class ListArticlesRequest extends FormRequest
         'sort_by' => 'created_at',
         'sort_direction' => 'desc',
         'search' => '',
-        'status' => null
+        'status' => null,
+        'category' => null,
+        'tags' => []
     ];
 
     /**
@@ -99,6 +101,14 @@ class ListArticlesRequest extends FormRequest
                 'nullable',
                 'string',
                 'in:' . implode(',', $this->allowedStatus)
+            ],
+            'category' => [
+                'nullable',
+                'string',
+                'max:255'
+            ],
+            'tags' => [
+                'nullable'
             ]
         ];
     }
@@ -119,7 +129,9 @@ class ListArticlesRequest extends FormRequest
             'sort_by.in' => '排序欄位必須是 ' . implode(', ', $this->allowedSortFields) . ' 其中之一',
             'sort_direction.in' => '排序方向必須是 ' . implode(', ', $this->allowedSortDirections) . ' 其中之一',
             'search.max' => '搜尋關鍵字不能超過 255 個字元',
-            'status.in' => '文章狀態必須是 ' . implode(', ', $this->allowedStatus) . ' 其中之一'
+            'status.in' => '文章狀態必須是 ' . implode(', ', $this->allowedStatus) . ' 其中之一',
+            'category.string' => '分類必須是字串',
+            'category.max' => '分類不能超過 255 個字元'
         ];
     }
 
@@ -139,7 +151,23 @@ class ListArticlesRequest extends FormRequest
             'sort_by' => $this->input('sort_by') ?: $this->defaults['sort_by'],
             'sort_direction' => $this->input('sort_direction') ?: $this->defaults['sort_direction'],
             'search' => $this->has('search') ? trim($this->input('search')) : null,
+            'category' => $this->has('category') ? trim($this->input('category')) : null,
         ];
+        
+        // 處理多標籤輸入 - 始終轉換為陣列
+        if ($this->has('tags')) {
+            $tags = $this->input('tags');
+            
+            if (is_array($tags)) {
+                // 如果已經是陣列，保持不變但清理每個元素
+                $mergeData['tags'] = array_filter(array_map('trim', $tags));
+            } else {
+                // 非陣列類型設為空陣列
+                $mergeData['tags'] = [];
+            }
+        } else {
+            $mergeData['tags'] = [];
+        }
         
         // 權限感知參數處理
         if (!Auth::check()) {

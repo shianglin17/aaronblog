@@ -22,7 +22,8 @@
 | 參數名 | 必填 | 類型 | 說明 |
 | --- | --- | --- | --- |
 | title | 是 | string | 文章標題，不超過 255 個字符 |
-| description | 否 | string | 文章摘要，顯示於列表頁，建議 150-200 字內 |
+| slug | 是 | string | 文章 URL 標識符，僅允許英文、數字和連字符，不超過 255 個字符，必須唯一 |
+| description | 是 | string | 文章摘要，顯示於列表頁及 SEO 描述，建議 150-160 字內 |
 | content | 是 | string | 文章完整內容 |
 | category_id | 否 | integer | 分類 ID |
 | status | 否 | string | 文章狀態，可選值：draft（草稿）、published（已發佈），默認為 draft |
@@ -84,6 +85,14 @@
     "errors": {
       "title": [
         "標題不能為空"
+      ],
+      "slug": [
+        "Slug不能為空",
+        "Slug只能包含字母、數字、連字符和底線",
+        "Slug已存在"
+      ],
+      "description": [
+        "文章描述不能為空"
       ]
     }
   }
