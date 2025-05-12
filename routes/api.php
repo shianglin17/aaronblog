@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -13,6 +15,10 @@ Route::get('/', function() {
 // 公開文章路由
 Route::get('/article/list', [ArticleController::class, 'list']);
 Route::get('/article/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+');
+
+// 分類和標籤路由
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/tags', [TagController::class, 'index']);
 
 // 認證相關路由
 Route::prefix('auth')->group(function () {

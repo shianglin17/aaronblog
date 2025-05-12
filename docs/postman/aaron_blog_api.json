@@ -803,6 +803,100 @@
           ]
         }
       ]
+    },
+    {
+      "name": "分類",
+      "description": "分類相關的 API",
+      "item": [
+        {
+          "name": "獲取所有分類",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            },
+            "description": "獲取系統中所有可用的文章分類"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/categories"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n    \"code\": 200,\n    \"message\": \"所有分類\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"技術分享\",\n            \"slug\": \"tech-sharing\",\n            \"description\": \"關於程式設計和技術的文章\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"生活記事\",\n            \"slug\": \"life-notes\",\n            \"description\": \"日常生活和隨筆\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"書籍推薦\",\n            \"slug\": \"book-recommendations\",\n            \"description\": \"好書分享和閱讀心得\"\n        }\n    ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "標籤",
+      "description": "標籤相關的 API",
+      "item": [
+        {
+          "name": "獲取所有標籤",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tags",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tags"
+              ]
+            },
+            "description": "獲取系統中所有可用的文章標籤"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/tags"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n    \"code\": 200,\n    \"message\": \"所有標籤\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"slug\": \"laravel\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Vue.js\",\n            \"slug\": \"vuejs\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"PHP\",\n            \"slug\": \"php\"\n        },\n        {\n            \"id\": 4,\n            \"name\": \"JavaScript\",\n            \"slug\": \"javascript\"\n        },\n        {\n            \"id\": 5,\n            \"name\": \"資料庫\",\n            \"slug\": \"database\"\n        }\n    ]\n}"
+            }
+          ]
+        }
+      ]
     }
   ],
   "event": [

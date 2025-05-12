@@ -7,6 +7,8 @@
 - [通用規範](./common/README.md) - API 通用規範、認證方式、回應格式等
 - [認證 API](./auth/) - 登入、登出、用戶資訊相關 API
 - [文章 API](./article/) - 文章管理相關 API
+- [分類 API](./category/) - 分類相關 API
+- [標籤 API](./tag/) - 標籤相關 API
 
 ## 認證相關 API
 
@@ -19,6 +21,11 @@
 
 - [取得文章列表](./article/list.md) - 獲取文章列表，支援分頁和搜尋
 - [取得單篇文章](./article/show.md) - 獲取單篇文章的詳細資料
+
+## 分類和標籤 API
+
+- [獲取所有分類](./category/list.md) - 獲取所有可用的文章分類
+- [獲取所有標籤](./tag/list.md) - 獲取所有可用的文章標籤
 
 ## 開始使用
 

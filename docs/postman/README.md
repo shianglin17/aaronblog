@@ -1,22 +1,81 @@
-# Aaron Blog API - Postman Collection
+# Aaron Blog API Postman Collection
 
-這個目錄包含 Aaron Blog API 的 Postman Collection，您可以使用它們快速測試和探索我們的 API。
+這個目錄包含了 Aaron Blog API 的 Postman Collection 檔案。你可以導入這些檔案到 Postman 中來測試 API。
 
 ## 檔案說明
 
-- `aaron_blog_api.json` - 完整的 Postman Collection
-- `aaron_blog_api_environment.json` - 開發環境的環境變數設定
-- `aaron_blog_api_production_environment.json` - 生產環境的環境變數設定
+- `aaron_blog_api.json` - 包含所有 API 請求的 Postman Collection
+- `aaron_blog_api_environment.json` - 開發環境變數設定
+- `aaron_blog_api_production_environment.json` - 生產環境變數設定
 
-## 如何使用
+## API 分類
 
-1. 下載 [Postman](https://www.postman.com/downloads/) 或使用 Postman Web 版
-2. 匯入 Collection 檔案：點擊 "Import" > 選擇 `aaron_blog_api.json`
-3. 匯入環境變數：
-   - 開發環境：點擊 "Import" > 選擇 `aaron_blog_api_environment.json`
-   - 生產環境：點擊 "Import" > 選擇 `aaron_blog_api_production_environment.json`
-4. 在 Postman 右上角選擇環境 (例如 "Aaron Blog API - 開發環境" 或 "Aaron Blog API - 生產環境")
-5. 開始測試 API！
+### 文章 API
+
+- `GET /api/article/list` - 獲取文章列表，支持分頁、排序、搜尋、標籤和分類篩選
+- `GET /api/article/{id}` - 獲取單篇文章
+- `POST /api/article` - 創建文章（需管理員權限）
+- `PUT /api/article/{id}` - 更新文章（需管理員權限）
+- `DELETE /api/article/{id}` - 刪除文章（需管理員權限）
+- `PATCH /api/article/{id}/publish` - 發布文章（需管理員權限）
+- `PATCH /api/article/{id}/draft` - 將文章設為草稿（需管理員權限）
+
+### 分類 API
+- `GET /api/categories` - 獲取所有分類
+
+### 標籤 API
+- `GET /api/tags` - 獲取所有標籤
+
+### 認證 API
+
+- `POST /api/auth/login` - 管理員登入
+- `POST /api/auth/logout` - 管理員登出
+- `GET /api/auth/user` - 獲取當前用戶資訊
+
+## 使用方法
+
+1. 下載 [Postman](https://www.postman.com/downloads/) 並安裝
+2. 在 Postman 中點擊 "File" -> "Import"
+3. 選擇 `aaron_blog_api.json` 文件導入
+4. 導入環境配置文件：
+   - 開發環境：`aaron_blog_api_environment.json`
+   - 生產環境：`aaron_blog_api_production_environment.json`
+5. 在 Postman 右上角的環境下拉菜單中選擇環境
+6. 使用 `/api/auth/login` 獲取 token
+7. 開始測試 API
+
+## 環境變數
+
+### 開發環境
+
+```json
+{
+  "baseUrl": "http://localhost:8000",
+  "token": ""
+}
+```
+
+### 生產環境
+
+```json
+{
+  "baseUrl": "https://api.aaronblog.com",
+  "token": ""
+}
+```
+
+## 認證流程
+
+1. 呼叫 `/api/auth/login` API，傳入用戶名和密碼
+2. API 回應中會包含 token
+3. 將 token 複製到環境變數中的 `token` 欄位
+4. 之後所有需要認證的 API 請求會自動加上 Authorization header
+
+## 注意事項
+
+- 某些 API 需要管理員權限，必須先登入取得 token
+- 文章列表 API 的篩選參數都是選填的
+- 生產環境的 API 可能會有速率限制
 
 ## API 路徑說明
 
@@ -35,23 +94,6 @@
 例如，獲取文章列表的完整 URL 是：
 - 開發環境：`http://localhost:8000/api/article/list`
 - 生產環境：`https://api.aaronblog.com/api/article/list`
-
-## 環境變數
-
-使用環境變數可以更輕鬆地在不同環境之間切換，以下是主要的環境變數：
-
-- `baseUrl` - API 的基礎 URL (不包含 `/api` 前綴)
-  - 開發環境: `http://localhost:8000`
-  - 生產環境: `https://api.aaronblog.com`
-- `token` - 認證 Token，會在登入後自動設定
-
-## 包含的 API
-
-目前這個 Collection 包含以下 API：
-
-1. **文章相關**
-   - 獲取文章列表 (`GET /api/article/list`) - 支援分頁、排序、搜尋、分類及標籤篩選功能
-   - 獲取單篇文章 (`GET /api/article/:id`) - 使用文章 ID 獲取詳細內容
 
 ## 文章標籤篩選格式
 
