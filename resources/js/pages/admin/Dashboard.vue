@@ -18,7 +18,7 @@
                   round 
                   size="small" 
                   :src="userAvatar"
-                  color="#3498db"
+                  color="#8f8072"
                 >{{ userInitials }}</n-avatar>
                 <span class="user-name">{{ user ? user.name : '管理員' }}</span>
                 <n-icon><chevron-down-outline /></n-icon>
@@ -39,6 +39,21 @@
                 placeholder="全部狀態"
                 style="width: 120px"
                 @update:value="fetchArticles"
+              />
+              <n-select
+                v-model:value="categoryFilter"
+                :options="categoryOptions"
+                placeholder="全部分類"
+                style="width: 140px"
+                clearable
+              />
+              <n-select
+                v-model:value="tagFilter"
+                :options="tagOptions"
+                placeholder="全部標籤"
+                style="width: 180px"
+                multiple
+                clearable
               />
               <n-input
                 v-model:value="searchKeyword"
@@ -129,26 +144,40 @@ import {
 import { ChevronDownOutline } from '@vicons/ionicons5';
 import {
   getArticleList,
-  createArticle,
-  updateArticle,
-  deleteArticle,
-  setArticleDraft,
-  setArticlePublish,
   getAllCategories,
   getAllTags,
   getArticleById
 } from '../../api/article';
+import {
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  setArticleDraft,
+  setArticlePublish
+} from '../../api/articleadmin';
 import { logout } from '../../api/auth';
 import type { User } from '../../types/auth';
+import type { Article, Category, Tag } from '../../types/article';
+
+interface ArticleForm {
+  id: number | null;
+  title: string;
+  slug: string;
+  description: string;
+  content: string;
+  category_id: number | null;
+  status: 'draft' | 'published';
+  tags: number[];
+}
 
 const router = useRouter();
 const message = useMessage();
 const user = ref<User | null>(null);
-const articles = ref<any[]>([]);
+const articles = ref<Article[]>([]);
 const loading = ref(false);
 const showEditModal = ref(false);
 const editMode = ref(false);
-const editForm = reactive({
+const editForm = reactive<ArticleForm>({
   id: null,
   title: '',
   slug: '',
@@ -166,6 +195,8 @@ const editRules = {
   content: [{ required: true, message: '內容不能為空', trigger: 'blur' }]
 };
 const statusFilter = ref('');
+const categoryFilter = ref<string | null>(null);
+const tagFilter = ref<string[]>([]);
 const statusOptions = [
   { label: '全部', value: '' },
   { label: '草稿', value: 'draft' },
@@ -178,8 +209,8 @@ const pagination = reactive({
   totalItems: 0,
   perPage: 15
 });
-const categoryOptions = ref<any[]>([]);
-const tagOptions = ref<any[]>([]);
+const categoryOptions = ref<{ label: string, value: string }[]>([]);
+const tagOptions = ref<{ label: string, value: string }[]>([]);
 
 const columns = [
   { title: '標題', key: 'title' },
@@ -223,7 +254,9 @@ async function fetchArticles() {
       page: pagination.currentPage,
       per_page: pagination.perPage,
       status: statusFilter.value || undefined,
-      search: searchKeyword.value || undefined
+      search: searchKeyword.value || undefined,
+      category: categoryFilter.value || undefined,
+      tags: tagFilter.value.length > 0 ? tagFilter.value.join(',') : undefined
     };
     const res = await getArticleList(params);
     articles.value = res.data || [];
@@ -246,8 +279,8 @@ async function fetchCategoriesAndTags() {
       getAllCategories(),
       getAllTags()
     ]);
-    categoryOptions.value = (catRes.data || []).map((c: any) => ({ label: c.name, value: c.id }));
-    tagOptions.value = (tagRes.data || []).map((t: any) => ({ label: t.name, value: t.id }));
+    categoryOptions.value = (catRes.data || []).map((c: Category) => ({ label: c.name, value: c.slug! }));
+    tagOptions.value = (tagRes.data || []).map((t: Tag) => ({ label: t.name, value: t.slug! }));
   } catch (error) {
     message.error('取得分類或標籤失敗');
   }
@@ -270,7 +303,7 @@ async function openEditModal(row: any) {
       content: res.data.content,
       category_id: res.data.category?.id || null,
       status: res.data.status,
-      tags: (res.data.tags || []).map((t: any) => t.id)
+      tags: (res.data.tags || []).map((t: Tag) => t.id)
     });
     editMode.value = true;
     showEditModal.value = true;
@@ -440,8 +473,8 @@ async function handleLogout() {
   background: #f5f7fa;
 }
 .admin-header {
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
+  background: #f8f5f2;
+  border-bottom: 1px solid #e0ddd7;
   padding: 0 24px;
 }
 .header-content {
@@ -453,7 +486,7 @@ async function handleLogout() {
 .logo h2 {
   margin: 0;
   font-size: 22px;
-  color: #3498db;
+  color: #7d6e5d;
 }
 .user-actions {
   display: flex;
