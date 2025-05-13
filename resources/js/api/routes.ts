@@ -13,10 +13,19 @@ export const API_ROUTES = {
     CATEGORIES: '/categories',
     TAGS: '/tags'
   },
+  ADMIN: {
+    ARTICLE: {
+      CREATE: '/admin/article',
+      UPDATE: (id: number) => `/admin/article/${id}`,
+      DELETE: (id: number) => `/admin/article/${id}`,
+      DRAFT: (id: number) => `/admin/article/${id}/draft`,
+      PUBLISH: (id: number) => `/admin/article/${id}/publish`
+    }
+  },
   AUTH: {
     LOGIN: '/auth/login',
     LOGOUT: '/auth/logout',
-    // REGISTER: '/auth/register'
+    REGISTER: '/auth/register'
   },
   USER: {
     PROFILE: '/user/profile',

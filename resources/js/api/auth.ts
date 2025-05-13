@@ -1,6 +1,6 @@
 import http from './http';
 import { API_ROUTES } from './routes';
-import { LoginParams, RegisterParams, AuthResponse } from '../types/auth';
+import { LoginParams, AuthResponse } from '../types/auth';
 import { ApiResponse } from '../types/common';
 
 /**
