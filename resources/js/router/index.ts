@@ -1,5 +1,5 @@
 import { defineAsyncComponent } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-router'
 import Home from '../pages/Home.vue'
 import ArticleDetail from '../pages/ArticleDetail.vue'
 import Login from '../pages/Login.vue'
@@ -17,10 +17,13 @@ const routes = [
         component: Home
     },
     {
-        path: '/article/:id',
+        path: '/article/:slug',
         name: 'article-detail',
         component: ArticleDetail,
-        props: true
+        props: (route: RouteLocationNormalized) => ({ 
+            slug: route.params.slug,
+            id: Number(route.query.id) 
+        })
     },
     {
         path: '/login',

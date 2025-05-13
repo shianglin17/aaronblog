@@ -9,7 +9,9 @@ export const API_ROUTES = {
     DETAIL: (id: number) => `/article/${id}`,
     CREATE: '/article',
     UPDATE: (id: number) => `/article/${id}`,
-    DELETE: (id: number) => `/article/${id}`
+    DELETE: (id: number) => `/article/${id}`,
+    CATEGORIES: '/categories',
+    TAGS: '/tags'
   },
   AUTH: {
     LOGIN: '/auth/login',

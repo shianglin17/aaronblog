@@ -16,9 +16,9 @@
         v-for="article in articles"
         :key="article.id"
         class="article-item"
-        @click="router.push(`/article/${article.id}`)"
+        @click="navigateToArticle(article)"
         tabindex="0"
-        @keydown.enter="router.push(`/article/${article.id}`)"
+        @keydown.enter="navigateToArticle(article)"
       >
         <h2 class="article-title">
           {{ article.title }}
@@ -110,6 +110,14 @@ onMounted(() => {
     currentPage.value = props.pagination.current_page;
   }
 });
+
+// 導航到文章詳情頁
+const navigateToArticle = (article: Article) => {
+  router.push({
+    path: `/article/${article.slug}`,
+    query: { id: article.id?.toString() || '' }
+  });
+};
 
 // 處理分頁變更
 const handlePageChange = (page: number) => {

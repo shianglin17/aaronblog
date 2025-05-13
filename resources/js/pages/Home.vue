@@ -21,6 +21,16 @@
         </n-button>
       </n-input-group>
     </div>
+    
+    <!-- 篩選器 -->
+    <n-spin :show="filtersLoading">
+      <ArticleFilter
+        v-if="categories.length > 0 || tags.length > 0"
+        :categories="categories"
+        :tags="tags"
+        @update:filters="handleFilterChange"
+      />
+    </n-spin>
   
     <!-- 文章列表 -->
     <n-spin :show="loading" description="載入中...">
@@ -43,9 +53,10 @@ import { ref, onMounted } from 'vue';
 import { SearchOutline } from '@vicons/ionicons5';
 import { NInput, NInputGroup, NButton, NSpin, NIcon } from 'naive-ui';
 import ArticleList from '../components/ArticleList.vue';
+import ArticleFilter from '../components/ArticleFilter.vue';
 import Footer from '../components/Footer.vue';
-import { getArticleList } from '../api/article';
-import type { Article, ArticleListParams } from '../types/article';
+import { getArticleList, getAllCategories, getAllTags } from '../api/article';
+import type { Article, ArticleListParams, Category, Tag } from '../types/article';
 import type { PaginationMeta } from '../types/common';
 import { DEFAULT_PAGINATION_PARAMS } from '../constants/pagination';
 
@@ -55,6 +66,12 @@ const loading = ref(true);
 const error = ref('');
 const pagination = ref<PaginationMeta | undefined>(undefined);
 const searchQuery = ref('');
+
+// 篩選狀態
+const categories = ref<Category[]>([]);
+const tags = ref<Tag[]>([]);
+const filtersLoading = ref(true);
+
 const currentParams = ref<ArticleListParams>({
   ...DEFAULT_PAGINATION_PARAMS,
   status: 'published'
@@ -107,9 +124,38 @@ function searchArticles() {
   fetchArticles();
 }
 
+// 處理篩選變更
+function handleFilterChange(filters: { category?: string, tags?: string[] }) {
+  currentParams.value.category = filters.category || undefined;
+  currentParams.value.tags = filters.tags;
+  currentParams.value.page = 1; // 重置頁碼
+  fetchArticles();
+}
+
+// 獲取分類和標籤數據
+async function fetchFilters() {
+  filtersLoading.value = true;
+  
+  try {
+    // 並行請求以提高效率
+    const [categoriesResponse, tagsResponse] = await Promise.all([
+      getAllCategories(),
+      getAllTags()
+    ]);
+    
+    categories.value = categoriesResponse.data;
+    tags.value = tagsResponse.data;
+  } catch (err) {
+    console.error('獲取篩選數據失敗:', err);
+  } finally {
+    filtersLoading.value = false;
+  }
+}
+
 // 掛載時獲取文章
 onMounted(() => {
   fetchArticles();
+  fetchFilters();
 });
 </script>
 

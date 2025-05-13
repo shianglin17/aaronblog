@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, defineProps } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NSpin, NIcon, NButton } from 'naive-ui';
 import { 
@@ -82,6 +82,12 @@ import {
 import Footer from '../components/Footer.vue';
 import { getArticleById } from '../api/article';
 import type { Article } from '../types/article';
+
+// 定義接收的 props
+const props = defineProps<{
+  slug?: string;
+  id?: number;
+}>();
 
 const route = useRoute();
 const router = useRouter();
@@ -96,8 +102,14 @@ const isAdmin = computed(() => {
 
 onMounted(async () => {
   try {
-    const id = route.params.id as string;
-    const response = await getArticleById(parseInt(id));
+    // 從 props 獲取文章 ID
+    const id = props.id;
+    
+    if (!id || isNaN(id) || id <= 0) {
+      throw new Error('無效的文章 ID');
+    }
+    
+    const response = await getArticleById(id);
     article.value = response.data;
   } catch (err) {
     error.value = '無法載入文章，請稍後再試';

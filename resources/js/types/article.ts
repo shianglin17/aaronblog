@@ -10,14 +10,17 @@ export interface Article {
     id: number;
     name: string;
   };
-  category: {
-    id: number;
-    name: string;
-    slug: string;
-  };
+  category: Category;
   created_at: string;
   updated_at?: string;
   tags?: Tag[];
+}
+
+// 定義分類介面
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
 }
 
 // 定義標籤介面
@@ -35,4 +38,6 @@ export interface ArticleListParams {
   sort_direction?: 'asc' | 'desc';
   search?: string;
   status?: 'draft' | 'published';
+  category?: string;
+  tags?: string[];
 }
