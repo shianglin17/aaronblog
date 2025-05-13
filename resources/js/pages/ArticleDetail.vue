@@ -6,17 +6,18 @@
         {{ error }}
       </div>
       
+      <!-- 返回按鈕 - 移至文章內容外部 -->
+      <div v-else-if="article" class="navigation-back">
+        <n-button quaternary type="primary" @click="goBack">
+          <template #icon>
+            <n-icon><ArrowBackOutline /></n-icon>
+          </template>
+          返回文章列表
+        </n-button>
+      </div>
+      
       <!-- 文章內容 -->
-      <div v-else-if="article" class="article-detail">
-        <div class="article-back">
-          <n-button quaternary type="primary" @click="goBack">
-            <template #icon>
-              <n-icon><ArrowBackOutline /></n-icon>
-            </template>
-            返回文章列表
-          </n-button>
-        </div>
-        
+      <div v-if="article" class="article-detail">
         <h1 class="article-title">{{ article.title }}</h1>
         
         <!-- 文章元數據區塊 -->
@@ -139,34 +140,35 @@ const formatDate = (dateString: string) => {
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 32px;
 }
 
-.article-back {
-  margin: 20px 0;
+.navigation-back {
+  margin: 30px 0 20px;
 }
 
 .article-detail {
-  padding: 20px 0;
+  padding: 20px 24px;
+  margin-top: 10px;
 }
 
 .article-title {
   font-size: 2.2rem;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   line-height: 1.3;
   color: var(--text-color);
 }
 
 .article-meta-wrapper {
-  margin-bottom: 28px;
+  margin-bottom: 36px;
 }
 
 .article-meta {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   font-size: 0.9rem;
   color: var(--text-secondary, #666);
   align-items: center;
@@ -181,9 +183,10 @@ const formatDate = (dateString: string) => {
 
 .article-tags {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
+  margin-top: 10px;
 }
 
 .tag-label {
@@ -210,20 +213,22 @@ const formatDate = (dateString: string) => {
   font-size: 1.05rem;
   color: var(--text-color);
   white-space: pre-line;
-  margin-top: 10px;
+  margin-top: 24px;
+  padding: 0 8px;
 }
 
 .error-message {
-  padding: 20px;
+  padding: 30px;
   color: #e74c3c;
   text-align: center;
   border: 1px solid #f9e4e4;
   border-radius: 4px;
   background-color: #fdf2f2;
+  margin: 30px 0;
 }
 
 .empty-message {
-  padding: 50px 0;
+  padding: 60px 0;
   text-align: center;
   color: var(--text-secondary);
 }
@@ -248,19 +253,32 @@ const formatDate = (dateString: string) => {
 
 /* 響應式設計 */
 @media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+  
+  .navigation-back {
+    margin: 20px 0 10px;
+  }
+  
+  .article-detail {
+    padding: 16px;
+  }
+  
   .article-title {
     font-size: 1.8rem;
-    margin-bottom: 14px;
+    margin-bottom: 20px;
   }
   
   .article-meta {
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     align-items: flex-start;
   }
   
   .article-content {
     font-size: 1rem;
+    padding: 0 4px;
   }
 }
 </style> 
