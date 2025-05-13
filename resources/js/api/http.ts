@@ -8,7 +8,8 @@ const http = axios.create({
     'Content-Type': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
     'Accept': 'application/json'
-  }
+  },
+  withCredentials: false
 });
 
 // 請求攔截器 - 處理授權等

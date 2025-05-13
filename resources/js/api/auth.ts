@@ -30,27 +30,6 @@ export async function login(params: LoginParams): Promise<ApiResponse<AuthRespon
 }
 
 /**
- * 使用者註冊
- * @param params 註冊參數
- * @returns 註冊結果
- */
-export async function register(params: RegisterParams): Promise<ApiResponse<AuthResponse>> {
-  try {
-    const response = await http.post(API_ROUTES.AUTH.REGISTER, params);
-    
-    // 如果註冊成功並直接登入，保存 token
-    if (response.data.status === 'success' && response.data.data.token) {
-      localStorage.setItem('auth_token', response.data.data.token);
-    }
-    
-    return response.data;
-  } catch (error) {
-    console.error('註冊失敗:', error);
-    throw error;
-  }
-}
-
-/**
  * 使用者登出
  * @returns 登出結果
  */

@@ -1,10 +1,10 @@
 <template>
-  <div class="admin-container">
+  <div class="admin-article-container">
     <n-layout>
       <n-layout-header class="admin-header">
         <div class="header-content">
           <div class="logo">
-            <h2>Aaron 後台管理</h2>
+            <h2>Aaron 文章管理</h2>
           </div>
           <div class="user-actions">
             <n-dropdown 
@@ -27,116 +27,325 @@
           </div>
         </div>
       </n-layout-header>
-      
-      <n-layout has-sider>
-        <n-layout-sider
-          collapse-mode="width"
-          :collapsed-width="64"
-          :width="240"
-          :native-scrollbar="false"
-          class="admin-sider"
-          bordered
-        >
-          <n-menu
-            :collapsed-width="64"
-            :collapsed-icon-size="22"
-            :options="menuOptions"
-            default-value="dashboard"
-          />
-        </n-layout-sider>
-        
-        <n-layout-content class="admin-content">
-          <div class="content-wrapper">
-            <div class="page-header">
-              <h1 class="page-title">儀表板</h1>
-              <p class="page-subtitle">網站總覽</p>
-            </div>
-            
-            <n-grid :cols="24" :x-gap="24" :y-gap="24">
-              <n-grid-item :span="24" :md="12">
-                <n-card title="網站概況" size="medium">
-                  <n-space vertical>
-                    <div class="welcome-message">
-                      <p class="welcome-text">歡迎回來，{{ user ? user.name : '管理員' }}！</p>
-                      <p>這是管理員儀表板頁面。您可以在這裡查看網站總覽數據。</p>
-                    </div>
-                  </n-space>
-                </n-card>
-              </n-grid-item>
-              
-              <n-grid-item :span="12" :md="6">
-                <n-card class="stat-card">
-                  <n-statistic label="文章總數" :value="0">
-                    <template #prefix>
-                      <n-icon size="24" color="#3498db">
-                        <document-text-outline />
-                      </n-icon>
-                    </template>
-                  </n-statistic>
-                </n-card>
-              </n-grid-item>
-              
-              <n-grid-item :span="12" :md="6">
-                <n-card class="stat-card">
-                  <n-statistic label="用戶總數" :value="1">
-                    <template #prefix>
-                      <n-icon size="24" color="#e74c3c">
-                        <people-outline />
-                      </n-icon>
-                    </template>
-                  </n-statistic>
-                </n-card>
-              </n-grid-item>
-              
-              <n-grid-item :span="24">
-                <n-card title="最近活動" size="medium">
-                  <n-empty description="暫無活動記錄" />
-                </n-card>
-              </n-grid-item>
-            </n-grid>
+      <n-layout-content class="admin-content">
+        <div class="content-wrapper">
+          <div class="page-header">
+            <h1 class="page-title">文章管理</h1>
+            <n-space>
+              <n-button type="primary" @click="openCreateModal">新增文章</n-button>
+              <n-select
+                v-model:value="statusFilter"
+                :options="statusOptions"
+                placeholder="全部狀態"
+                style="width: 120px"
+                @update:value="fetchArticles"
+              />
+              <n-input
+                v-model:value="searchKeyword"
+                placeholder="搜尋標題/內容"
+                clearable
+                style="width: 200px"
+                @keyup.enter="fetchArticles"
+              />
+              <n-button @click="fetchArticles">搜尋</n-button>
+            </n-space>
           </div>
-        </n-layout-content>
-      </n-layout>
+          <n-data-table
+            :columns="columns"
+            :data="articles"
+            :loading="loading"
+            :pagination="false"
+            :row-key="row => row.id"
+            style="margin-top: 24px"
+          />
+          <div class="pagination-wrapper">
+            <n-pagination
+              v-model:page="pagination.currentPage"
+              :page-size="pagination.perPage"
+              :item-count="pagination.totalItems"
+              @update:page="fetchArticles"
+            />
+          </div>
+        </div>
+        <!-- 新增/編輯文章 Modal -->
+        <n-modal v-model:show="showEditModal" preset="dialog" :title="editMode ? '編輯文章' : '新增文章'">
+          <n-form :model="editForm" :rules="editRules" ref="editFormRef" label-width="80">
+            <n-form-item label="標題" path="title">
+              <n-input v-model:value="editForm.title" maxlength="255" show-count />
+            </n-form-item>
+            <n-form-item label="Slug" path="slug">
+              <n-input v-model:value="editForm.slug" maxlength="255" show-count />
+            </n-form-item>
+            <n-form-item label="摘要" path="description">
+              <n-input v-model:value="editForm.description" maxlength="160" show-count type="textarea" />
+            </n-form-item>
+            <n-form-item label="內容" path="content">
+              <n-input v-model:value="editForm.content" type="textarea" rows="6" />
+            </n-form-item>
+            <n-form-item label="分類" path="category_id">
+              <n-select v-model:value="editForm.category_id" :options="categoryOptions" clearable />
+            </n-form-item>
+            <n-form-item label="狀態" path="status">
+              <n-select v-model:value="editForm.status" :options="statusOptions" />
+            </n-form-item>
+            <n-form-item label="標籤" path="tags">
+              <n-select v-model:value="editForm.tags" :options="tagOptions" multiple clearable />
+            </n-form-item>
+          </n-form>
+          <template #action>
+            <n-space>
+              <n-button @click="showEditModal = false">取消</n-button>
+              <n-button type="primary" @click="submitEditForm">{{ editMode ? '儲存變更' : '新增' }}</n-button>
+            </n-space>
+          </template>
+        </n-modal>
+      </n-layout-content>
     </n-layout>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, h } from 'vue';
+import { ref, computed, onMounted, h, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { 
+import {
   NLayout,
   NLayoutHeader,
   NLayoutContent,
-  NLayoutSider,
-  NMenu,
-  NCard,
-  NButton, 
-  NSpace, 
-  NGrid, 
-  NGridItem, 
-  NStatistic, 
-  NIcon,
+  NButton,
+  NSpace,
+  NInput,
+  NSelect,
+  NDataTable,
+  NPagination,
+  NModal,
+  NForm,
+  NFormItem,
   NAvatar,
   NDropdown,
-  NEmpty,
+  NIcon,
+  useMessage,
   DropdownOption
 } from 'naive-ui';
-import { 
-  DocumentTextOutline, 
-  PeopleOutline, 
-  HomeOutline,
-  NewspaperOutline,
-  SettingsOutline,
-  LogOutOutline,
-  PersonOutline,
-  ChevronDownOutline
-} from '@vicons/ionicons5';
+import { ChevronDownOutline } from '@vicons/ionicons5';
+import {
+  getArticleList,
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  setArticleDraft,
+  setArticlePublish,
+  getAllCategories,
+  getAllTags,
+  getArticleById
+} from '../../api/article';
 import { logout } from '../../api/auth';
 import type { User } from '../../types/auth';
 
 const router = useRouter();
+const message = useMessage();
 const user = ref<User | null>(null);
+const articles = ref<any[]>([]);
+const loading = ref(false);
+const showEditModal = ref(false);
+const editMode = ref(false);
+const editForm = reactive({
+  id: null,
+  title: '',
+  slug: '',
+  description: '',
+  content: '',
+  category_id: null,
+  status: 'draft',
+  tags: []
+});
+const editFormRef = ref();
+const editRules = {
+  title: [{ required: true, message: '標題不能為空', trigger: 'blur' }],
+  slug: [{ required: true, message: 'Slug 不能為空', trigger: 'blur' }],
+  description: [{ required: true, message: '摘要不能為空', trigger: 'blur' }],
+  content: [{ required: true, message: '內容不能為空', trigger: 'blur' }]
+};
+const statusFilter = ref('');
+const statusOptions = [
+  { label: '全部', value: '' },
+  { label: '草稿', value: 'draft' },
+  { label: '已發佈', value: 'published' }
+];
+const searchKeyword = ref('');
+const pagination = reactive({
+  currentPage: 1,
+  totalPages: 1,
+  totalItems: 0,
+  perPage: 15
+});
+const categoryOptions = ref<any[]>([]);
+const tagOptions = ref<any[]>([]);
+
+const columns = [
+  { title: '標題', key: 'title' },
+  { title: '狀態', key: 'status', render(row: any) { return row.status === 'published' ? '已發佈' : '草稿'; } },
+  { title: '分類', key: 'category', render(row: any) { return row.category?.name || '-'; } },
+  { title: '作者', key: 'author', render(row: any) { return row.author?.name || '-'; } },
+  { title: '建立時間', key: 'created_at' },
+  { title: '更新時間', key: 'updated_at' },
+  {
+    title: '操作',
+    key: 'actions',
+    render(row: any) {
+      return h(NSpace, {}, {
+        default: () => [
+          h(NButton, { size: 'small', onClick: () => openEditModal(row) }, { default: () => '編輯' }),
+          h(NButton, { size: 'small', type: 'error', onClick: () => handleDelete(row) }, { default: () => '刪除' }),
+          row.status === 'published'
+            ? h(NButton, { size: 'small', onClick: () => handleSetDraft(row) }, { default: () => '設為草稿' })
+            : h(NButton, { size: 'small', type: 'primary', onClick: () => handleSetPublish(row) }, { default: () => '發布' })
+        ]
+      });
+    }
+  }
+];
+
+function resetEditForm() {
+  editForm.id = null;
+  editForm.title = '';
+  editForm.slug = '';
+  editForm.description = '';
+  editForm.content = '';
+  editForm.category_id = null;
+  editForm.status = 'draft';
+  editForm.tags = [];
+}
+
+async function fetchArticles() {
+  loading.value = true;
+  try {
+    const params: any = {
+      page: pagination.currentPage,
+      per_page: pagination.perPage,
+      status: statusFilter.value || undefined,
+      search: searchKeyword.value || undefined
+    };
+    const res = await getArticleList(params);
+    articles.value = res.data || [];
+    if (res.meta && res.meta.pagination) {
+      pagination.currentPage = res.meta.pagination.current_page;
+      pagination.totalPages = res.meta.pagination.total_pages;
+      pagination.totalItems = res.meta.pagination.total_items;
+      pagination.perPage = res.meta.pagination.per_page;
+    }
+  } catch (error) {
+    message.error('取得文章列表失敗');
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function fetchCategoriesAndTags() {
+  try {
+    const [catRes, tagRes] = await Promise.all([
+      getAllCategories(),
+      getAllTags()
+    ]);
+    categoryOptions.value = (catRes.data || []).map((c: any) => ({ label: c.name, value: c.id }));
+    tagOptions.value = (tagRes.data || []).map((t: any) => ({ label: t.name, value: t.id }));
+  } catch (error) {
+    message.error('取得分類或標籤失敗');
+  }
+}
+
+function openCreateModal() {
+  resetEditForm();
+  editMode.value = false;
+  showEditModal.value = true;
+}
+
+async function openEditModal(row: any) {
+  try {
+    const res = await getArticleById(row.id);
+    Object.assign(editForm, {
+      id: res.data.id,
+      title: res.data.title,
+      slug: res.data.slug,
+      description: res.data.description,
+      content: res.data.content,
+      category_id: res.data.category?.id || null,
+      status: res.data.status,
+      tags: (res.data.tags || []).map((t: any) => t.id)
+    });
+    editMode.value = true;
+    showEditModal.value = true;
+  } catch (error) {
+    message.error('取得文章資料失敗');
+  }
+}
+
+async function submitEditForm() {
+  // 表單驗證
+  // @ts-ignore
+  editFormRef.value?.validate(async (errors: any) => {
+    if (errors) return;
+    try {
+      if (editMode.value && editForm.id) {
+        await updateArticle(editForm.id, {
+          title: editForm.title,
+          slug: editForm.slug,
+          description: editForm.description,
+          content: editForm.content,
+          category_id: editForm.category_id,
+          status: editForm.status,
+          tags: editForm.tags
+        });
+        message.success('文章更新成功');
+      } else {
+        await createArticle({
+          title: editForm.title,
+          slug: editForm.slug,
+          description: editForm.description,
+          content: editForm.content,
+          category_id: editForm.category_id,
+          status: editForm.status,
+          tags: editForm.tags
+        });
+        message.success('文章新增成功');
+      }
+      showEditModal.value = false;
+      fetchArticles();
+    } catch (error) {
+      message.error('儲存失敗，請檢查欄位或稍後再試');
+    }
+  });
+}
+
+async function handleDelete(row: any) {
+  if (!confirm('確定要刪除這篇文章嗎？')) return;
+  try {
+    await deleteArticle(row.id);
+    message.success('刪除成功');
+    fetchArticles();
+  } catch (error) {
+    message.error('刪除失敗');
+  }
+}
+
+async function handleSetDraft(row: any) {
+  try {
+    await setArticleDraft(row.id);
+    message.success('已設為草稿');
+    fetchArticles();
+  } catch (error) {
+    message.error('狀態切換失敗');
+  }
+}
+
+async function handleSetPublish(row: any) {
+  try {
+    await setArticlePublish(row.id);
+    message.success('已發布');
+    fetchArticles();
+  } catch (error) {
+    message.error('狀態切換失敗');
+  }
+}
 
 // 用戶頭像處理
 const userAvatar = computed<string | undefined>(() => {
@@ -152,46 +361,12 @@ const userInitials = computed(() => {
   return 'A';
 });
 
-// 菜單選項
-const menuOptions = [
-  {
-    label: '儀表板',
-    key: 'dashboard',
-    icon: renderIcon(HomeOutline)
-  },
-  {
-    label: '文章管理',
-    key: 'articles',
-    icon: renderIcon(NewspaperOutline),
-    children: [
-      {
-        label: '所有文章',
-        key: 'articles-list'
-      },
-      {
-        label: '新增文章',
-        key: 'articles-create'
-      }
-    ]
-  },
-  {
-    label: '設定',
-    key: 'settings',
-    icon: renderIcon(SettingsOutline)
-  }
-];
-
 // 用戶下拉菜單選項
 const userMenuOptions = [
   {
-    label: '個人資料',
-    key: 'profile',
-    icon: renderIcon(PersonOutline)
-  },
-  {
     label: '登出',
     key: 'logout',
-    icon: renderIcon(LogOutOutline)
+    icon: renderIcon(ChevronDownOutline)
   }
 ];
 
@@ -229,9 +404,6 @@ function renderUserLabel(option: DropdownOption) {
 function handleUserMenuSelect(key: string) {
   if (key === 'logout') {
     handleLogout();
-  } else if (key === 'profile') {
-    // 導航到個人資料頁面
-    // router.push('/admin/profile');
   }
 }
 
@@ -245,6 +417,8 @@ onMounted(() => {
       console.error('解析用戶資料時出錯:', error);
     }
   }
+  fetchArticles();
+  fetchCategoriesAndTags();
 });
 
 async function handleLogout() {
@@ -261,108 +435,47 @@ async function handleLogout() {
 </script>
 
 <style scoped>
-.admin-container {
+.admin-article-container {
   min-height: 100vh;
-  background-color: var(--body-bg, #f5f7f9);
+  background: #f5f7fa;
 }
-
 .admin-header {
-  height: 64px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
   padding: 0 24px;
-  background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 999;
 }
-
 .header-content {
-  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 64px;
 }
-
 .logo h2 {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: var(--text-color, #333);
+  font-size: 22px;
+  color: #3498db;
 }
-
 .user-actions {
   display: flex;
   align-items: center;
 }
-
-.user-name {
-  margin: 0 8px;
-}
-
-.admin-sider {
-  position: fixed;
-  top: 64px;
-  left: 0;
-  height: calc(100vh - 64px);
-  overflow: hidden;
-  z-index: 998;
-}
-
 .admin-content {
-  margin-top: 64px;
-  margin-left: 240px;
-  padding: 24px;
-  min-height: calc(100vh - 64px);
+  padding: 32px 24px;
 }
-
-.content-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .page-header {
-  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
-
 .page-title {
-  margin: 0 0 8px 0;
-  font-size: 1.75rem;
-  font-weight: 500;
-  color: var(--text-color, #333);
-}
-
-.page-subtitle {
+  font-size: 24px;
+  font-weight: 600;
   margin: 0;
-  font-size: 0.9rem;
-  color: var(--text-secondary, #666);
 }
-
-.welcome-message {
-  margin-bottom: 1rem;
-}
-
-.welcome-text {
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.stat-card {
-  height: 100%;
-}
-
-/* 響應式設計 */
-@media (max-width: 992px) {
-  .admin-content {
-    margin-left: 64px;
-    padding: 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-title {
-    font-size: 1.5rem;
-  }
+.pagination-wrapper {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
 }
 </style> 

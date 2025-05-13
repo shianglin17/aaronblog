@@ -5,11 +5,6 @@ import ArticleDetail from '../pages/ArticleDetail.vue'
 import Login from '../pages/Login.vue'
 import { isLoggedIn } from '../api/auth'
 
-// 異步載入管理頁面，減少首屏加載時間
-const AdminDashboard = defineAsyncComponent(() => 
-  import('../pages/admin/Dashboard.vue')
-)
-
 const routes = [
     {
         path: '/',
@@ -36,7 +31,7 @@ const routes = [
     {
         path: '/admin',
         name: 'admin',
-        component: AdminDashboard,
+        component: () => import('../pages/admin/Dashboard.vue'),
         meta: {
             requiresAuth: true
         }

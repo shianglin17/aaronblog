@@ -62,9 +62,12 @@ class AuthController extends Controller
         // 刪除當前用戶的 token
         /** @var User $user */
         $user = $request->user();
-        /** @var PersonalAccessToken $token */
+
         $token = $user->currentAccessToken();
-        $token->delete();
+
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+        }
 
         return ResponseMaker::success(null, message:'登出成功');
     }
