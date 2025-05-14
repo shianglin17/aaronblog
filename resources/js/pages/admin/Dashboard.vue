@@ -314,7 +314,6 @@ async function openEditModal(row: any) {
 
 async function submitEditForm() {
   // 表單驗證
-  // @ts-ignore
   editFormRef.value?.validate(async (errors: any) => {
     if (errors) return;
     try {
