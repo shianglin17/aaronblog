@@ -27,7 +27,7 @@ PUT /api/admin/tags/{id}
 | 參數名稱     | 類型   | 必填 | 描述                                   |
 |-------------|--------|------|--------------------------------------|
 | name        | String | 否   | 標籤名稱，最大長度 50 字符              |
-| slug        | String | 否   | 標籤 Slug，URL 友好的識別符，最大長度 255 字符。如果不提供但更新了 name，系統會根據 name 自動生成 |
+| slug        | String | 否   | 標籤 Slug，URL 友好的識別符，最大長度 255 字符 |
 
 ## 請求示例
 
@@ -74,7 +74,7 @@ Content-Type: application/json
         "標籤名稱已存在"
       ],
       "slug": [
-        "Slug已存在"
+        "標籤別名不能為空"
       ]
     }
   }
@@ -106,5 +106,4 @@ Content-Type: application/json
 - 此 API 需要認證
 - 標籤名稱是唯一的，不能重複
 - 標籤 slug 是唯一的，用於前端 URL
-- 如果不提供 slug 但提供了 name，系統會根據名稱自動生成 slug
 - 請求參數可以只包含需要更新的欄位 

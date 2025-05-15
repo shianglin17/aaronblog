@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Tag;
 use App\Repositories\TagRepository;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Str;
 
 class TagService
 {
@@ -51,11 +50,6 @@ class TagService
      */
     public function createTag(array $data): Tag
     {
-        // 如果沒有提供 slug，則根據名稱自動生成
-        if (!isset($data['slug']) && isset($data['name'])) {
-            $data['slug'] = Str::slug($data['name']);
-        }
-
         return $this->repository->createTag($data);
     }
 
@@ -71,11 +65,6 @@ class TagService
         $tag = $this->getTagById($id);
         if (!$tag) {
             return null;
-        }
-
-        // 如果更新了名稱但沒有提供 slug，則自動更新 slug
-        if (isset($data['name']) && !isset($data['slug'])) {
-            $data['slug'] = Str::slug($data['name']);
         }
 
         $this->repository->updateTag($tag, $data);

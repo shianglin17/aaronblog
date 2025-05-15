@@ -34,7 +34,7 @@ class UpdateTagRequest extends FormRequest
             ],
             'slug' => [
                 'sometimes', 
-                'nullable', 
+                'required', 
                 'string', 
                 'max:255', 
                 Rule::unique('tags')->ignore($tagId), 
@@ -54,6 +54,7 @@ class UpdateTagRequest extends FormRequest
             'name.required' => '標籤名稱不能為空',
             'name.max' => '標籤名稱不能超過50個字符',
             'name.unique' => '標籤名稱已存在',
+            'slug.required' => '標籤別名不能為空',
             'slug.max' => 'Slug不能超過255個字符',
             'slug.unique' => 'Slug已存在',
             'slug.alpha_dash' => 'Slug只能包含字母、數字、連字符和底線'

@@ -23,7 +23,7 @@ class CreateTagRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:50', 'unique:tags,name'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:tags,slug', 'alpha_dash']
+            'slug' => ['required', 'string', 'max:255', 'unique:tags,slug', 'alpha_dash']
         ];
     }
 
@@ -38,6 +38,7 @@ class CreateTagRequest extends FormRequest
             'name.required' => '標籤名稱不能為空',
             'name.max' => '標籤名稱不能超過50個字符',
             'name.unique' => '標籤名稱已存在',
+            'slug.required' => '標籤別名不能為空',
             'slug.max' => 'Slug不能超過255個字符',
             'slug.unique' => 'Slug已存在',
             'slug.alpha_dash' => 'Slug只能包含字母、數字、連字符和底線'
