@@ -87,4 +87,47 @@ class AuthController extends Controller
         // 回傳用戶資料
         return ResponseMaker::success($user, message:'登出成功');
     }
+
+    /**
+     * 註冊新用戶
+     *
+     * @param string $email
+     * @param string $password
+     * @return array
+     * @throws ValidationException
+     */
+    public function register(string $name, string $email, string $password): array
+    {
+        // 驗證 email 格式
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw ValidationException::withMessages([
+                'email' => ['Email 格式不正確。'],
+            ]);
+        }
+
+        // 檢查 email 是否已存在
+        if (User::where('email', $email)->exists()) {
+            throw ValidationException::withMessages([
+                'email' => ['Email 已被註冊。'],
+            ]);
+        }
+
+        // 驗證密碼長度
+        if (strlen($password) < 6) {
+            throw ValidationException::withMessages([
+                'password' => ['密碼長度至少 6 碼。'],
+            ]);
+        }
+
+        // 建立新用戶
+        $user = User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => $password,
+        ]);
+
+        return [
+            'user' => $user,
+        ];
+    }
 }
