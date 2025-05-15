@@ -25,6 +25,10 @@
 
 ### 標籤 API
 - `GET /api/tags` - 獲取所有標籤
+- `GET /api/tags/{id}` - 獲取標籤詳情
+- `POST /api/admin/tags` - 創建標籤（需管理員權限）
+- `PUT /api/admin/tags/{id}` - 更新標籤（需管理員權限）
+- `DELETE /api/admin/tags/{id}` - 刪除標籤（需管理員權限）
 
 ### 認證 API
 

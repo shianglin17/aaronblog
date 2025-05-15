@@ -892,7 +892,321 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n    \"code\": 200,\n    \"message\": \"所有標籤\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"slug\": \"laravel\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Vue.js\",\n            \"slug\": \"vuejs\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"PHP\",\n            \"slug\": \"php\"\n        },\n        {\n            \"id\": 4,\n            \"name\": \"JavaScript\",\n            \"slug\": \"javascript\"\n        },\n        {\n            \"id\": 5,\n            \"name\": \"資料庫\",\n            \"slug\": \"database\"\n        }\n    ]\n}"
+              "body": "{\n    \"status\": \"success\",\n    \"code\": 200,\n    \"message\": \"所有標籤\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Laravel\",\n            \"slug\": \"laravel\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Vue.js\",\n            \"slug\": \"vuejs\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"PHP\",\n            \"slug\": \"php\"\n        },\n        {\n            \"id\": 4,\n            \"name\": \"JavaScript\",\n            \"slug\": \"javascript\"\n        },\n        {\n            \"id\": 5,\n            \"name\": \"資料庫\",\n            \"slug\": \"database\"\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "獲取標籤詳情",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tags/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tags",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "標籤 ID"
+                }
+              ]
+            },
+            "description": "獲取指定標籤的詳細資訊"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/tags/1"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"標籤詳情\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Laravel\",\n    \"slug\": \"laravel\"\n  }\n}"
+            },
+            {
+              "name": "標籤不存在回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/tags/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"標籤不存在\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "創建標籤",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"雲端運算\",\n  \"slug\": \"cloud-computing\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/tags",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "tags"
+              ]
+            },
+            "description": "創建一個新的文章標籤"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"雲端運算\",\n  \"slug\": \"cloud-computing\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/tags"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 201,\n  \"message\": \"標籤創建成功\",\n  \"data\": {\n    \"id\": 7,\n    \"name\": \"雲端運算\",\n    \"slug\": \"cloud-computing\"\n  }\n}"
+            },
+            {
+              "name": "驗證錯誤回應範例",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"slug\": \"cloud-computing\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/tags"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 422,\n  \"message\": \"驗證失敗\",\n  \"meta\": {\n    \"errors\": {\n      \"name\": [\n        \"標籤名稱不能為空\"\n      ]\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "更新標籤",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"雲端科技\",\n  \"slug\": \"cloud-tech\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/tags/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "tags",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "7",
+                  "description": "標籤 ID"
+                }
+              ]
+            },
+            "description": "更新現有的文章標籤"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"雲端科技\",\n  \"slug\": \"cloud-tech\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/tags/7"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"標籤更新成功\",\n  \"data\": {\n    \"id\": 7,\n    \"name\": \"雲端科技\",\n    \"slug\": \"cloud-tech\"\n  }\n}"
+            },
+            {
+              "name": "標籤不存在回應範例",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"雲端科技\",\n  \"slug\": \"cloud-tech\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/tags/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"標籤不存在\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "刪除標籤",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/tags/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "tags",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "7",
+                  "description": "標籤 ID"
+                }
+              ]
+            },
+            "description": "刪除現有的文章標籤"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/tags/7"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"標籤刪除成功\"\n}"
+            },
+            {
+              "name": "標籤不存在回應範例",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/tags/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"標籤不存在\"\n}"
             }
           ]
         }
