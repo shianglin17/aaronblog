@@ -10,9 +10,11 @@ export const API_ROUTES = {
     CREATE: '/article',
     UPDATE: (id: number) => `/article/${id}`,
     DELETE: (id: number) => `/article/${id}`,
-    CATEGORIES: '/categories',
-    TAGS: '/tags',
-    TAG_DETAIL: (id: number) => `/tags/${id}`
+    CATEGORIES: '/categories'
+  },
+  TAG: {
+    LIST: '/tags',
+    DETAIL: (id: number) => `/tags/${id}`
   },
   ADMIN: {
     ARTICLE: {
@@ -37,5 +39,4 @@ export const API_ROUTES = {
     PROFILE: '/user/profile',
     UPDATE_PROFILE: '/user/profile'
   }
-  // 其他 API 路由可在此擴展...
 }; 

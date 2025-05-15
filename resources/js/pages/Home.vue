@@ -55,8 +55,9 @@ import { NInput, NInputGroup, NButton, NSpin, NIcon } from 'naive-ui';
 import ArticleList from '../components/ArticleList.vue';
 import ArticleFilter from '../components/ArticleFilter.vue';
 import Footer from '../components/Footer.vue';
-import { getArticleList, getAllCategories, getAllTags } from '../api/article';
-import type { Article, ArticleListParams, Category, Tag } from '../types/article';
+import { articleApi, tagApi } from '../api/index';
+import type { Article, ArticleListParams, Category } from '../types/article';
+import type { Tag } from '../types/tag';
 import type { PaginationMeta } from '../types/common';
 import { DEFAULT_PAGINATION_PARAMS } from '../constants/pagination';
 
@@ -89,7 +90,7 @@ async function fetchArticles() {
       status: 'published' // 強制覆蓋，確保前台只顯示已發布文章
     };
     
-    const response = await getArticleList(params);
+    const response = await articleApi.getList(params);
     articles.value = response.data;
     pagination.value = response.meta?.pagination;
   } catch (err) {
@@ -139,8 +140,8 @@ async function fetchFilters() {
   try {
     // 並行請求以提高效率
     const [categoriesResponse, tagsResponse] = await Promise.all([
-      getAllCategories(),
-      getAllTags()
+      articleApi.getAllCategories(),
+      tagApi.getList()
     ]);
     
     categories.value = categoriesResponse.data;

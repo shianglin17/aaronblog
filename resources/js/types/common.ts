@@ -21,3 +21,8 @@ export interface PaginationMeta {
   total_items: number;
   per_page: number;
 } 
+
+// API函數類型定義
+export type ApiFunction<T, P = void> = P extends void 
+  ? () => Promise<ApiResponse<T>> 
+  : (params: P) => Promise<ApiResponse<T>>; 

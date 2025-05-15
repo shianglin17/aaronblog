@@ -142,32 +142,14 @@ import {
   DropdownOption
 } from 'naive-ui';
 import { ChevronDownOutline } from '@vicons/ionicons5';
-import {
-  getArticleList,
-  getAllCategories,
-  getAllTags,
-  getArticleById
-} from '../../api/article';
-import {
-  createArticle,
-  updateArticle,
-  deleteArticle,
-  setArticleDraft,
-  setArticlePublish
-} from '../../api/articleadmin';
-import { logout } from '../../api/auth';
+import { authApi, articleApi, tagApi } from '../../api/index';
 import type { User } from '../../types/auth';
-import type { Article, Category, Tag } from '../../types/article';
+import type { Article, CreateArticleParams, Category } from '../../types/article';
+import type { Tag } from '../../types/tag';
 
-interface ArticleForm {
+// 表單型別與 CreateArticleParams 保持一致，但增加 id 欄位用於編輯
+interface ArticleForm extends CreateArticleParams {
   id: number | null;
-  title: string;
-  slug: string;
-  description: string;
-  content: string;
-  category_id: number | null;
-  status: 'draft' | 'published';
-  tags: number[];
 }
 
 const router = useRouter();
@@ -258,7 +240,7 @@ async function fetchArticles() {
       category: categoryFilter.value || undefined,
       tags: tagFilter.value.length > 0 ? tagFilter.value.join(',') : undefined
     };
-    const res = await getArticleList(params);
+    const res = await articleApi.getList(params);
     articles.value = res.data || [];
     if (res.meta && res.meta.pagination) {
       pagination.currentPage = res.meta.pagination.current_page;
@@ -276,8 +258,8 @@ async function fetchArticles() {
 async function fetchCategoriesAndTags() {
   try {
     const [catRes, tagRes] = await Promise.all([
-      getAllCategories(),
-      getAllTags()
+      articleApi.getAllCategories(),
+      tagApi.getList()
     ]);
     categoryOptions.value = (catRes.data || []).map((c: Category) => ({ label: c.name, value: c.slug! }));
     tagOptions.value = (tagRes.data || []).map((t: Tag) => ({ label: t.name, value: t.slug! }));
@@ -294,7 +276,7 @@ function openCreateModal() {
 
 async function openEditModal(row: any) {
   try {
-    const res = await getArticleById(row.id);
+    const res = await articleApi.getById(row.id);
     Object.assign(editForm, {
       id: res.data.id,
       title: res.data.title,
@@ -318,25 +300,27 @@ async function submitEditForm() {
     if (errors) return;
     try {
       if (editMode.value && editForm.id) {
-        await updateArticle(editForm.id, {
+        // 將 number[] 轉換為符合 API 需求的格式
+        await articleApi.admin.update({id: editForm.id, data: {
           title: editForm.title,
           slug: editForm.slug,
           description: editForm.description,
           content: editForm.content,
           category_id: editForm.category_id,
           status: editForm.status,
-          tags: editForm.tags
-        });
+          tags: editForm.tags // 在後端處理 tag ID 轉換
+        }});
         message.success('文章更新成功');
       } else {
-        await createArticle({
+        // 將 number[] 轉換為符合 API 需求的格式
+        await articleApi.admin.create({
           title: editForm.title,
           slug: editForm.slug,
           description: editForm.description,
           content: editForm.content,
           category_id: editForm.category_id,
           status: editForm.status,
-          tags: editForm.tags
+          tags: editForm.tags // 在後端處理 tag ID 轉換
         });
         message.success('文章新增成功');
       }
@@ -351,7 +335,7 @@ async function submitEditForm() {
 async function handleDelete(row: any) {
   if (!confirm('確定要刪除這篇文章嗎？')) return;
   try {
-    await deleteArticle(row.id);
+    await articleApi.admin.delete(row.id);
     message.success('刪除成功');
     fetchArticles();
   } catch (error) {
@@ -361,7 +345,7 @@ async function handleDelete(row: any) {
 
 async function handleSetDraft(row: any) {
   try {
-    await setArticleDraft(row.id);
+    await articleApi.admin.setDraft(row.id);
     message.success('已設為草稿');
     fetchArticles();
   } catch (error) {
@@ -371,7 +355,7 @@ async function handleSetDraft(row: any) {
 
 async function handleSetPublish(row: any) {
   try {
-    await setArticlePublish(row.id);
+    await articleApi.admin.setPublish(row.id);
     message.success('已發布');
     fetchArticles();
   } catch (error) {
@@ -398,14 +382,8 @@ const userMenuOptions = [
   {
     label: '登出',
     key: 'logout',
-    icon: renderIcon(ChevronDownOutline)
   }
 ];
-
-// 渲染圖標
-function renderIcon(icon: any) {
-  return () => h(NIcon, null, { default: () => h(icon) });
-}
 
 // 渲染用戶標籤
 function renderUserLabel(option: DropdownOption) {
@@ -455,7 +433,7 @@ onMounted(() => {
 
 async function handleLogout() {
   try {
-    await logout();
+    await authApi.logout();
     // 登出成功，導向首頁
     router.push('/');
   } catch (error) {

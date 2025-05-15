@@ -86,7 +86,7 @@ import {
   FormInst 
 } from 'naive-ui';
 import { MailOutline, LockClosedOutline } from '@vicons/ionicons5';
-import { login } from '../api/auth';
+import { authApi } from '../api/index';
 import type { LoginParams } from '../types/auth';
 
 const router = useRouter();
@@ -123,7 +123,7 @@ async function handleLogin() {
   try {
     await formRef.value?.validate();
     isLoading.value = true;
-    const response = await login(form);
+    const response = await authApi.login(form);
     
     if (response.status === 'success') {
       // 成功登入，導向管理頁面

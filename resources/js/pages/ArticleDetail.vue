@@ -81,7 +81,7 @@ import {
   PricetagOutline 
 } from '@vicons/ionicons5';
 import Footer from '../components/Footer.vue';
-import { getArticleById } from '../api/article';
+import { articleApi } from '../api/index';
 import type { Article } from '../types/article';
 
 // 定義接收的 props
@@ -110,7 +110,7 @@ onMounted(async () => {
       throw new Error('無效的文章 ID');
     }
     
-    const response = await getArticleById(id);
+    const response = await articleApi.getById(id);
     article.value = response.data;
   } catch (err) {
     error.value = '無法載入文章，請稍後再試';

@@ -1,3 +1,5 @@
+import { Tag } from './tag';
+
 // 定義文章介面
 export interface Article {
   id?: number;
@@ -16,18 +18,22 @@ export interface Article {
   tags?: Tag[];
 }
 
+// 定義創建文章所需的參數
+export interface CreateArticleParams {
+  title: string;
+  slug?: string;
+  description?: string;
+  content: string;
+  category_id?: number | null;
+  status: 'draft' | 'published';
+  tags?: number[]; // 標籤 ID 陣列，後端會處理成 Tag 物件
+}
+
 // 定義分類介面
 export interface Category {
   id: number;
   name: string;
   slug: string;
-}
-
-// 定義標籤介面
-export interface Tag {
-  id: number;
-  name: string;
-  slug?: string;
 }
 
 // 定義請求參數介面
