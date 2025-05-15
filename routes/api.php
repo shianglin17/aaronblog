@@ -18,6 +18,7 @@ Route::get('/article/{id}', [ArticleController::class, 'show'])->where('id', '[0
 
 // 分類和標籤路由
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories/{id}', [CategoryController::class, 'show'])->where('id', '[0-9]+');
 Route::get('/tags', [TagController::class, 'index']);
 Route::get('/tags/{id}', [TagController::class, 'show'])->where('id', '[0-9]+');
 
@@ -45,6 +46,13 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', [TagController::class, 'store']);
             Route::put('/{id}', [TagController::class, 'update'])->where('id', '[0-9]+');
             Route::delete('/{id}', [TagController::class, 'destroy'])->where('id', '[0-9]+');
+        });
+        
+        // 分類管理
+        Route::prefix('categories')->group(function () {
+            Route::post('/', [CategoryController::class, 'store']);
+            Route::put('/{id}', [CategoryController::class, 'update'])->where('id', '[0-9]+');
+            Route::delete('/{id}', [CategoryController::class, 'destroy'])->where('id', '[0-9]+');
         });
     });
 });

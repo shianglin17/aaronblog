@@ -848,6 +848,320 @@
               "body": "{\n    \"code\": 200,\n    \"message\": \"所有分類\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"技術分享\",\n            \"slug\": \"tech-sharing\",\n            \"description\": \"關於程式設計和技術的文章\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"生活記事\",\n            \"slug\": \"life-notes\",\n            \"description\": \"日常生活和隨筆\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"書籍推薦\",\n            \"slug\": \"book-recommendations\",\n            \"description\": \"好書分享和閱讀心得\"\n        }\n    ]\n}"
             }
           ]
+        },
+        {
+          "name": "獲取分類詳情",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "分類 ID"
+                }
+              ]
+            },
+            "description": "獲取指定分類的詳細資訊"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/categories/1"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"分類詳情\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"技術分享\",\n    \"slug\": \"tech-sharing\",\n    \"description\": \"關於程式設計和技術的文章\"\n  }\n}"
+            },
+            {
+              "name": "分類不存在回應範例",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/categories/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"分類不存在\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "創建分類",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"程式教學\",\n  \"slug\": \"programming-tutorials\",\n  \"description\": \"學習程式設計的教學文章\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories"
+              ]
+            },
+            "description": "創建一個新的文章分類"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"程式教學\",\n  \"slug\": \"programming-tutorials\",\n  \"description\": \"學習程式設計的教學文章\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/categories"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 201,\n  \"message\": \"分類創建成功\",\n  \"data\": {\n    \"id\": 4,\n    \"name\": \"程式教學\",\n    \"slug\": \"programming-tutorials\",\n    \"description\": \"學習程式設計的教學文章\"\n  }\n}"
+            },
+            {
+              "name": "驗證錯誤回應範例",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"程式教學\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/categories"
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 422,\n  \"message\": \"驗證失敗\",\n  \"meta\": {\n    \"errors\": {\n      \"slug\": [\n        \"分類別名不能為空\"\n      ]\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "更新分類",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"程式教學與分享\",\n  \"slug\": \"programming-tutorials\",\n  \"description\": \"學習程式設計的教學文章與實用技巧分享\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/categories/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "4",
+                  "description": "分類 ID"
+                }
+              ]
+            },
+            "description": "更新現有的文章分類"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"程式教學與分享\",\n  \"slug\": \"programming-tutorials\",\n  \"description\": \"學習程式設計的教學文章與實用技巧分享\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/categories/4"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"分類更新成功\",\n  \"data\": {\n    \"id\": 4,\n    \"name\": \"程式教學與分享\",\n    \"slug\": \"programming-tutorials\",\n    \"description\": \"學習程式設計的教學文章與實用技巧分享\"\n  }\n}"
+            },
+            {
+              "name": "分類不存在回應範例",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"程式教學與分享\",\n  \"slug\": \"programming-tutorials\",\n  \"description\": \"學習程式設計的教學文章與實用技巧分享\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/categories/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"分類不存在\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "刪除分類",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/categories/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "4",
+                  "description": "分類 ID"
+                }
+              ]
+            },
+            "description": "刪除現有的文章分類"
+          },
+          "response": [
+            {
+              "name": "成功回應範例",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/categories/4"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 200,\n  \"message\": \"分類刪除成功\"\n}"
+            },
+            {
+              "name": "分類不存在回應範例",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/categories/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 404,\n  \"message\": \"分類不存在\"\n}"
+            }
+          ]
         }
       ]
     },
