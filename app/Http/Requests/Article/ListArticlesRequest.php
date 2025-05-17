@@ -37,6 +37,7 @@ class ListArticlesRequest extends FormRequest
     protected array $allowedStatus = [
         Article::STATUS_DRAFT,
         Article::STATUS_PUBLISHED,
+        'all',
     ];
 
     /**
@@ -168,14 +169,14 @@ class ListArticlesRequest extends FormRequest
         } else {
             $mergeData['tags'] = [];
         }
-        
+
         // 權限感知參數處理
         if (!Auth::check()) {
-            // 非登入用戶只能看已發佈的文章
+            // 非登入用戶只能看已發佈的文章，無論提供什麼參數
             $mergeData['status'] = Article::STATUS_PUBLISHED;
         } else if (!$this->has('status')) {
             // 登入用戶若未指定狀態，則不限狀態
-            $mergeData['status'] = null;
+            $mergeData['status'] = 'all';
         } else {
             // 登入用戶可以指定要查詢的狀態
             $mergeData['status'] = $this->input('status');

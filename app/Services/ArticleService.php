@@ -4,9 +4,7 @@ namespace App\Services;
 
 use App\Models\Article;
 use App\Repositories\ArticleRepository;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleService

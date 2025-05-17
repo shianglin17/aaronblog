@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Article;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -30,7 +29,7 @@ class ArticleRepository
                   ->orWhere('content', 'like', "%{$param['search']}%")
                   ->orWhere('description', 'like', "%{$param['search']}%")
         )
-        ->when(isset($param['status']), fn(Builder $query): Builder => 
+        ->when($param['status'] !== 'all', fn(Builder $query): Builder => 
             $query->where('status', $param['status'])
         )
         // 依照分類篩選（使用分類的 slug）
