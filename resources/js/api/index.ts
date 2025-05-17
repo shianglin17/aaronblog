@@ -7,6 +7,7 @@
 export { tagApi } from './tagApi';
 export { articleApi } from './articleApi';
 export { authApi } from './authApi';
+export { categoryApi } from './categoryApi';
 
 // 導出 HTTP 實例，以便直接使用
 export { default as http } from './http';

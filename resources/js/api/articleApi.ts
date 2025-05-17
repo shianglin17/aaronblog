@@ -1,6 +1,7 @@
 import http from './http';
 import { API_ROUTES } from './routes';
-import { Article, CreateArticleParams, ArticleListParams, Category } from '../types/article';
+import { Article, CreateArticleParams, ArticleListParams } from '../types/article';
+import { Category  } from '../types/category';
 import { ApiResponse, ApiFunction } from '../types/common';
 
 export const articleApi = {
@@ -12,7 +13,7 @@ export const articleApi = {
     http.get(API_ROUTES.ARTICLE.DETAIL(id)).then(r => r.data)) as ApiFunction<Article, number>,
   
   getAllCategories: (() => 
-    http.get(API_ROUTES.ARTICLE.CATEGORIES).then(r => r.data)) as ApiFunction<Category[]>,
+    http.get(API_ROUTES.CATEGORY.LIST).then(r => r.data)) as ApiFunction<Category[]>,
   
   // 管理 API
   admin: {

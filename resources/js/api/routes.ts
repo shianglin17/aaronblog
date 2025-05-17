@@ -16,6 +16,10 @@ export const API_ROUTES = {
     LIST: '/tags',
     DETAIL: (id: number) => `/tags/${id}`
   },
+  CATEGORY: {
+    LIST: '/categories',
+    DETAIL: (id: number) => `/categories/${id}`
+  },
   ADMIN: {
     ARTICLE: {
       CREATE: '/admin/article',
@@ -28,6 +32,11 @@ export const API_ROUTES = {
       CREATE: '/admin/tags',
       UPDATE: (id: number) => `/admin/tags/${id}`,
       DELETE: (id: number) => `/admin/tags/${id}`
+    },
+    CATEGORY: {
+      CREATE: '/admin/categories',
+      UPDATE: (id: number) => `/admin/categories/${id}`,
+      DELETE: (id: number) => `/admin/categories/${id}`
     }
   },
   AUTH: {

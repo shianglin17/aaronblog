@@ -144,8 +144,9 @@ import {
 import { ChevronDownOutline } from '@vicons/ionicons5';
 import { authApi, articleApi, tagApi } from '../../api/index';
 import type { User } from '../../types/auth';
-import type { Article, CreateArticleParams, Category } from '../../types/article';
+import type { Article, CreateArticleParams } from '../../types/article';
 import type { Tag } from '../../types/tag';
+import type { Category } from '../../types/category';
 
 // 表單型別與 CreateArticleParams 保持一致，但增加 id 欄位用於編輯
 interface ArticleForm extends CreateArticleParams {

@@ -12,7 +12,7 @@ export interface Tag {
 // 創建標籤請求參數介面
 export interface CreateTagParams {
   name: string;
-  slug?: string;
+  slug: string;
 }
 
 // 更新標籤請求參數介面
