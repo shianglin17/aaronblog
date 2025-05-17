@@ -7,12 +7,14 @@ export interface Category {
   id: number;
   name: string;
   slug: string;
+  description: string;
 }
 
 // 創建分類請求參數介面
 export interface CreateCategoryParams {
   name: string;
   slug: string;
+  description: string;
 }
 
 // 更新分類請求參數介面
@@ -21,5 +23,6 @@ export interface UpdateCategoryParams {
   data: {
     name?: string;
     slug: string;
+    description: string;
   }
 } 

@@ -7,23 +7,36 @@
             <h2>Aaron 文章管理</h2>
           </div>
           <div class="user-actions">
-            <n-dropdown 
-              :options="userMenuOptions" 
-              @select="handleUserMenuSelect"
-              :render-label="renderUserLabel"
-              trigger="click"
-            >
-              <n-button quaternary>
-                <n-avatar 
-                  round 
-                  size="small" 
-                  :src="userAvatar"
-                  color="#8f8072"
-                >{{ userInitials }}</n-avatar>
-                <span class="user-name">{{ user ? user.name : '管理員' }}</span>
-                <n-icon><chevron-down-outline /></n-icon>
-              </n-button>
-            </n-dropdown>
+            <n-space :size="20" align="center">
+              <div class="nav-tabs">
+                <n-button class="nav-tab active" quaternary size="large" @click="$router.push('/admin/articles')">
+                  文章管理
+                </n-button>
+                <n-button class="nav-tab" quaternary size="large" @click="$router.push('/admin/tags')">
+                  標籤管理
+                </n-button>
+                <n-button class="nav-tab" quaternary size="large" @click="$router.push('/admin/categories')">
+                  分類管理
+                </n-button>
+              </div>
+              <n-dropdown 
+                :options="userMenuOptions" 
+                @select="handleUserMenuSelect"
+                :render-label="renderUserLabel"
+                trigger="click"
+              >
+                <n-button quaternary>
+                  <n-avatar 
+                    round 
+                    size="small" 
+                    :src="userAvatar"
+                    color="#8f8072"
+                  >{{ userInitials }}</n-avatar>
+                  <span class="user-name">{{ user ? user.name : '管理員' }}</span>
+                  <n-icon><chevron-down-outline /></n-icon>
+                </n-button>
+              </n-dropdown>
+            </n-space>
           </div>
         </div>
       </n-layout-header>
@@ -38,18 +51,19 @@
                 :options="statusOptions"
                 placeholder="全部狀態"
                 style="width: 120px"
+                :clearable="false"
                 @update:value="fetchArticles"
               />
               <n-select
                 v-model:value="categoryFilter"
-                :options="categoryOptions"
+                :options="filterCategoryOptions"
                 placeholder="全部分類"
                 style="width: 140px"
                 clearable
               />
               <n-select
                 v-model:value="tagFilter"
-                :options="tagOptions"
+                :options="filterTagOptions"
                 placeholder="全部標籤"
                 style="width: 180px"
                 multiple
@@ -72,6 +86,10 @@
             :pagination="false"
             :row-key="row => row.id"
             style="margin-top: 24px"
+            class="data-table"
+            :empty-text="searchKeyword || statusFilter !== 'all' || categoryFilter || tagFilter.length > 0 
+              ? '沒有匹配的文章' 
+              : '尚未創建任何文章'"
           />
           <div class="pagination-wrapper">
             <n-pagination
@@ -101,7 +119,10 @@
               <n-select v-model:value="editForm.category_id" :options="categoryOptions" clearable />
             </n-form-item>
             <n-form-item label="狀態" path="status">
-              <n-select v-model:value="editForm.status" :options="statusOptions" />
+              <n-select v-model:value="editForm.status" :options="[
+                { label: '草稿', value: 'draft' },
+                { label: '已發佈', value: 'published' }
+              ]" />
             </n-form-item>
             <n-form-item label="標籤" path="tags">
               <n-select v-model:value="editForm.tags" :options="tagOptions" multiple clearable />
@@ -147,6 +168,7 @@ import type { User } from '../../types/auth';
 import type { Article, CreateArticleParams } from '../../types/article';
 import type { Tag } from '../../types/tag';
 import type { Category } from '../../types/category';
+import { formatDateTime } from '../../utils/date';
 
 // 表單型別與 CreateArticleParams 保持一致，但增加 id 欄位用於編輯
 interface ArticleForm extends CreateArticleParams {
@@ -177,11 +199,11 @@ const editRules = {
   description: [{ required: true, message: '摘要不能為空', trigger: 'blur' }],
   content: [{ required: true, message: '內容不能為空', trigger: 'blur' }]
 };
-const statusFilter = ref('');
+const statusFilter = ref('all');
 const categoryFilter = ref<string | null>(null);
 const tagFilter = ref<string[]>([]);
 const statusOptions = [
-  { label: '全部', value: '' },
+  { label: '全部', value: 'all' },
   { label: '草稿', value: 'draft' },
   { label: '已發佈', value: 'published' }
 ];
@@ -192,21 +214,66 @@ const pagination = reactive({
   totalItems: 0,
   perPage: 15
 });
-const categoryOptions = ref<{ label: string, value: string }[]>([]);
-const tagOptions = ref<{ label: string, value: string }[]>([]);
+const categoryOptions = ref<{ label: string, value: number }[]>([]);
+const tagOptions = ref<{ label: string, value: number }[]>([]);
+// 用於篩選的選項，使用 slug
+const filterCategoryOptions = ref<{ label: string, value: string }[]>([]);
+const filterTagOptions = ref<{ label: string, value: string }[]>([]);
 
 const columns = [
-  { title: '標題', key: 'title' },
-  { title: '狀態', key: 'status', render(row: any) { return row.status === 'published' ? '已發佈' : '草稿'; } },
-  { title: '分類', key: 'category', render(row: any) { return row.category?.name || '-'; } },
-  { title: '作者', key: 'author', render(row: any) { return row.author?.name || '-'; } },
-  { title: '建立時間', key: 'created_at' },
-  { title: '更新時間', key: 'updated_at' },
+  { 
+    title: '標題', 
+    key: 'title',
+    width: 240,
+    ellipsis: {
+      tooltip: true
+    }
+  },
+  { 
+    title: '狀態', 
+    key: 'status', 
+    width: 100,
+    align: 'center' as 'center',
+    render(row: any) { return row.status === 'published' ? '已發佈' : '草稿'; } 
+  },
+  { 
+    title: '分類', 
+    key: 'category', 
+    width: 120,
+    ellipsis: {
+      tooltip: true
+    },
+    render(row: any) { return row.category?.name || '-'; } 
+  },
+  { 
+    title: '作者', 
+    key: 'author', 
+    width: 120,
+    ellipsis: {
+      tooltip: true
+    },
+    render(row: any) { return row.author?.name || '-'; } 
+  },
+  { 
+    title: '建立時間', 
+    key: 'created_at',
+    width: 180,
+    render(row: any) { return row.created_at ? formatDateTime(row.created_at) : '-'; }
+  },
+  { 
+    title: '更新時間', 
+    key: 'updated_at',
+    width: 180,
+    render(row: any) { return row.updated_at ? formatDateTime(row.updated_at) : '-'; }
+  },
   {
     title: '操作',
     key: 'actions',
+    width: 240,
+    align: 'center' as 'center',
+    fixed: 'right' as 'right',
     render(row: any) {
-      return h(NSpace, {}, {
+      return h(NSpace, { justify: 'center' }, {
         default: () => [
           h(NButton, { size: 'small', onClick: () => openEditModal(row) }, { default: () => '編輯' }),
           h(NButton, { size: 'small', type: 'error', onClick: () => handleDelete(row) }, { default: () => '刪除' }),
@@ -233,10 +300,15 @@ function resetEditForm() {
 async function fetchArticles() {
   loading.value = true;
   try {
+    // 確保 status 永遠有值，即使用戶嘗試清除或未設置也使用 'all'
+    if (statusFilter.value === '') {
+      statusFilter.value = 'all';
+    }
+    
     const params: any = {
       page: pagination.currentPage,
       per_page: pagination.perPage,
-      status: statusFilter.value || undefined,
+      status: statusFilter.value, // 一定會有值，不用設置 || undefined
       search: searchKeyword.value || undefined,
       category: categoryFilter.value || undefined,
       tags: tagFilter.value.length > 0 ? tagFilter.value.join(',') : undefined
@@ -262,8 +334,13 @@ async function fetchCategoriesAndTags() {
       articleApi.getAllCategories(),
       tagApi.getList()
     ]);
-    categoryOptions.value = (catRes.data || []).map((c: Category) => ({ label: c.name, value: c.slug! }));
-    tagOptions.value = (tagRes.data || []).map((t: Tag) => ({ label: t.name, value: t.slug! }));
+    // 用於表單的選項，使用 ID
+    categoryOptions.value = (catRes.data || []).map((c: Category) => ({ label: c.name, value: c.id }));
+    tagOptions.value = (tagRes.data || []).map((t: Tag) => ({ label: t.name, value: t.id }));
+    
+    // 用於篩選的選項，使用 slug
+    filterCategoryOptions.value = (catRes.data || []).map((c: Category) => ({ label: c.name, value: c.slug }));
+    filterTagOptions.value = (tagRes.data || []).map((t: Tag) => ({ label: t.name, value: t.slug }));
   } catch (error) {
     message.error('取得分類或標籤失敗');
   }
@@ -488,5 +565,39 @@ async function handleLogout() {
   margin-top: 24px;
   display: flex;
   justify-content: flex-end;
+}
+.nav-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(239, 239, 245, 0.35);
+}
+
+.nav-tab {
+  position: relative;
+  font-weight: 500;
+  padding: 0 12px;
+  height: 40px;
+  border-radius: 4px 4px 0 0;
+}
+
+.nav-tab.active {
+  color: #7d6e5d;
+  background-color: rgba(239, 239, 245, 0.2);
+}
+
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #8f8072;
+}
+
+.data-table {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 </style> 

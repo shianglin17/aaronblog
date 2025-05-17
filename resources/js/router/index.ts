@@ -30,8 +30,28 @@ const routes = [
     },
     {
         path: '/admin',
-        name: 'admin',
+        redirect: '/admin/articles'
+    },
+    {
+        path: '/admin/articles',
+        name: 'admin-articles',
         component: () => import('../pages/admin/Dashboard.vue'),
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/admin/tags',
+        name: 'admin-tags',
+        component: () => import('../pages/admin/TagManager.vue'),
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/admin/categories',
+        name: 'admin-categories',
+        component: () => import('../pages/admin/CategoryManager.vue'),
         meta: {
             requiresAuth: true
         }
@@ -53,7 +73,7 @@ router.beforeEach((to, from, next) => {
     // 檢查是否需要訪客狀態（如登入頁面）
     else if (to.meta.requiresGuest && authApi.isLoggedIn()) {
         // 需要訪客狀態但已登入，重定向到管理頁面
-        next({ name: 'admin' });
+        next({ name: 'admin-articles' });
     } 
     else {
         // 其他情況正常放行
