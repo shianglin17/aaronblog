@@ -1,4 +1,4 @@
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import { articleApi, categoryApi, tagApi } from '../api';
 import { ERROR_MESSAGES, STATUS_OPTIONS } from '../constants';
 import type { Article, ArticleListParams, CreateArticleParams } from '../types/article';
@@ -203,56 +203,75 @@ export function useArticles(message: any) {
   };
 }
 
+// 定義文章表單的初始狀態常量
+const INITIAL_ARTICLE_FORM_STATE = {
+  title: '',
+  slug: '',
+  description: '',
+  content: '',
+  category_id: null,
+  status: 'draft' as const, // 根據您的最新更改，新文章默認為草稿
+  tags: [] as number[] // 明確標籤為數字陣列
+};
+
 /**
  * 文章表單管理邏輯
  */
 export function useArticleForm(message: any, onSuccess: () => void) {
-  // 表單狀態
-  const DEFAULT_FORM = {
-    title: '',
-    slug: '',
-    description: '',
-    content: '',
-    category_id: null,
-    status: 'draft' as const,
-    tags: []
-  };
-  
-  const formModel = reactive<CreateArticleParams>({ ...DEFAULT_FORM });
+  // 使用初始狀態常量來初始化 formModel，確保是深拷貝
+  const formModel = reactive<CreateArticleParams>({ 
+    ...INITIAL_ARTICLE_FORM_STATE,
+    tags: [...INITIAL_ARTICLE_FORM_STATE.tags] // 確保 tags 也是新的陣列實例
+  });
+
   const showForm = ref(false);
   const isEdit = ref(false);
   const editingId = ref<number | null>(null);
-  
-  // 計算屬性
+
   const formTitle = computed(() => isEdit.value ? '編輯文章' : '新增文章');
-  
+
+  /**
+   * 重置表單模型到初始狀態，並清除編輯上下文。
+   */
+  function resetAndInitializeFormModel() {
+    formModel.title = INITIAL_ARTICLE_FORM_STATE.title;
+    formModel.slug = INITIAL_ARTICLE_FORM_STATE.slug;
+    formModel.description = INITIAL_ARTICLE_FORM_STATE.description;
+    formModel.content = INITIAL_ARTICLE_FORM_STATE.content;
+    formModel.category_id = INITIAL_ARTICLE_FORM_STATE.category_id;
+    formModel.status = INITIAL_ARTICLE_FORM_STATE.status;
+    formModel.tags = [...INITIAL_ARTICLE_FORM_STATE.tags]; // 關鍵：賦予新的陣列實例
+
+    editingId.value = null; // 重置正在編輯的ID
+    // isEdit 的狀態將由 openCreateForm 或 openEditForm 明確設定
+  }
+
   // 打開新增表單
   function openCreateForm() {
-    Object.assign(formModel, DEFAULT_FORM);
+    resetAndInitializeFormModel(); // 先徹底重置表單
     isEdit.value = false;
-    editingId.value = null;
     showForm.value = true;
   }
-  
+
   // 打開編輯表單
   function openEditForm(row: Article) {
+    resetAndInitializeFormModel(); // 先徹底重置表單，清除任何殘留狀態
     isEdit.value = true;
     editingId.value = row.id || null;
     
-    // 填充表單數據
-    Object.assign(formModel, {
-      title: row.title,
-      slug: row.slug,
-      description: row.description || '',
-      content: row.content,
-      category_id: row.category?.id || null,
-      status: row.status,
-      tags: row.tags?.map(tag => tag.id) || []
-    });
+    // 從 'row' 物件填充表單數據
+    formModel.title = row.title;
+    formModel.slug = row.slug || ''; // 提供預設空字串以防 slug 為 null/undefined
+    formModel.description = row.description || '';
+    formModel.content = row.content;
+    formModel.category_id = row.category?.id || null;
+    formModel.status = row.status;
+    // 確保賦予新的陣列實例
+    formModel.tags = row.tags?.map(tag => tag.id) || []; 
     
     showForm.value = true;
   }
-  
+
   // 表單提交
   async function handleFormSubmit(data: CreateArticleParams) {
     try {
@@ -267,13 +286,27 @@ export function useArticleForm(message: any, onSuccess: () => void) {
         message.success('文章創建成功');
       }
       
-      showForm.value = false;
-      onSuccess();
+      showForm.value = false; // 關閉模態框，這會觸發下面的 watch
+      onSuccess(); // 調用成功回調
     } catch (error) {
       message.error(isEdit.value ? ERROR_MESSAGES.UPDATE_FAILED : ERROR_MESSAGES.CREATE_FAILED);
       console.error(error);
     }
   }
+
+  // 監聽 showForm 狀態變化
+  // 當模態框從顯示變為隱藏時，重置表單模型
+  // 這涵蓋了點擊取消按鈕、點擊模態框外部或提交成功後關閉模態框的情況
+  watch(showForm, (isVisible) => {
+    if (!isVisible) {
+      // 使用 setTimeout 將重置操作推遲到下一個事件循環
+      // 這有助於確保在表單完全關閉後執行重置，避免可能的衝突
+      setTimeout(() => {
+        resetAndInitializeFormModel();
+        isEdit.value = false; // 同時重置 isEdit 狀態
+      }, 0);
+    }
+  });
   
   return {
     formModel,
