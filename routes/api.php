@@ -13,7 +13,7 @@ Route::get('/', function() {
 });
 
 // 公開文章路由
-Route::get('/article/list', [ArticleController::class, 'list']);
+Route::get('/article/list', [ArticleController::class, 'list'])->middleware('auth:sanctum');
 Route::get('/article/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+');
 
 // 分類和標籤路由
