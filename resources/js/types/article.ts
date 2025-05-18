@@ -37,7 +37,7 @@ export interface ArticleListParams {
   sort_by?: 'created_at' | 'updated_at' | 'title';
   sort_direction?: 'asc' | 'desc';
   search?: string;
-  status?: 'draft' | 'published';
+  status?: 'draft' | 'published' | 'all';
   category?: string;
   tags?: string[];
 }

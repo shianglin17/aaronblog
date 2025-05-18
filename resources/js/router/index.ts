@@ -1,4 +1,3 @@
-import { defineAsyncComponent } from 'vue'
 import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-router'
 import Home from '../pages/Home.vue'
 import ArticleDetail from '../pages/ArticleDetail.vue'
@@ -35,7 +34,7 @@ const routes = [
     {
         path: '/admin/articles',
         name: 'admin-articles',
-        component: () => import('../pages/admin/Dashboard.vue'),
+        component: () => import('../pages/admin/ArticleManagement.vue'),
         meta: {
             requiresAuth: true
         }
@@ -43,7 +42,7 @@ const routes = [
     {
         path: '/admin/tags',
         name: 'admin-tags',
-        component: () => import('../pages/admin/TagManager.vue'),
+        component: () => import('../pages/admin/TagManagement.vue'),
         meta: {
             requiresAuth: true
         }
@@ -51,7 +50,7 @@ const routes = [
     {
         path: '/admin/categories',
         name: 'admin-categories',
-        component: () => import('../pages/admin/CategoryManager.vue'),
+        component: () => import('../pages/admin/CategoryManagement.vue'),
         meta: {
             requiresAuth: true
         }

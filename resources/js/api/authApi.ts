@@ -1,6 +1,6 @@
 import http from './http';
 import { API_ROUTES } from './routes';
-import { LoginParams, AuthResponse } from '../types/auth';
+import { LoginParams, AuthResponse, User } from '../types/auth';
 import { ApiResponse, ApiFunction } from '../types/common';
 
 export const authApi = {
@@ -35,6 +35,30 @@ export const authApi = {
         throw error;
       });
   }) as ApiFunction<null>,
+  
+  // 獲取當前登入用戶
+  getCurrentUser: (() => {
+    // 首先嘗試從本地存儲獲取
+    const userDataStr = localStorage.getItem('user_data');
+    if (userDataStr) {
+      const userData = JSON.parse(userDataStr);
+      return Promise.resolve({
+        status: 'success',
+        code: 200,
+        message: 'User data retrieved from local storage',
+        data: userData
+      });
+    }
+    
+    // 如果本地沒有，從 API 獲取
+    return http.get(API_ROUTES.USER.PROFILE)
+      .then(r => {
+        if (r.data.status === 'success' && r.data.data) {
+          localStorage.setItem('user_data', JSON.stringify(r.data.data));
+        }
+        return r.data;
+      });
+  }) as ApiFunction<User>,
   
   // 本地功能，非 API 呼叫
   isLoggedIn: (): boolean => {
