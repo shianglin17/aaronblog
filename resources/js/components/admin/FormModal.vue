@@ -1,8 +1,9 @@
 <template>
   <n-modal v-model:show="showModal" preset="card" :title="title" :style="{ width: width }">
     <n-form
+      v-if="showModal"
       ref="formRef"
-      :model="formData"
+      :model="props.modelValue"
       :rules="rules"
       label-placement="left"
       label-width="auto"
@@ -66,29 +67,17 @@ const props = defineProps({
 
 const emit = defineEmits(['update:show', 'update:model-value', 'submit', 'cancel']);
 
-// 處理表單數據，用於雙向綁定
-const formData = ref(props.modelValue);
-
-// 監聽外部表單數據變化
-watch(() => props.modelValue, (newVal) => {
-  formData.value = { ...newVal };
-}, { deep: true });
-
-// 監聽內部表單數據變化，同步到外部
-watch(formData, (newVal) => {
-  emit('update:model-value', newVal);
-}, { deep: true });
-
 // 監聽外部模態窗顯示狀態
 watch(() => props.show, (newVal) => {
   showModal.value = newVal;
 });
 
 // 監聽內部模態窗顯示狀態，同步到外部
-watch(showModal, (newVal) => {
-  emit('update:show', newVal);
+watch(showModal, (newVal, oldVal) => {
+  if (newVal !== props.show) {
+    emit('update:show', newVal);
+  }
   
-  // 當模態窗關閉時，重置表單
   if (!newVal) {
     setTimeout(() => {
       formRef.value?.restoreValidation();
@@ -103,7 +92,7 @@ async function handleSubmit() {
   try {
     submitting.value = true;
     await formRef.value.validate();
-    emit('submit', formData.value);
+    emit('submit', props.modelValue);
   } catch (error) {
     console.error('表單驗證失敗', error);
   } finally {
@@ -115,13 +104,6 @@ async function handleSubmit() {
 function closeModal() {
   showModal.value = false;
   emit('cancel');
-}
-
-// 重置表單
-function resetForm() {
-  if (formRef.value) {
-    formRef.value.restoreValidation();
-  }
 }
 </script>
 
