@@ -77,22 +77,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, onMounted, computed } from 'vue';
-import { 
-  NPagination, 
-  NIcon 
-} from 'naive-ui';
+import { ref, defineProps, defineEmits, onMounted } from 'vue';
 import { 
   PersonOutline, 
   TimeOutline, 
   FolderOutline, 
   PricetagOutline,
-  ArrowForwardOutline
 } from '@vicons/ionicons5';
 import type { Article } from '../types/article';
 import type { PaginationMeta } from '../types/common';
 import { useRouter } from 'vue-router';
-import { withDefaults } from 'vue';
 
 const props = defineProps<{
   articles: Article[];

@@ -72,7 +72,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, defineProps } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { NSpin, NIcon, NButton } from 'naive-ui';
 import { 
   ArrowBackOutline,
   PersonOutline, 

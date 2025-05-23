@@ -61,15 +61,6 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import {
-  NButton,
-  NIcon,
-  NCard,
-  NSpace,
-  NFormItem,
-  NSelect,
-  NCollapseTransition
-} from 'naive-ui';
 import { FilterOutline } from '@vicons/ionicons5';
 import FilterBar from './FilterBar.vue';
 import type { SelectOption } from 'naive-ui';

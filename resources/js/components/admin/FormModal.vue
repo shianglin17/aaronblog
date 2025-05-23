@@ -21,7 +21,6 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { NModal, NForm, NButton } from 'naive-ui';
 
 // 表單引用
 const formRef = ref<any>(null);

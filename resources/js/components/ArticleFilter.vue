@@ -38,7 +38,6 @@
 
 <script setup lang="ts">
 import { ref, computed, defineEmits, defineProps, watch } from 'vue';
-import { NSelect, NButton, NIcon } from 'naive-ui';
 import { SearchOutline, CloseOutline } from '@vicons/ionicons5';
 
 interface Category {

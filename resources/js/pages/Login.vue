@@ -74,17 +74,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { 
-  NForm, 
-  NFormItem, 
-  NInput, 
-  NCheckbox, 
-  NButton, 
-  NAlert,
-  NIcon,
-  FormRules, 
-  FormInst 
-} from 'naive-ui';
+import { FormRules, FormInst } from 'naive-ui';
 import { MailOutline, LockClosedOutline } from '@vicons/ionicons5';
 import { authApi } from '../api/index';
 import type { LoginParams } from '../types/auth';

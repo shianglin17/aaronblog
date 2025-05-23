@@ -10,7 +10,6 @@
 
 <script setup lang="ts">
 import { defineOptions } from 'vue'
-import { NConfigProvider } from 'naive-ui'
 
 defineOptions({
     name: 'App'

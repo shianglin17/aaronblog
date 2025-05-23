@@ -103,16 +103,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useMessage } from 'naive-ui';
-import { 
-  NButton, 
-  NFormItem, 
-  NInput, 
-  NSelect, 
-  NModal, 
-  NMessageProvider 
-} from 'naive-ui';
 import AdminLayout from '../../components/admin/AdminLayout.vue';
 import DataTable from '../../components/admin/DataTable.vue';
 import ArticleFilterBar from '../../components/admin/ArticleFilterBar.vue';
@@ -120,7 +112,6 @@ import FormModal from '../../components/admin/FormModal.vue';
 import { ARTICLE_COLUMNS, ARTICLE_FORM_RULES } from '../../constants';
 import { useArticles, useArticleForm, useArticleDelete, useOptions } from '../../composables/useArticle';
 import type { Article } from '../../types/article';
-import type { SelectOption } from 'naive-ui';
 
 // 消息提示
 const message = useMessage();
@@ -134,7 +125,6 @@ const {
   loading,
   params,
   pagination,
-  filterVisible,
   categoryOptions,
   tagOptions,
   categoryFilter,

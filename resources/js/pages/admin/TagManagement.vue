@@ -59,13 +59,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useMessage } from 'naive-ui';
-import { 
-  NButton, 
-  NFormItem, 
-  NInput, 
-  NModal, 
-  NMessageProvider
-} from 'naive-ui';
 import AdminLayout from '../../components/admin/AdminLayout.vue';
 import DataTable from '../../components/admin/DataTable.vue';
 import FilterBar from '../../components/admin/FilterBar.vue';

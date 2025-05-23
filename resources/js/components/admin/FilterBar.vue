@@ -39,7 +39,6 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { NSpace, NInput, NSelect, NButton, NIcon } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { STATUS_OPTIONS } from '../../constants';
 

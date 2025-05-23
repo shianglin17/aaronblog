@@ -1,89 +1,76 @@
 <template>
-  <n-message-provider>
-    <div class="admin-container">
-      <n-layout>
-        <n-layout-header class="admin-header">
-          <div class="header-content">
-            <div class="logo">
-              <h2>Aaron 內容管理</h2>
-            </div>
-            <div class="user-actions">
-              <n-space :size="20" align="center">
-                <div class="nav-tabs">
-                  <n-button 
-                    class="nav-tab" 
-                    :class="{ active: currentRoute === '/admin/articles' }"
-                    quaternary 
-                    size="large" 
-                    @click="$router.push('/admin/articles')"
-                  >
-                    文章管理
-                  </n-button>
-                  <n-button 
-                    class="nav-tab" 
-                    :class="{ active: currentRoute === '/admin/tags' }"
-                    quaternary 
-                    size="large" 
-                    @click="$router.push('/admin/tags')"
-                  >
-                    標籤管理
-                  </n-button>
-                  <n-button 
-                    class="nav-tab" 
-                    :class="{ active: currentRoute === '/admin/categories' }"
-                    quaternary 
-                    size="large" 
-                    @click="$router.push('/admin/categories')"
-                  >
-                    分類管理
-                  </n-button>
-                </div>
-                <n-dropdown 
-                  :options="userMenuOptions" 
-                  @select="handleUserMenuSelect"
-                  trigger="click"
+  <div class="admin-container">
+    <n-layout>
+      <n-layout-header class="admin-header">
+        <div class="header-content">
+          <div class="logo">
+            <h2>Aaron 內容管理</h2>
+          </div>
+          <div class="user-actions">
+            <n-space :size="20" align="center">
+              <div class="nav-tabs">
+                <n-button 
+                  class="nav-tab" 
+                  :class="{ active: currentRoute === '/admin/articles' }"
+                  quaternary 
+                  size="large" 
+                  @click="$router.push('/admin/articles')"
                 >
-                  <n-button quaternary>
-                    <n-avatar 
-                      round 
-                      size="small" 
-                      :src="userAvatar"
-                      color="#8f8072"
-                    >{{ userInitials }}</n-avatar>
-                    <span class="user-name">{{ user ? user.name : '管理員' }}</span>
-                    <n-icon><chevron-down-outline /></n-icon>
-                  </n-button>
-                </n-dropdown>
-              </n-space>
-            </div>
+                  文章管理
+                </n-button>
+                <n-button 
+                  class="nav-tab" 
+                  :class="{ active: currentRoute === '/admin/tags' }"
+                  quaternary 
+                  size="large" 
+                  @click="$router.push('/admin/tags')"
+                >
+                  標籤管理
+                </n-button>
+                <n-button 
+                  class="nav-tab" 
+                  :class="{ active: currentRoute === '/admin/categories' }"
+                  quaternary 
+                  size="large" 
+                  @click="$router.push('/admin/categories')"
+                >
+                  分類管理
+                </n-button>
+              </div>
+              <n-dropdown 
+                :options="userMenuOptions" 
+                @select="handleUserMenuSelect"
+                trigger="click"
+              >
+                <n-button quaternary>
+                  <n-avatar 
+                    round 
+                    size="small" 
+                    :src="userAvatar"
+                    color="#8f8072"
+                  >{{ userInitials }}</n-avatar>
+                  <span class="user-name">{{ user ? user.name : '管理員' }}</span>
+                  <n-icon><chevron-down-outline /></n-icon>
+                </n-button>
+              </n-dropdown>
+            </n-space>
           </div>
-        </n-layout-header>
-        <n-layout-content class="admin-content">
-          <div class="content-wrapper">
-            <!-- 頁面內容 -->
-            <slot></slot>
-          </div>
-        </n-layout-content>
-      </n-layout>
-    </div>
-  </n-message-provider>
+        </div>
+      </n-layout-header>
+      <n-layout-content class="admin-content">
+        <div class="content-wrapper">
+          <!-- 頁面內容 -->
+          <slot></slot>
+        </div>
+      </n-layout-content>
+    </n-layout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import {
-  NLayout,
-  NLayoutHeader,
-  NLayoutContent,
-  NButton,
-  NSpace,
-  NAvatar,
-  NDropdown,
-  NIcon,
-  NMessageProvider,
-  useMessage
-} from 'naive-ui';
+import { useMessage } from 'naive-ui';
 import { ChevronDownOutline } from '@vicons/ionicons5';
 import { authApi } from '../../api/index';
 import type { User } from '../../types/auth';
