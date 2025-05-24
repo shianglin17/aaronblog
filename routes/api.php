@@ -13,7 +13,7 @@ Route::get('/', function() {
 });
 
 // 公開文章路由
-Route::get('/article/list', [ArticleController::class, 'list'])->middleware('auth:sanctum');
+Route::get('/article/list', [ArticleController::class, 'list']);
 Route::get('/article/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+');
 
 // 分類和標籤路由
@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('admin')->group(function () {
         // 文章管理
         Route::prefix('article')->group(function () {
+            Route::get('/list', [ArticleController::class, 'list']);
             Route::post('/', [ArticleController::class, 'store']);
             Route::put('/{id}', [ArticleController::class, 'update'])->where('id', '[0-9]+');
             Route::delete('/{id}', [ArticleController::class, 'destroy'])->where('id', '[0-9]+');

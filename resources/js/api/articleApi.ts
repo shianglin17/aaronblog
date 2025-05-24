@@ -2,7 +2,7 @@ import http from './http';
 import { API_ROUTES } from './routes';
 import { Article, CreateArticleParams, ArticleListParams } from '../types/article';
 import { Category  } from '../types/category';
-import { ApiResponse, ApiFunction } from '../types/common';
+import { ApiFunction } from '../types/common';
 
 export const articleApi = {
   // 公共 API
@@ -17,6 +17,9 @@ export const articleApi = {
   
   // 管理 API
   admin: {
+    getList: ((params: ArticleListParams = {}) => 
+      http.get(API_ROUTES.ADMIN.ARTICLE.LIST, { params }).then(r => r.data)) as ApiFunction<Article[], ArticleListParams>,
+
     create: ((data: CreateArticleParams) => 
       http.post(API_ROUTES.ADMIN.ARTICLE.CREATE, data).then(r => r.data)) as ApiFunction<Article, CreateArticleParams>,
     

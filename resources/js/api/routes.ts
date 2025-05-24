@@ -22,6 +22,7 @@ export const API_ROUTES = {
   },
   ADMIN: {
     ARTICLE: {
+      LIST: '/admin/article/list',
       CREATE: '/admin/article',
       UPDATE: (id: number) => `/admin/article/${id}`,
       DELETE: (id: number) => `/admin/article/${id}`,

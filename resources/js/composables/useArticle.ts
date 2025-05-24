@@ -87,7 +87,7 @@ export function useArticles(message: any) {
         delete apiParams.tags;
       }
       
-      const response = await articleApi.getList(apiParams);
+      const response = await articleApi.admin.getList(apiParams);
       articles.value = response.data;
       
       if (response.meta?.pagination) {
