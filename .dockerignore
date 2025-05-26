@@ -1,0 +1,65 @@
+# === Git 相關 ===
+.git
+.gitignore
+.gitattributes
+
+# === 環境變數檔案 ===
+.env
+.env.*
+!.env.example
+
+# === 依賴套件資料夾 ===
+node_modules/     # 排除，前端已在本地 npm run build 過
+# vendor/         # 保留，避免在 VM 重新下載
+
+# === 建構產物 ===
+# public/build/   # 保留，這是我們要的前端建構結果
+public/hot
+public/storage
+storage/app/public
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/testing/
+storage/framework/views/
+storage/logs/
+
+# === 快取檔案 ===
+bootstrap/cache/
+.phpunit.result.cache
+
+# === IDE 設定檔 ===
+.idea/
+.vscode/
+.cursor/
+*.swp
+*.swo
+*~
+
+# === 作業系統檔案 ===
+.DS_Store
+Thumbs.db
+
+# === 測試相關 ===
+tests/
+phpunit.xml
+.phpunit.result.cache
+
+# === 開發工具設定 ===
+.editorconfig
+.cursorrules
+tsconfig.json
+# vite.config.js  # 前端建構需要
+# package.json    # 前端建構需要
+# package-lock.json # 前端建構需要
+# composer.json   # PHP 依賴安裝需要
+# composer.lock   # PHP 依賴安裝需要
+
+# === Docker 相關 ===
+Dockerfile
+docker-compose*.yml
+Makefile
+
+# === 臨時檔案 ===
+*.log
+*.tmp
+*.temp 

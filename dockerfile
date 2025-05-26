@@ -1,19 +1,7 @@
 # Dockerfile for Laravel + Vue 混合專案
-# 採用多階段建構：Node.js 建構前端，PHP 運行後端
+# 假設前端已在本地建構完成
 
-# === 第一階段：前端建構 ===
-FROM node:20-alpine as node_builder
-
-WORKDIR /app
-
-# 複製前端相關檔案
-COPY package*.json vite.config.js ./
-COPY resources ./resources
-
-# 安裝依賴並建構前端資源
-RUN npm install && npm run build
-
-# === 第二階段：後端執行環境 ===
+# === PHP 執行環境 ===
 FROM php:8.2-fpm
 
 # 安裝系統依賴與 PHP 擴充
@@ -36,14 +24,15 @@ COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
 # 設定工作目錄
 WORKDIR /var/www
 
-# 複製專案檔案
+# 複製專案檔案（.dockerignore 會自動排除不需要的檔案）
 COPY . .
 
-# 複製前端建構結果
-COPY --from=node_builder /app/public/build ./public/build
+# 建立必要目錄並設定權限
+RUN mkdir -p bootstrap/cache storage/logs storage/framework/cache storage/framework/sessions storage/framework/views \
+    && chown -R www-data:www-data bootstrap/cache storage
 
 # 安裝 PHP 依賴
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 # 設定目錄權限
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/database
