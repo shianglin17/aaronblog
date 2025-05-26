@@ -21,9 +21,6 @@
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: aaronlei17/aaronblog-app:latest
     container_name: aaronblog-app
     env_file:
