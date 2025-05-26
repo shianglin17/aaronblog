@@ -27,7 +27,7 @@ services:
     image: aaronblog-app:latest
     container_name: aaronblog-app
     env_file:
-      - .env.gcp
+      - .env
     volumes:
       # GCP 環境只掛載 SQLite 資料庫檔案
       - sqlite-data:/var/www/database
