@@ -28,6 +28,7 @@ services:
     volumes:
       # GCP 環境只掛載 SQLite 資料庫檔案
       - sqlite-data:/var/www/database
+      - .env:/var/www/.env
     environment:
       - APP_DEBUG=false
       - APP_ENV=production
