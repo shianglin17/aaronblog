@@ -42,6 +42,9 @@ services:
     depends_on: []
     networks:
       - aaronblog-net
+    # 暴露 PHP-FPM 端口（內部通訊用）
+    expose:
+      - "9000"
     healthcheck:
       test: ["CMD", "php", "artisan", "tinker", "--execute=echo 'OK';"]
       interval: 60s
