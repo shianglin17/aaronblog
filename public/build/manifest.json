@@ -1,0 +1,84 @@
+{
+  "_FormModal-!~{006}~.js": {
+    "file": "assets/FormModal-zZOoafyE.css",
+    "src": "_FormModal-!~{006}~.js"
+  },
+  "_FormModal-YKquRykX.js": {
+    "file": "assets/FormModal-YKquRykX.js",
+    "name": "FormModal",
+    "imports": [
+      "resources/js/app.ts"
+    ],
+    "css": [
+      "assets/FormModal-zZOoafyE.css"
+    ]
+  },
+  "_categoryApi-CWwyYJ-L.js": {
+    "file": "assets/categoryApi-CWwyYJ-L.js",
+    "name": "categoryApi",
+    "imports": [
+      "resources/js/app.ts"
+    ]
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-l0sNRNKZ.js",
+    "name": "app",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.ts": {
+    "file": "assets/app-BT4Ucd5t.js",
+    "name": "app",
+    "src": "resources/js/app.ts",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/pages/admin/ArticleManagement.vue",
+      "resources/js/pages/admin/TagManagement.vue",
+      "resources/js/pages/admin/CategoryManagement.vue"
+    ],
+    "css": [
+      "assets/app-BQA-OQNd.css"
+    ]
+  },
+  "resources/js/pages/admin/ArticleManagement.vue": {
+    "file": "assets/ArticleManagement-BBrkZXF_.js",
+    "name": "ArticleManagement",
+    "src": "resources/js/pages/admin/ArticleManagement.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_FormModal-YKquRykX.js",
+      "resources/js/app.ts",
+      "_categoryApi-CWwyYJ-L.js"
+    ],
+    "css": [
+      "assets/ArticleManagement-CpFDEilE.css"
+    ]
+  },
+  "resources/js/pages/admin/CategoryManagement.vue": {
+    "file": "assets/CategoryManagement-DOCZjjvr.js",
+    "name": "CategoryManagement",
+    "src": "resources/js/pages/admin/CategoryManagement.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_FormModal-YKquRykX.js",
+      "resources/js/app.ts",
+      "_categoryApi-CWwyYJ-L.js"
+    ],
+    "css": [
+      "assets/CategoryManagement-N_hYN6ff.css"
+    ]
+  },
+  "resources/js/pages/admin/TagManagement.vue": {
+    "file": "assets/TagManagement-iHOOgXA4.js",
+    "name": "TagManagement",
+    "src": "resources/js/pages/admin/TagManagement.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_FormModal-YKquRykX.js",
+      "resources/js/app.ts"
+    ],
+    "css": [
+      "assets/TagManagement-DV1WBf6K.css"
+    ]
+  }
+}
