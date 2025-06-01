@@ -82,6 +82,7 @@ import {
 import Footer from '../components/Footer.vue';
 import { articleApi } from '../api/index';
 import type { Article } from '../types/article';
+import { formatDate } from '../utils/date';
 
 // 定義接收的 props
 const props = defineProps<{
@@ -122,16 +123,6 @@ onMounted(async () => {
 // 返回上一頁
 const goBack = () => {
   router.back();
-};
-
-// 格式化日期
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('zh-TW', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
 };
 </script>
 

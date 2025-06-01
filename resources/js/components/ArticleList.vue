@@ -87,6 +87,7 @@ import {
 import type { Article } from '../types/article';
 import type { PaginationMeta } from '../types/common';
 import { useRouter } from 'vue-router';
+import { formatDate } from '../utils/date';
 
 const props = defineProps<{
   articles: Article[];
@@ -116,16 +117,6 @@ const navigateToArticle = (article: Article) => {
 // 處理分頁變更
 const handlePageChange = (page: number) => {
   emit('page-change', page);
-};
-
-// 格式化日期
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('zh-TW', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
 };
 </script>
 

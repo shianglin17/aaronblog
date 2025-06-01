@@ -26,14 +26,9 @@ services:
     env_file:
       - .env
     volumes:
-      # GCP 環境只掛載 SQLite 資料庫檔案
+      # GCP 環境使用 Docker Volume 掛載 SQLite 資料庫
       - sqlite-data:/var/www/database
       - .env:/var/www/.env
-    environment:
-      - APP_DEBUG=false
-      - APP_ENV=production
-      - DB_CONNECTION=sqlite
-      - DB_DATABASE=/var/www/database/database.sqlite
     # 記憶體限制，適合免費層 VM (1GB RAM)
     mem_limit: 512m
     mem_reservation: 256m
