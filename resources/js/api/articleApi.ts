@@ -27,12 +27,6 @@ export const articleApi = {
       http.put(API_ROUTES.ADMIN.ARTICLE.UPDATE(params.id), params.data).then(r => r.data)) as ApiFunction<Article, {id: number; data: Partial<CreateArticleParams>}>,
     
     delete: ((id: number) => 
-      http.delete(API_ROUTES.ADMIN.ARTICLE.DELETE(id)).then(r => r.data)) as ApiFunction<null, number>,
-    
-    setDraft: ((id: number) => 
-      http.patch(API_ROUTES.ADMIN.ARTICLE.DRAFT(id)).then(r => r.data)) as ApiFunction<Article, number>,
-    
-    setPublish: ((id: number) => 
-      http.patch(API_ROUTES.ADMIN.ARTICLE.PUBLISH(id)).then(r => r.data)) as ApiFunction<Article, number>
+      http.delete(API_ROUTES.ADMIN.ARTICLE.DELETE(id)).then(r => r.data)) as ApiFunction<null, number>
   }
 }; 

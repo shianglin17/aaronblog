@@ -116,36 +116,4 @@ class ArticleService
         // 軟刪除文章
         return $this->repository->deleteArticle($article);
     }
-
-    /**
-     * 發佈文章
-     *
-     * @param int $id 文章ID
-     * @return Article|null
-     */
-    public function publishArticle(int $id): ?Article
-    {
-        $article = $this->getArticleById($id);
-        if (!$article) {
-            return null;
-        }
-
-        return $this->updateArticle($id, ['status' => Article::STATUS_PUBLISHED]);
-    }
-
-    /**
-     * 將文章設為草稿
-     *
-     * @param int $id 文章ID
-     * @return Article|null
-     */
-    public function draftArticle(int $id): ?Article
-    {
-        $article = $this->getArticleById($id);
-        if (!$article) {
-            return null;
-        }
-
-        return $this->updateArticle($id, ['status' => Article::STATUS_DRAFT]);
-    }
 } 

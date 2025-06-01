@@ -17,8 +17,6 @@
 - `POST /api/article` - 創建文章（需管理員權限）
 - `PUT /api/article/{id}` - 更新文章（需管理員權限）
 - `DELETE /api/article/{id}` - 刪除文章（需管理員權限）
-- `PATCH /api/article/{id}/publish` - 發布文章（需管理員權限）
-- `PATCH /api/article/{id}/draft` - 將文章設為草稿（需管理員權限）
 
 ### 分類 API
 - `GET /api/categories` - 獲取所有分類

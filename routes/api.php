@@ -38,8 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', [ArticleController::class, 'store']);
             Route::put('/{id}', [ArticleController::class, 'update'])->where('id', '[0-9]+');
             Route::delete('/{id}', [ArticleController::class, 'destroy'])->where('id', '[0-9]+');
-            Route::patch('/{id}/publish', [ArticleController::class, 'publish'])->where('id', '[0-9]+');
-            Route::patch('/{id}/draft', [ArticleController::class, 'draft'])->where('id', '[0-9]+');
         });
         
         // 標籤管理

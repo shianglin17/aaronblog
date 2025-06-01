@@ -25,9 +25,7 @@ export const API_ROUTES = {
       LIST: '/admin/article/list',
       CREATE: '/admin/article',
       UPDATE: (id: number) => `/admin/article/${id}`,
-      DELETE: (id: number) => `/admin/article/${id}`,
-      DRAFT: (id: number) => `/admin/article/${id}/draft`,
-      PUBLISH: (id: number) => `/admin/article/${id}/publish`
+      DELETE: (id: number) => `/admin/article/${id}`
     },
     TAG: {
       CREATE: '/admin/tags',

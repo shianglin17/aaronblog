@@ -115,44 +115,4 @@ class ArticleController extends Controller
 
         return ResponseMaker::success(message: '文章刪除成功');
     }
-
-    /**
-     * 發佈文章
-     * @param int $id 文章ID
-     * 
-     * @return JsonResponse
-     */
-    public function publish(int $id): JsonResponse
-    {
-        $article = $this->articleService->publishArticle($id);
-
-        if (!$article) {
-            return ResponseMaker::error('文章不存在', 404);
-        }
-
-        return ResponseMaker::success(
-            data: $this->articleTransformer->transform($article),
-            message: '文章已發佈'
-        );
-    }
-
-    /**
-     * 將文章設為草稿
-     * @param int $id 文章ID
-     * 
-     * @return JsonResponse
-     */
-    public function draft(int $id): JsonResponse
-    {
-        $article = $this->articleService->draftArticle($id);
-
-        if (!$article) {
-            return ResponseMaker::error('文章不存在', 404);
-        }
-
-        return ResponseMaker::success(
-            data: $this->articleTransformer->transform($article),
-            message: '文章已設為草稿'
-        );
-    }
 }
