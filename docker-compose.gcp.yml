@@ -26,6 +26,7 @@ services:
     env_file:
       - .env
     volumes:
+      - ./public:/var/www/public:ro
       # GCP 環境使用 Docker Volume 掛載 SQLite 資料庫
       - sqlite-data:/var/www/database
       - .env:/var/www/.env
