@@ -50,7 +50,15 @@ export const ARTICLE_COLUMNS = [
 export const CATEGORY_COLUMNS = [
   { title: '名稱', key: 'name', sorter: true },
   { title: 'Slug', key: 'slug' },
-  { title: '描述', key: 'description' }
+  { title: '描述', key: 'description' },
+  { 
+    title: '建立時間', 
+    key: 'created_at', 
+    sorter: true,
+    render(row: any) {
+      return formatDateTime(row.created_at);
+    }
+  }
 ];
 
 // 標籤表格列
