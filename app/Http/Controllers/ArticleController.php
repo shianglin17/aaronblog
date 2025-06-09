@@ -31,7 +31,7 @@ class ArticleController extends Controller
      * 
      * @return JsonResponse
      */
-    public function list(ListArticlesRequest $request): JsonResponse
+    public function index(ListArticlesRequest $request): JsonResponse
     {
         $param = $request->validated();
         $articles = $this->articleService->getArticles($param);

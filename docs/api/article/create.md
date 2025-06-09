@@ -5,7 +5,7 @@
 此接口用於創建新文章。
 
 - 請求方式：POST
-- 請求地址：`/api/admin/article`
+- 請求地址：`/api/admin/articles`
 - 需要認證：是
 
 ## 請求參數

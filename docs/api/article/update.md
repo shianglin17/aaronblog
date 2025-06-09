@@ -5,7 +5,7 @@
 此接口用於更新現有文章。
 
 - 請求方式：PUT
-- 請求地址：`/api/admin/article/{id}`
+- 請求地址：`/api/admin/articles/{id}`
 - 需要認證：是
 
 ## 請求參數

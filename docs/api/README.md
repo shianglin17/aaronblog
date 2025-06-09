@@ -19,8 +19,11 @@
 
 ## 文章相關 API
 
-- [取得文章列表](./article/list.md) - 獲取文章列表，支援分頁和搜尋
-- [取得單篇文章](./article/show.md) - 獲取單篇文章的詳細資料
+- [取得文章列表](./article/list.md) - 獲取文章列表，支援分頁和搜尋 (`GET /api/articles`)
+- [取得單篇文章](./article/show.md) - 獲取單篇文章的詳細資料 (`GET /api/articles/{id}`)
+- [創建文章](./article/create.md) - 創建新文章 (`POST /api/admin/articles`)
+- [更新文章](./article/update.md) - 更新現有文章 (`PUT /api/admin/articles/{id}`)
+- [刪除文章](./article/delete.md) - 刪除文章 (`DELETE /api/admin/articles/{id}`)
 
 ## 分類和標籤 API
 

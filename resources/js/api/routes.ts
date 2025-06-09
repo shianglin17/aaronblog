@@ -5,11 +5,11 @@
 
 export const API_ROUTES = {
   ARTICLE: {
-    LIST: '/article/list',
-    DETAIL: (id: number) => `/article/${id}`,
-    CREATE: '/article',
-    UPDATE: (id: number) => `/article/${id}`,
-    DELETE: (id: number) => `/article/${id}`,
+    LIST: '/articles',
+    DETAIL: (id: number) => `/articles/${id}`,
+    CREATE: '/articles',
+    UPDATE: (id: number) => `/articles/${id}`,
+    DELETE: (id: number) => `/articles/${id}`,
     CATEGORIES: '/categories'
   },
   TAG: {
@@ -22,10 +22,10 @@ export const API_ROUTES = {
   },
   ADMIN: {
     ARTICLE: {
-      LIST: '/admin/article/list',
-      CREATE: '/admin/article',
-      UPDATE: (id: number) => `/admin/article/${id}`,
-      DELETE: (id: number) => `/admin/article/${id}`
+      LIST: '/admin/articles',
+      CREATE: '/admin/articles',
+      UPDATE: (id: number) => `/admin/articles/${id}`,
+      DELETE: (id: number) => `/admin/articles/${id}`
     },
     TAG: {
       CREATE: '/admin/tags',

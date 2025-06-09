@@ -27,14 +27,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=&status=published&category=technology&tags[]=laravel&tags[]=php",
+              "raw": "{{baseUrl}}/api/articles?page=1&per_page=15&sort_by=created_at&sort_direction=desc&search=&status=published&category=technology&tags[]=laravel&tags[]=php",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "article",
-                "list"
+                "articles"
               ],
               "query": [
                 {
@@ -92,7 +91,7 @@
               "originalRequest": {
                 "method": "GET",
                 "url": {
-                  "raw": "{{baseUrl}}/api/article/list?page=1&per_page=15"
+                  "raw": "{{baseUrl}}/api/articles?page=1&per_page=15"
                 }
               },
               "status": "OK",
@@ -107,7 +106,7 @@
               "originalRequest": {
                 "method": "GET",
                 "url": {
-                  "raw": "{{baseUrl}}/api/article/list?page=0&per_page=15"
+                  "raw": "{{baseUrl}}/api/articles?page=0&per_page=15"
                 }
               },
               "status": "Unprocessable Entity",
@@ -137,13 +136,13 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/article/:id",
+              "raw": "{{baseUrl}}/api/articles/:id",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "article",
+                "articles",
                 ":id"
               ],
               "variable": [
@@ -162,7 +161,7 @@
               "originalRequest": {
                 "method": "GET",
                 "url": {
-                  "raw": "{{baseUrl}}/api/article/1"
+                  "raw": "{{baseUrl}}/api/articles/1"
                 }
               },
               "status": "OK",
@@ -177,7 +176,7 @@
               "originalRequest": {
                 "method": "GET",
                 "url": {
-                  "raw": "{{baseUrl}}/api/article/999"
+                  "raw": "{{baseUrl}}/api/articles/999"
                 }
               },
               "status": "Not Found",
@@ -200,11 +199,6 @@
                 "type": "text"
               },
               {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token}}",
                 "type": "text"
@@ -212,7 +206,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"新文章標題\",\n  \"content\": \"這是新文章的內容...\",\n  \"category_id\": 1,\n  \"status\": \"draft\",\n  \"tags\": [1, 2]\n}",
+              "raw": "{\n  \"title\": \"測試文章\",\n  \"slug\": \"test-article\",\n  \"description\": \"這是一篇測試文章的摘要...\",\n  \"content\": \"這是一篇測試文章的內容...\",\n  \"category_id\": 1,\n  \"status\": \"draft\",\n  \"tags\": [1, 2]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -220,17 +214,17 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/article",
+              "raw": "{{baseUrl}}/api/admin/articles",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "admin",
-                "article"
+                "articles"
               ]
             },
-            "description": "創建新文章。請求體參數說明：\n- title: 必填 - String - 文章標題，不超過 255 個字符\n- content: 必填 - String - 文章內容\n- category_id: 選填 - Integer - 分類 ID\n- description: 選填 - String - 文章摘要\n- status: 選填 - String - 文章狀態，可選值：draft（草稿）、published（已發佈），默認為 draft\n- tags: 選填 - Array<Integer> - 標籤 ID 數組，必須使用陣列格式 [1, 2, 3]"
+            "description": "創建新文章。請求體參數說明：\n- title: 必填 - String - 文章標題，不超過 255 個字符\n- slug: 必填 - String - 文章 URL 標識符，僅允許英文、數字和連字符，不超過 255 個字符，必須唯一\n- description: 必填 - String - 文章摘要，顯示於列表頁及 SEO 描述，建議 150-160 字內\n- content: 必填 - String - 文章完整內容\n- category_id: 選填 - Integer - 分類 ID\n- status: 選填 - String - 文章狀態，可選值：draft（草稿）、published（已發佈），默認為 draft\n- tags: 選填 - Array<Integer> - 標籤 ID 數組，必須使用陣列格式 [1, 2, 3]"
           },
           "response": [
             {
@@ -240,11 +234,10 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"新文章標題\",\n  \"content\": \"這是新文章的內容...\",\n  \"category_id\": 1,\n  \"status\": \"draft\",\n  \"tags\": [1, 2]\n}",
-                  "description": "這是新文章的摘要..."
+                  "raw": "{\n  \"title\": \"測試文章\",\n  \"slug\": \"test-article\",\n  \"description\": \"這是一篇測試文章的摘要...\",\n  \"content\": \"這是一篇測試文章的內容...\",\n  \"category_id\": 1,\n  \"status\": \"draft\",\n  \"tags\": [1, 2]\n}"
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/admin/article"
+                  "raw": "{{baseUrl}}/api/admin/articles"
                 }
               },
               "status": "Created",
@@ -252,7 +245,7 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n  \"status\": \"success\",\n  \"code\": 201,\n  \"message\": \"文章創建成功\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"新文章標題\",\n    \"slug\": \"new-article-title\",\n    \"content\": \"這是新文章的內容...\",\n    \"status\": \"draft\",\n    \"author\": {\n      \"id\": 1,\n      \"name\": \"管理員\"\n    },\n    \"category\": {\n      \"id\": 1,\n      \"name\": \"技術分享\",\n      \"slug\": \"technology-sharing\"\n    },\n    \"tags\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laravel\",\n        \"slug\": \"laravel\"\n      },\n      {\n        \"id\": 2,\n        \"name\": \"Vue.js\",\n        \"slug\": \"vue-js\"\n      }\n    ],\n    \"created_at\": \"2023-05-09T12:34:56.000000Z\",\n    \"updated_at\": \"2023-05-09T12:34:56.000000Z\"\n  }\n}"
+              "body": "{\n  \"status\": \"success\",\n  \"code\": 201,\n  \"message\": \"文章創建成功\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"測試文章\",\n    \"slug\": \"test-article\",\n    \"description\": \"這是一篇測試文章的摘要...\",\n    \"content\": \"這是一篇測試文章的內容...\",\n    \"status\": \"draft\",\n    \"author\": {\n      \"id\": 1,\n      \"name\": \"管理員\"\n    },\n    \"category\": {\n      \"id\": 1,\n      \"name\": \"技術分享\",\n      \"slug\": \"technology-sharing\"\n    },\n    \"tags\": [\n      {\n        \"id\": 1,\n        \"name\": \"Laravel\",\n        \"slug\": \"laravel\"\n      },\n      {\n        \"id\": 2,\n        \"name\": \"Vue.js\",\n        \"slug\": \"vue-js\"\n      }\n    ],\n    \"created_at\": \"2023-05-09T12:34:56.000000Z\",\n    \"updated_at\": \"2023-05-09T12:34:56.000000Z\"\n  }\n}"
             },
             {
               "name": "驗證錯誤回應範例",
@@ -261,10 +254,10 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"content\": \"這是新文章的內容...\",\n  \"category_id\": 1,\n  \"tags\": [1, 2]\n}"
+                  "raw": "{\n  \"title\": \"\",\n  \"slug\": \"invalid slug!\",\n  \"description\": \"\"\n}"
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/admin/article"
+                  "raw": "{{baseUrl}}/api/admin/articles"
                 }
               },
               "status": "Unprocessable Entity",
@@ -272,7 +265,7 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n  \"status\": \"error\",\n  \"code\": 422,\n  \"message\": \"驗證錯誤\",\n  \"meta\": {\n    \"errors\": {\n      \"title\": [\n        \"標題不能為空\"\n      ]\n    }\n  }\n}"
+              "body": "{\n  \"status\": \"error\",\n  \"code\": 422,\n  \"message\": \"驗證錯誤\",\n  \"meta\": {\n    \"errors\": {\n      \"title\": [\n        \"標題不能為空\"\n      ],\n      \"slug\": [\n        \"Slug只能包含字母、數字、連字符和底線\"\n      ],\n      \"description\": [\n        \"文章描述不能為空\"\n      ]\n    }\n  }\n}"
             }
           ]
         },
@@ -283,11 +276,6 @@
             "header": [
               {
                 "key": "Accept",
-                "value": "application/json",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
                 "value": "application/json",
                 "type": "text"
               },
@@ -307,14 +295,14 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/article/:id",
+              "raw": "{{baseUrl}}/api/admin/articles/:id",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "admin",
-                "article",
+                "articles",
                 ":id"
               ],
               "variable": [
@@ -339,7 +327,7 @@
                   "description": "這是更新後的文章摘要..."
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/admin/article/1"
+                  "raw": "{{baseUrl}}/api/admin/articles/1"
                 }
               },
               "status": "OK",
@@ -359,7 +347,7 @@
                   "raw": "{\n  \"title\": \"已存在的文章標題\"\n}"
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/admin/article/1"
+                  "raw": "{{baseUrl}}/api/admin/articles/1"
                 }
               },
               "status": "Unprocessable Entity",
@@ -379,7 +367,7 @@
                   "raw": "{\n  \"title\": \"更新後的文章標題\"\n}"
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/admin/article/999"
+                  "raw": "{{baseUrl}}/api/admin/articles/999"
                 }
               },
               "status": "Not Found",
@@ -408,14 +396,14 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/article/:id",
+              "raw": "{{baseUrl}}/api/admin/articles/:id",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "admin",
-                "article",
+                "articles",
                 ":id"
               ],
               "variable": [
@@ -435,7 +423,7 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/admin/article/1"
+                  "raw": "{{baseUrl}}/api/admin/articles/1"
                 }
               },
               "status": "OK",
@@ -451,7 +439,7 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/admin/article/999"
+                  "raw": "{{baseUrl}}/api/admin/articles/999"
                 }
               },
               "status": "Not Found",

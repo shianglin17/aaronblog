@@ -6,7 +6,7 @@
 
 **請求方法**
 ```
-GET /api/article/list
+GET /api/articles
 ```
 
 **請求標頭**

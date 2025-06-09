@@ -5,7 +5,7 @@
 此接口用於刪除文章，實際是軟刪除，將文章標記為已刪除。
 
 - 請求方式：DELETE
-- 請求地址：`/api/admin/article/{id}`
+- 請求地址：`/api/admin/articles/{id}`
 - 需要認證：是
 
 ## 請求參數

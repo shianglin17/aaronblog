@@ -140,8 +140,8 @@ class ListArticlesRequest extends FormRequest
      * 前置處理請求資料
      * 
      * 基於路由的認證感知參數處理：
-     * 1. 公開路由 (/api/article/list)：強制只顯示已發布文章，確保公開內容的安全性
-     * 2. 管理路由 (/api/admin/article/list)：需要通過認證，認證後可彈性控制 status 參數
+     * 1. 公開路由 (/api/articles)：強制只顯示已發布文章，確保公開內容的安全性
+     * 2. 管理路由 (/api/admin/articles)：需要通過認證，認證後可彈性控制 status 參數
      * 3. 認證用戶若未指定狀態，預設顯示所有狀態文章以便管理
      */
     protected function prepareForValidation(): void
@@ -170,10 +170,10 @@ class ListArticlesRequest extends FormRequest
             $mergeData['tags'] = [];
         }
 
-        if (request()->is('api/article/list')) {
+        if (request()->is('api/articles')) {
             // 公開路由：強制只顯示已發布文章，確保未認證用戶只能看到公開內容
             $mergeData['status'] = Article::STATUS_PUBLISHED;
-        } else if (request()->is('api/admin/article/list') && Auth::check()) {
+        } else if (request()->is('api/admin/articles') && Auth::check()) {
             // 管理路由且已指定狀態：允許認證用戶透過參數控制查詢範圍
             $mergeData['status'] = $this->input('status');
         }
