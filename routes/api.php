@@ -12,10 +12,10 @@ Route::get('/', function() {
 });
 
 // 公開內容 API - 使用 RESTful 資源路由
-  Route::prefix('articles')->group(function () {
-      Route::get('/', [ArticleController::class, 'index']);
-      Route::get('/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+');
-  });
+Route::prefix('articles')->group(function () {
+    Route::get('/', [ArticleController::class, 'index']);
+    Route::get('/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+');
+});
 
 // 分類相關路由
 Route::prefix('categories')->group(function () {
