@@ -21,8 +21,8 @@
 
 1. 本地```docker buildx build --platform linux/amd64 -t aaronlei17/aaronblog-app:latest --push .```
 2. GCP VM 直接 ```docker pull aaronlei17/aaronblog-app:latest```
-3. GCP VM ```docker-compose.gcp.yml down```
-4. GCP VM ```docker-compose.gcp.yml up -d```
+3. GCP VM ```docker-compose -f docker-compose.gcp.yml down```
+4. GCP VM ```docker-compose -f docker-compose.gcp.yml up -d```
 
 ## 前端修改後推上正式環境流程
 
