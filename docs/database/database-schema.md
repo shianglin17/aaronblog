@@ -13,7 +13,6 @@
 | category_id| bigint      | unsigned, nullable      | 分類 ID      |
 | created_at | timestamp   | nullable                | 建立時間      |
 | updated_at | timestamp   | nullable                | 更新時間      |
-| deleted_at | timestamp   | nullable                | 軟刪除時間    |
 
 索引：
 - PRIMARY KEY (`id`)
@@ -31,7 +30,6 @@
 | description| text        | not null                | 分類描述      |
 | created_at | timestamp   | nullable                | 建立時間      |
 | updated_at | timestamp   | nullable                | 更新時間      |
-| deleted_at | timestamp   | nullable                | 軟刪除時間    |
 
 索引：
 - PRIMARY KEY (`id`)
@@ -46,7 +44,6 @@
 | name       | varchar(50) | not null                | 標籤名稱      |
 | created_at | timestamp   | nullable                | 建立時間      |
 | updated_at | timestamp   | nullable                | 更新時間      |
-| deleted_at | timestamp   | nullable                | 軟刪除時間    |
 
 索引：
 - PRIMARY KEY (`id`)
@@ -176,13 +173,8 @@
    - 所有表都包含 `created_at` 和 `updated_at` 時間戳記
    - 用於追蹤記錄的建立和更新時間
 
-5. **軟刪除機制**
-   - 文章、分類和標籤都實作了軟刪除機制
-   - 使用 `deleted_at` 欄位標記刪除時間
-   - 當記錄被「刪除」時，實際上只是設置 `deleted_at` 時間戳記
-   - 預設的查詢會自動排除已軟刪除的記錄
-   - 可以使用特定方法查詢或恢復已軟刪除的記錄：
-     - `withTrashed()`: 包含已刪除的記錄
-     - `onlyTrashed()`: 只查詢已刪除的記錄
-     - `restore()`: 恢復已刪除的記錄
-     - `forceDelete()`: 永久刪除記錄 
+5. **刪除策略**
+   - 使用硬刪除（Hard Delete）
+   - 刪除記錄時會直接從資料庫中移除
+   - 透過外鍵約束處理關聯資料的清理
+   - 建議在刪除前進行資料備份 

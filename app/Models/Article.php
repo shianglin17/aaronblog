@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Article 文章模型
@@ -20,7 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $user_id 作者 ID
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon|null $deleted_at
  *
  * @property-read Category $category
  * @property-read User $author
@@ -28,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Article extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * 文章狀態：草稿
@@ -52,7 +50,7 @@ class Article extends Model
         'content',
         'status',
         'category_id',
-        'user_id',
+        'user_id'
     ];
 
     /**
