@@ -10,8 +10,8 @@ services:
       - .env
     volumes:
       - ./public:/var/www/public:ro
-      # GCP 環境使用新的專用 volume 只掛載 SQLite 檔案
-      - sqlite-db-file:/var/www/database/database.sqlite
+      # SQLite 資料庫檔案掛載到 storage 目錄（Laravel 最佳實踐）
+      - sqlite-storage:/var/www/storage/app/database
       - .env:/var/www/.env
     # 記憶體限制，適合免費層 VM (1GB RAM)
     mem_limit: 512m
@@ -52,7 +52,7 @@ services:
   # MySQL 服務已移除，使用 SQLite
 
 volumes:
-  sqlite-db-file:
+  sqlite-storage:
     driver: local
 
 networks:
