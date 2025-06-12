@@ -28,13 +28,13 @@ WORKDIR /var/www
 COPY . .
 
 # 建立必要目錄並設定權限
-RUN mkdir -p bootstrap/cache storage/logs storage/framework/cache storage/framework/sessions storage/framework/views \
+RUN mkdir -p bootstrap/cache storage/logs storage/framework/cache storage/framework/sessions storage/framework/views storage/app/database \
     && chown -R www-data:www-data bootstrap/cache storage
 
 # 安裝 PHP 依賴
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
-# 設定目錄權限
+# 設定目錄權限（包含新的 database 目錄）
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/database
 
 # 啟動 PHP-FPM
