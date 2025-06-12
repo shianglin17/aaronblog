@@ -22,12 +22,8 @@ services:
     # 暴露 PHP-FPM 端口（內部通訊用）
     expose:
       - "9000"
-    healthcheck:
-      test: ["CMD", "php", "artisan", "tinker", "--execute=echo 'OK';"]
-      interval: 60s
-      timeout: 10s
-      retries: 2
-      start_period: 60s
+    depends_on:
+      - redis
 
   nginx:
     image: nginx:alpine
@@ -47,6 +43,20 @@ services:
     # 記憶體限制
     mem_limit: 128m
     mem_reservation: 64m
+    restart: unless-stopped
+
+  # Redis 快取服務
+  redis:
+    image: redis:7-alpine
+    container_name: aaronblog-redis
+    # 基本記憶體限制
+    mem_limit: 128m
+    # 最重要的配置：限制記憶體使用量
+    command: redis-server --maxmemory 100mb --maxmemory-policy allkeys-lru
+    expose:
+      - "6379"
+    networks:
+      - aaronblog-net
     restart: unless-stopped
 
 volumes:
