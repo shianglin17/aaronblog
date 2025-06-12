@@ -5,7 +5,7 @@ version: '3.8'
 
 services:
   app:
-    image: aaronlei17/aaronblog-app:latest
+    build: .
     container_name: aaronblog-app
     env_file:
       - .env.development
@@ -17,6 +17,7 @@ services:
       - APP_ENV=local
     depends_on:
       - mysql
+      - redis
     networks:
       - aaronblog-net
 
@@ -45,6 +46,14 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-secret}
     volumes:
       - mysql-dev-data:/var/lib/mysql
+    networks:
+      - aaronblog-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: aaronblog-redis
+    ports:
+      - "6380:6379"  # 開發環境使用非標準端口
     networks:
       - aaronblog-net
 

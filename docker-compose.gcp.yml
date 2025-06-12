@@ -49,8 +49,6 @@ services:
     mem_reservation: 64m
     restart: unless-stopped
 
-  # MySQL 服務已移除，使用 SQLite
-
 volumes:
   sqlite-storage:
     driver: local

@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     && docker-php-ext-install pdo_mysql pdo_sqlite \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && rm -rf /var/lib/apt/lists/*
 
 # 安裝 Composer
