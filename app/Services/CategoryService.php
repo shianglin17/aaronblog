@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
+use App\Services\Cache\CategoryCacheService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
@@ -15,32 +16,46 @@ class CategoryService
     protected CategoryRepository $repository;
 
     /**
-     * @param CategoryRepository $repository
+     * @var CategoryCacheService
      */
-    public function __construct(CategoryRepository $repository)
-    {
+    protected CategoryCacheService $cacheService;
+
+    /**
+     * @param CategoryRepository $repository
+     * @param CategoryCacheService $cacheService
+     */
+    public function __construct(
+        CategoryRepository $repository,
+        CategoryCacheService $cacheService
+    ) {
         $this->repository = $repository;
+        $this->cacheService = $cacheService;
     }
 
     /**
-     * 獲取所有分類
+     * 獲取所有分類（含快取）
      *
      * @return Collection
      */
     public function getAllCategories(): Collection
     {
-        return $this->repository->getAllCategories();
+        return $this->cacheService->cacheCategoryList(
+            fn() => $this->repository->getAllCategories()
+        );
     }
 
     /**
-     * 獲取指定ID的分類
+     * 獲取指定ID的分類（含快取）
      *
      * @param int $id 分類ID
      * @return Category|null
      */
     public function getCategoryById(int $id): ?Category
     {
-        return $this->repository->getCategoryById($id);
+        return $this->cacheService->cacheCategoryDetail(
+            $id,
+            fn() => $this->repository->getCategoryById($id)
+        );
     }
 
     /**
@@ -51,10 +66,12 @@ class CategoryService
      */
     public function createCategory(array $data): Category
     {
-        // 在這裡不需要自動生成 slug，因為 slug 已設為必填
-        // 但如果需要進行其他處理，可以在這裡添加
-
-        return $this->repository->createCategory($data);
+        $category = $this->repository->createCategory($data);
+        
+        // 清除分類列表快取
+        $this->cacheService->clearListCache();
+        
+        return $category;
     }
 
     /**
@@ -72,6 +89,10 @@ class CategoryService
         }
 
         $this->repository->updateCategory($category, $data);
+        
+        // 清除該分類的所有相關快取
+        $this->cacheService->clearCategoryAllCache($id);
+        
         return $category->refresh();
     }
 
@@ -95,6 +116,13 @@ class CategoryService
             $category->articles()->update(['category_id' => null]);
         }
         
-        return $this->repository->deleteCategory($category);
+        $result = $this->repository->deleteCategory($category);
+        
+        // 刪除成功後清除相關快取
+        if ($result) {
+            $this->cacheService->clearCategoryAllCache($id);
+        }
+        
+        return $result;
     }
 } 

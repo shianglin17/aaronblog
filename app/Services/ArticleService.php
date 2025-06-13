@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Article;
 use App\Repositories\ArticleRepository;
+use App\Services\Cache\ArticleCacheService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,32 +16,50 @@ class ArticleService
     protected ArticleRepository $repository;
 
     /**
-     * @param ArticleRepository $repository
+     * @var ArticleCacheService
      */
-    public function __construct(ArticleRepository $repository)
-    {
+    protected ArticleCacheService $cacheService;
+
+    /**
+     * @param ArticleRepository $repository
+     * @param ArticleCacheService $cacheService
+     */
+    public function __construct(
+        ArticleRepository $repository,
+        ArticleCacheService $cacheService
+    ) {
         $this->repository = $repository;
+        $this->cacheService = $cacheService;
     }
 
     /**
-     * 獲取所有文章列表
+     * 獲取所有文章列表（含快取）
      *
+     * @param array $param 查詢參數
      * @return LengthAwarePaginator
      */
-    public function getArticles(Array $param): LengthAwarePaginator
+    public function getArticles(array $param): LengthAwarePaginator
     {
-        return $this->repository->getArticles($param);
+        // 使用快取服務
+        return $this->cacheService->cacheArticleList(
+            $param,
+            fn() => $this->repository->getArticles($param)
+        );
     }
     
     /**
-     * 獲取單篇文章詳情
+     * 獲取單篇文章詳情（含快取）
      *
      * @param int $id 文章ID
      * @return Article|null
      */
     public function getArticleById(int $id): ?Article
     {
-        return $this->repository->getArticleById($id);
+        // 使用快取服務
+        return $this->cacheService->cacheArticleDetail(
+            $id,
+            fn() => $this->repository->getArticleById($id)
+        );
     }
 
     /**
@@ -69,6 +88,9 @@ class ArticleService
             $article->tags()->sync($data['tags']);
         }
 
+        // 清除相關快取
+        $this->cacheService->clearAllListCache();
+
         return $article;
     }
 
@@ -94,6 +116,9 @@ class ArticleService
             $article->tags()->sync($data['tags']);
         }
 
+        // 清除該文章的所有相關快取
+        $this->cacheService->clearArticleAllCache($id);
+
         return $article->refresh();
     }
 
@@ -114,6 +139,13 @@ class ArticleService
         $article->tags()->detach();
 
         // 軟刪除文章
-        return $this->repository->deleteArticle($article);
+        $result = $this->repository->deleteArticle($article);
+
+        // 刪除成功後清除相關快取
+        if ($result) {
+            $this->cacheService->clearArticleAllCache($id);
+        }
+
+        return $result;
     }
 } 
