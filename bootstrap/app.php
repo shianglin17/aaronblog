@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [
             // API 請求的中間件
             EnsureFrontendRequestsAreStateful::class,
+            'throttle:api',
         ]);
     
         // 添加命名中間件

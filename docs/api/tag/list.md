@@ -32,33 +32,39 @@ Accept: application/json
 
 ```json
 {
+  "status": "success",
   "code": 200,
   "message": "所有標籤",
   "data": [
     {
       "id": 1,
       "name": "Laravel",
-      "slug": "laravel"
+      "slug": "laravel",
+      "created_at": "2024-03-20T12:00:00.000000Z"
     },
     {
       "id": 2,
       "name": "Vue.js",
-      "slug": "vuejs"
+      "slug": "vuejs",
+      "created_at": "2024-03-20T12:00:00.000000Z"
     },
     {
       "id": 3,
       "name": "PHP",
-      "slug": "php"
+      "slug": "php",
+      "created_at": "2024-03-20T12:00:00.000000Z"
     },
     {
       "id": 4,
       "name": "JavaScript",
-      "slug": "javascript"
+      "slug": "javascript",
+      "created_at": "2024-03-20T12:00:00.000000Z"
     },
     {
       "id": 5,
       "name": "資料庫",
-      "slug": "database"
+      "slug": "database",
+      "created_at": "2024-03-20T12:00:00.000000Z"
     }
   ]
 }
@@ -73,6 +79,7 @@ Accept: application/json
 | id | Integer | 標籤 ID |
 | name | String | 標籤名稱 |
 | slug | String | 標籤 Slug（URL 友好的識別符） |
+| created_at | String | 建立時間（ISO 8601 格式） |
 
 ## 備註
 

@@ -29,3 +29,9 @@
 1. 本地 npm run build 編譯前端資源
 2. git push（要包含前端編譯後的 public/）
 3. GCP VM ```git pull``` (docker-compose 已掛載 volumn) 
+
+## 文檔
+
+- [版本管理規範](docs/versioning.md)
+- [API 文檔](docs/api/README.md)
+- [系統架構](docs/architecture/architecture-overview.md)

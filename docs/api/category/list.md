@@ -32,6 +32,7 @@ Accept: application/json
 
 ```json
 {
+  "status": "success",
   "code": 200,
   "message": "所有分類",
   "data": [
@@ -39,19 +40,22 @@ Accept: application/json
       "id": 1,
       "name": "技術分享",
       "slug": "tech-sharing",
-      "description": "關於程式設計和技術的文章"
+      "description": "關於程式設計和技術的文章",
+      "created_at": "2024-03-20T12:00:00.000000Z"
     },
     {
       "id": 2,
       "name": "生活記事",
       "slug": "life-notes",
-      "description": "日常生活和隨筆"
+      "description": "日常生活和隨筆",
+      "created_at": "2024-03-20T12:00:00.000000Z"
     },
     {
       "id": 3,
       "name": "書籍推薦",
       "slug": "book-recommendations",
-      "description": "好書分享和閱讀心得"
+      "description": "好書分享和閱讀心得",
+      "created_at": "2024-03-20T12:00:00.000000Z"
     }
   ]
 }
@@ -67,6 +71,7 @@ Accept: application/json
 | name | String | 分類名稱 |
 | slug | String | 分類 Slug（URL 友好的識別符） |
 | description | String | 分類描述（可能為 null） |
+| created_at | String | 建立時間（ISO 8601 格式） |
 
 ## 備註
 

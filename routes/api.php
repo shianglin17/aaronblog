@@ -12,32 +12,32 @@ Route::get('/', function() {
 });
 
 // 公開內容 API - 使用 RESTful 資源路由
-Route::prefix('articles')->group(function () {
+Route::prefix('articles')->middleware('throttle:30,1')->group(function () {
     Route::get('/', [ArticleController::class, 'index']);
     Route::get('/{id}', [ArticleController::class, 'show'])->where('id', '[0-9]+');
 });
 
 // 分類相關路由
-Route::prefix('categories')->group(function () {
+Route::prefix('categories')->middleware('throttle:30,1')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
     Route::get('/{id}', [CategoryController::class, 'show'])->where('id', '[0-9]+');
 });
 
 // 標籤相關路由
-Route::prefix('tags')->group(function () {
+Route::prefix('tags')->middleware('throttle:30,1')->group(function () {
     Route::get('/', [TagController::class, 'index']);
     Route::get('/{id}', [TagController::class, 'show'])->where('id', '[0-9]+');
 });
 
 // 認證相關路由
 Route::prefix('auth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1'); // 登入限制更嚴格
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
 });
 
 // 管理後台 API - 需要認證
-Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
+Route::prefix('admin')->middleware(['auth:sanctum', 'throttle:30,1'])->group(function () {
     // 文章管理
     Route::prefix('articles')->group(function () {
         Route::get('/', [ArticleController::class, 'index']);

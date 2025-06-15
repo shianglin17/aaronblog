@@ -169,7 +169,7 @@ onMounted(() => {
 
 .header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 20px;
 }
 
 .site-title {
@@ -189,7 +189,7 @@ onMounted(() => {
 
 .search-area {
   max-width: 500px;
-  margin: 0 auto 40px;
+  margin: 0 auto 20px;
 }
 
 /* 響應式設計 */

@@ -1,52 +1,45 @@
-# Aaron Blog API 文件
+# Aaron Blog API 文檔
 
-這是 Aaron Blog 的 API 文件，提供了所有可用的 API 端點的詳細說明。
+## 基本資訊
 
-## 文件分類
+- **API 版本**：v1
+- **基礎路徑**：`/api`
+- **請求格式**：JSON
+- **字符編碼**：UTF-8
 
-- [通用規範](./common/README.md) - API 通用規範、認證方式、回應格式等
-- [認證 API](./auth/) - 登入、登出、用戶資訊相關 API
-- [文章 API](./article/) - 文章管理相關 API
-- [分類 API](./category/) - 分類相關 API
-- [標籤 API](./tag/) - 標籤相關 API
+## 核心概念
 
-## 認證相關 API
+- [錯誤處理](error-handling.md) - HTTP 狀態碼、錯誤回應格式
+- [認證機制](authentication.md) - Bearer Token 認證
+- [分頁規範](pagination.md) - 分頁參數與回應格式
+- [通用參數](common-parameters.md) - 排序、搜尋、日期格式
+- [Rate Limiting](rate-limiting.md) - 請求頻率限制
 
-- [登入](./auth/login.md) - 管理員登入系統，獲取 API Token
-- [登出](./auth/logout.md) - 管理員登出系統，廢除 API Token
-- [獲取用戶資訊](./auth/user.md) - 獲取當前登入用戶資訊
-- [認證流程詳解](./auth/auth-flow.md) - Laravel 認證系統工作原理詳解
+## API 端點
 
-## 文章相關 API
+### 公開 API
 
-- [取得文章列表](./article/list.md) - 獲取文章列表，支援分頁和搜尋 (`GET /api/articles`)
-- [取得單篇文章](./article/show.md) - 獲取單篇文章的詳細資料 (`GET /api/articles/{id}`)
-- [創建文章](./article/create.md) - 創建新文章 (`POST /api/admin/articles`)
-- [更新文章](./article/update.md) - 更新現有文章 (`PUT /api/admin/articles/{id}`)
-- [刪除文章](./article/delete.md) - 刪除文章 (`DELETE /api/admin/articles/{id}`)
+| 功能 | 端點 | 說明 |
+|------|------|------|
+| [文章列表](article/list.md) | `GET /api/articles` | 取得文章列表 |
+| [文章詳情](article/show.md) | `GET /api/articles/{id}` | 取得單篇文章 |
+| [分類列表](category/list.md) | `GET /api/categories` | 取得分類列表 |
+| [分類詳情](category/show.md) | `GET /api/categories/{id}` | 取得單一分類 |
+| [標籤列表](tag/list.md) | `GET /api/tags` | 取得標籤列表 |
+| [標籤詳情](tag/show.md) | `GET /api/tags/{id}` | 取得單一標籤 |
 
-## 分類和標籤 API
+### 認證 API
 
-- [獲取所有分類](./category/list.md) - 獲取所有可用的文章分類
-- [獲取所有標籤](./tag/list.md) - 獲取所有可用的文章標籤
+| 功能 | 端點 | 說明 |
+|------|------|------|
+| [登入](auth/login.md) | `POST /api/auth/login` | 用戶登入 |
+| [登出](auth/logout.md) | `POST /api/auth/logout` | 用戶登出 |
+| [用戶資訊](auth/user.md) | `GET /api/auth/user` | 取得當前用戶資訊 |
 
-## 開始使用
+### 管理員 API
 
-1. 閱讀 [通用規範](./common/README.md) 了解 API 的基本要求和格式
-2. 了解 [認證流程詳解](./auth/auth-flow.md) 理解認證系統運作原理
-3. 根據需求查閱具體的 API 文檔
-4. 使用 Postman 或其他工具測試 API
-
-## 認證方式
-
-本 API 使用 Bearer Token 認證：
-
-1. 先呼叫 `/api/auth/login` 獲取 Token
-2. 在後續請求的 Header 中加入 `Authorization: Bearer {token}`
-3. Token 過期或需要登出時，呼叫 `/api/auth/logout`
-
-## Postman Collection
-
-我們提供了 Postman Collection 以便於測試 API：
-
-- [Postman Collection](../postman/aaron_blog_api.json) - 包含所有 API 請求的集合 
+| 功能 | 端點 | 說明 |
+|------|------|------|
+| [文章管理](admin/articles.md) | `POST/PUT/DELETE /api/admin/articles` | 文章 CRUD 操作 |
+| [分類管理](admin/categories.md) | `POST/PUT/DELETE /api/admin/categories` | 分類 CRUD 操作 |
+| [標籤管理](admin/tags.md) | `POST/PUT/DELETE /api/admin/tags` | 標籤 CRUD 操作 | 
