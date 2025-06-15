@@ -77,7 +77,8 @@ class ArticleCacheService
     {
         $cacheKey = $this->generateListCacheKey($params);
         
-        return Cache::remember(
+        // 使用標籤快取，以便批量清除
+        return Cache::tags([self::CACHE_PREFIX . ':list'])->remember(
             $cacheKey,
             self::CACHE_TTL['list'] * 60, // 轉換為秒
             $callback
@@ -95,7 +96,8 @@ class ArticleCacheService
     {
         $cacheKey = $this->generateDetailCacheKey($articleId);
         
-        return Cache::remember(
+        // 使用標籤快取，以便批量清除
+        return Cache::tags([self::CACHE_PREFIX . ':detail'])->remember(
             $cacheKey,
             self::CACHE_TTL['detail'] * 60, // 轉換為秒
             $callback
@@ -109,8 +111,7 @@ class ArticleCacheService
      */
     public function clearAllListCache(): void
     {
-        // 由於列表快取鍵包含參數簽名，無法直接清除所有
-        // 使用標籤快取策略（需要 Redis）
+        // 使用標籤快取策略清除所有列表快取
         Cache::tags([self::CACHE_PREFIX . ':list'])->flush();
     }
 
@@ -139,5 +140,14 @@ class ArticleCacheService
         $this->clearAllListCache();
     }
 
-
+    /**
+     * 清除所有文章相關快取（列表和詳情）
+     * 
+     * 用於大量資料異動時的快取重置
+     */
+    public function clearAllCache(): void
+    {
+        Cache::tags([self::CACHE_PREFIX . ':list'])->flush();
+        Cache::tags([self::CACHE_PREFIX . ':detail'])->flush();
+    }
 } 
