@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Tag;
 use App\Repositories\TagRepository;
 use App\Services\Cache\TagCacheService;
+use App\Exceptions\ResourceNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
 
 class TagService
@@ -47,14 +48,21 @@ class TagService
      * 獲取指定ID的標籤（含快取）
      *
      * @param int $id 標籤ID
-     * @return Tag|null
+     * @return Tag
+     * @throws ResourceNotFoundException
      */
-    public function getTagById(int $id): ?Tag
+    public function getTagById(int $id): Tag
     {
-        return $this->cacheService->cacheTagDetail(
+        $tag = $this->cacheService->cacheTagDetail(
             $id,
             fn() => $this->repository->getTagById($id)
         );
+        
+        if ($tag === null) {
+            throw new ResourceNotFoundException('標籤', $id);
+        }
+        
+        return $tag;
     }
 
     /**
@@ -78,14 +86,12 @@ class TagService
      *
      * @param int $id 標籤ID
      * @param array $data 更新數據
-     * @return Tag|null
+     * @return Tag
+     * @throws ResourceNotFoundException
      */
-    public function updateTag(int $id, array $data): ?Tag
+    public function updateTag(int $id, array $data): Tag
     {
         $tag = $this->getTagById($id);
-        if (!$tag) {
-            return null;
-        }
 
         $this->repository->updateTag($tag, $data);
         
@@ -100,13 +106,11 @@ class TagService
      *
      * @param int $id 標籤ID
      * @return bool
+     * @throws ResourceNotFoundException
      */
     public function deleteTag(int $id): bool
     {
         $tag = $this->getTagById($id);
-        if (!$tag) {
-            return false;
-        }
 
         // 刪除標籤前先解除與文章的關聯
         $tag->articles()->detach();

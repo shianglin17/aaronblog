@@ -9,6 +9,7 @@ use App\Http\Requests\Tag\UpdateTagRequest;
 use App\Services\TagService;
 use App\Transformer\TagTransformer;
 use Illuminate\Http\JsonResponse;
+use App\Exceptions\ResourceNotFoundException;
 
 class TagController extends Controller
 {
@@ -41,14 +42,11 @@ class TagController extends Controller
      * 
      * @param int $id 標籤ID
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function show(int $id): JsonResponse
     {
         $tag = $this->tagService->getTagById($id);
-        
-        if (!$tag) {
-            return ResponseMaker::error('標籤不存在', 404);
-        }
         
         return ResponseMaker::success(
             data: $this->transformer->transform($tag),
@@ -80,15 +78,12 @@ class TagController extends Controller
      * @param int $id 標籤ID
      * @param UpdateTagRequest $request
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function update(int $id, UpdateTagRequest $request): JsonResponse
     {
         $data = $request->validated();
         $tag = $this->tagService->updateTag($id, $data);
-        
-        if (!$tag) {
-            return ResponseMaker::error('標籤不存在', 404);
-        }
         
         return ResponseMaker::success(
             data: $this->transformer->transform($tag),
@@ -101,14 +96,11 @@ class TagController extends Controller
      * 
      * @param int $id 標籤ID
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function destroy(int $id): JsonResponse
     {
-        $result = $this->tagService->deleteTag($id);
-        
-        if (!$result) {
-            return ResponseMaker::error('標籤不存在', 404);
-        }
+        $this->tagService->deleteTag($id);
         
         return ResponseMaker::success(message: '標籤刪除成功');
     }

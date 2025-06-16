@@ -51,4 +51,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 422);
             }
         });
+
+        // 處理自定義業務異常
+        $exceptions->render(function (BaseException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return $e->toJSONResponse();
+            }
+        });
     })->create();

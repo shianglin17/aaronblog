@@ -28,16 +28,7 @@ class TagRepository
         return Tag::find($id);
     }
 
-    /**
-     * 根據 slug 獲取標籤
-     *
-     * @param string $slug 標籤slug
-     * @return Tag|null
-     */
-    public function getTagBySlug(string $slug): ?Tag
-    {
-        return Tag::where('slug', $slug)->first();
-    }
+
 
     /**
      * 創建新標籤

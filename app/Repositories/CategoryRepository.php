@@ -28,16 +28,7 @@ class CategoryRepository
         return Category::find($id);
     }
 
-    /**
-     * 根據 slug 獲取分類
-     *
-     * @param string $slug 分類slug
-     * @return Category|null
-     */
-    public function getCategoryBySlug(string $slug): ?Category
-    {
-        return Category::where('slug', $slug)->first();
-    }
+
 
     /**
      * 創建新分類

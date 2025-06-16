@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use App\Services\Cache\CategoryCacheService;
+use App\Exceptions\ResourceNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
@@ -48,14 +49,21 @@ class CategoryService
      * 獲取指定ID的分類（含快取）
      *
      * @param int $id 分類ID
-     * @return Category|null
+     * @return Category
+     * @throws ResourceNotFoundException
      */
-    public function getCategoryById(int $id): ?Category
+    public function getCategoryById(int $id): Category
     {
-        return $this->cacheService->cacheCategoryDetail(
+        $category = $this->cacheService->cacheCategoryDetail(
             $id,
             fn() => $this->repository->getCategoryById($id)
         );
+        
+        if ($category === null) {
+            throw new ResourceNotFoundException('分類', $id);
+        }
+        
+        return $category;
     }
 
     /**
@@ -79,14 +87,12 @@ class CategoryService
      *
      * @param int $id 分類ID
      * @param array $data 更新數據
-     * @return Category|null
+     * @return Category
+     * @throws ResourceNotFoundException
      */
-    public function updateCategory(int $id, array $data): ?Category
+    public function updateCategory(int $id, array $data): Category
     {
         $category = $this->getCategoryById($id);
-        if (!$category) {
-            return null;
-        }
 
         $this->repository->updateCategory($category, $data);
         
@@ -101,13 +107,11 @@ class CategoryService
      *
      * @param int $id 分類ID
      * @return bool
+     * @throws ResourceNotFoundException
      */
     public function deleteCategory(int $id): bool
     {
         $category = $this->getCategoryById($id);
-        if (!$category) {
-            return false;
-        }
 
         // 檢查是否有關聯的文章
         if ($category->articles()->count() > 0) {

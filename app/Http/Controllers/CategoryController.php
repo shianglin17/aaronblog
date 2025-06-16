@@ -9,6 +9,7 @@ use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Services\CategoryService;
 use App\Transformer\CategoryTransformer;
 use Illuminate\Http\JsonResponse;
+use App\Exceptions\ResourceNotFoundException;
 
 class CategoryController extends Controller
 {
@@ -41,14 +42,11 @@ class CategoryController extends Controller
      * 
      * @param int $id 分類ID
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function show(int $id): JsonResponse
     {
         $category = $this->categoryService->getCategoryById($id);
-        
-        if (!$category) {
-            return ResponseMaker::error('分類不存在', 404);
-        }
         
         return ResponseMaker::success(
             data: $this->transformer->transform($category),
@@ -80,15 +78,12 @@ class CategoryController extends Controller
      * @param int $id 分類ID
      * @param UpdateCategoryRequest $request
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function update(int $id, UpdateCategoryRequest $request): JsonResponse
     {
         $data = $request->validated();
         $category = $this->categoryService->updateCategory($id, $data);
-        
-        if (!$category) {
-            return ResponseMaker::error('分類不存在', 404);
-        }
         
         return ResponseMaker::success(
             data: $this->transformer->transform($category),
@@ -101,14 +96,11 @@ class CategoryController extends Controller
      * 
      * @param int $id 分類ID
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function destroy(int $id): JsonResponse
     {
-        $result = $this->categoryService->deleteCategory($id);
-        
-        if (!$result) {
-            return ResponseMaker::error('分類不存在', 404);
-        }
+        $this->categoryService->deleteCategory($id);
         
         return ResponseMaker::success(message: '分類刪除成功');
     }

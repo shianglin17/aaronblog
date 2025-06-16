@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Article;
 use App\Repositories\ArticleRepository;
 use App\Services\Cache\ArticleCacheService;
+use App\Exceptions\ResourceNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
@@ -51,15 +52,22 @@ class ArticleService
      * 獲取單篇文章詳情（含快取）
      *
      * @param int $id 文章ID
-     * @return Article|null
+     * @return Article
+     * @throws ResourceNotFoundException
      */
-    public function getArticleById(int $id): ?Article
+    public function getArticleById(int $id): Article
     {
         // 使用快取服務
-        return $this->cacheService->cacheArticleDetail(
+        $article = $this->cacheService->cacheArticleDetail(
             $id,
             fn() => $this->repository->getArticleById($id)
         );
+        
+        if ($article === null) {
+            throw new ResourceNotFoundException('文章', $id);
+        }
+        
+        return $article;
     }
 
     /**
@@ -99,14 +107,12 @@ class ArticleService
      *
      * @param int $id 文章ID
      * @param array $data 更新資料
-     * @return Article|null
+     * @return Article
+     * @throws ResourceNotFoundException
      */
-    public function updateArticle(int $id, array $data): ?Article
+    public function updateArticle(int $id, array $data): Article
     {
         $article = $this->getArticleById($id);
-        if (!$article) {
-            return null;
-        }
 
         // 更新文章
         $this->repository->updateArticle($article, $data);
@@ -127,13 +133,11 @@ class ArticleService
      *
      * @param int $id 文章ID
      * @return bool
+     * @throws ResourceNotFoundException
      */
     public function deleteArticle(int $id): bool
     {
         $article = $this->getArticleById($id);
-        if (!$article) {
-            return false;
-        }
 
         // 清除標籤關聯
         $article->tags()->detach();

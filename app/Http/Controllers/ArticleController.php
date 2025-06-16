@@ -11,6 +11,7 @@ use App\Http\Requests\Article\CreateArticleRequest;
 use App\Http\Requests\Article\UpdateArticleRequest;
 use App\Http\Response\ResponseMaker;
 use App\Transformer\ArticleTransformer;
+use App\Exceptions\ResourceNotFoundException;
 
 class ArticleController extends Controller
 {
@@ -44,14 +45,11 @@ class ArticleController extends Controller
      * @param int $id 文章ID
      * 
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function show(int $id): JsonResponse
     {
         $article = $this->articleService->getArticleById($id);
-
-        if (!$article) {
-            return ResponseMaker::error('文章不存在', 404);
-        }
 
         return ResponseMaker::success(
             data: $this->articleTransformer->transform($article),
@@ -83,15 +81,12 @@ class ArticleController extends Controller
      * @param UpdateArticleRequest $request
      * 
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function update(int $id, UpdateArticleRequest $request): JsonResponse
     {
         $data = $request->validated();
         $article = $this->articleService->updateArticle($id, $data);
-
-        if (!$article) {
-            return ResponseMaker::error('文章不存在', 404);
-        }
 
         return ResponseMaker::success(
             data: $this->articleTransformer->transform($article),
@@ -104,14 +99,11 @@ class ArticleController extends Controller
      * @param int $id 文章ID
      * 
      * @return JsonResponse
+     * @throws ResourceNotFoundException
      */
     public function destroy(int $id): JsonResponse
     {
-        $result = $this->articleService->deleteArticle($id);
-
-        if (!$result) {
-            return ResponseMaker::error('文章不存在', 404);
-        }
+        $this->articleService->deleteArticle($id);
 
         return ResponseMaker::success(message: '文章刪除成功');
     }
