@@ -1,6 +1,6 @@
 <?php
 
-use App\Exceptions\Handler;
+use App\Exceptions\BaseException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [
             // API 請求的中間件
             EnsureFrontendRequestsAreStateful::class,
-            'throttle:api',
+            'throttle:30,1',
         ]);
     
         // 添加命名中間件
