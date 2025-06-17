@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article;
 use App\Services\ArticleService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Article\ListArticlesRequest;
@@ -12,6 +11,7 @@ use App\Http\Requests\Article\UpdateArticleRequest;
 use App\Http\Response\ResponseMaker;
 use App\Transformer\ArticleTransformer;
 use App\Exceptions\ResourceNotFoundException;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -34,8 +34,7 @@ class ArticleController extends Controller
      */
     public function index(ListArticlesRequest $request): JsonResponse
     {
-        $param = $request->validated();
-        $articles = $this->articleService->getArticles($param);
+        $articles = $this->articleService->getArticles($request->validated());
 
         return ResponseMaker::paginatorWithTransformer($articles, $this->articleTransformer);
     }
@@ -66,6 +65,8 @@ class ArticleController extends Controller
     public function store(CreateArticleRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $data['user_id'] = Auth::id();
+        
         $article = $this->articleService->createArticle($data);
 
         return ResponseMaker::success(
@@ -85,8 +86,7 @@ class ArticleController extends Controller
      */
     public function update(int $id, UpdateArticleRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $article = $this->articleService->updateArticle($id, $data);
+        $article = $this->articleService->updateArticle($id, $request->validated());
 
         return ResponseMaker::success(
             data: $this->articleTransformer->transform($article),

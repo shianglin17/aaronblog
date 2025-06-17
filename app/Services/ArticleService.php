@@ -7,7 +7,6 @@ use App\Repositories\ArticleRepository;
 use App\Services\Cache\ArticleCacheService;
 use App\Exceptions\ResourceNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
 
 class ArticleService
 {
@@ -57,7 +56,6 @@ class ArticleService
      */
     public function getArticleById(int $id): Article
     {
-        // 使用快取服務
         $article = $this->cacheService->cacheArticleDetail(
             $id,
             fn() => $this->repository->getArticleById($id)
@@ -78,23 +76,10 @@ class ArticleService
      */
     public function createArticle(array $data): Article
     {
-        // 如果未設定狀態，預設為草稿
-        if (!isset($data['status'])) {
-            $data['status'] = Article::STATUS_DRAFT;
-        }
-
-        // 設定當前登入用戶為作者
-        if (!isset($data['user_id']) && Auth::check()) {
-            $data['user_id'] = Auth::id();
-        }
-
-        // 創建文章
         $article = $this->repository->createArticle($data);
 
-        // 處理標籤
-        if (isset($data['tags']) && is_array($data['tags'])) {
-            $article->tags()->sync($data['tags']);
-        }
+        // 同步標籤關聯
+        $this->syncArticleTags($article, $data);
 
         // 清除相關快取
         $this->cacheService->clearAllListCache();
@@ -117,15 +102,27 @@ class ArticleService
         // 更新文章
         $this->repository->updateArticle($article, $data);
 
-        // 處理標籤
-        if (isset($data['tags']) && is_array($data['tags'])) {
-            $article->tags()->sync($data['tags']);
-        }
+        // 同步標籤關聯
+        $this->syncArticleTags($article, $data);
 
         // 清除該文章的所有相關快取
         $this->cacheService->clearArticleAllCache($id);
 
         return $article->refresh();
+    }
+
+    /**
+     * 同步文章標籤關聯
+     *
+     * @param Article $article 文章模型
+     * @param array $data 資料陣列
+     * @return void
+     */
+    private function syncArticleTags(Article $article, array $data): void
+    {
+        if (isset($data['tags']) && is_array($data['tags'])) {
+            $article->tags()->sync($data['tags']);
+        }
     }
 
     /**
