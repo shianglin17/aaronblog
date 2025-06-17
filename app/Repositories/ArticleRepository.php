@@ -11,10 +11,10 @@ class ArticleRepository
     /**
      * 獲取所有文章
      *
-     * @param array $param 查詢參數
+     * @param array $params 查詢參數
      * @return LengthAwarePaginator
      */
-    public function getArticles(array $param): LengthAwarePaginator
+    public function getArticles(array $params): LengthAwarePaginator
     {
         return Article::select([
             'id', 'title', 'slug', 'description', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
@@ -24,30 +24,28 @@ class ArticleRepository
             'category:id,name,slug',
             'tags:id,name,slug'
         ])
-        ->when(!empty($param['search']), fn(Builder $query): Builder => 
-            $query->where('title', 'like', "%{$param['search']}%")
-                  ->orWhere('content', 'like', "%{$param['search']}%")
-                  ->orWhere('description', 'like', "%{$param['search']}%")
+        ->when(!empty($params['search']), fn(Builder $query): Builder => 
+            $query->where('title', 'like', "%{$params['search']}%")
+                  ->orWhere('content', 'like', "%{$params['search']}%")
+                  ->orWhere('description', 'like', "%{$params['search']}%")
         )
-        ->when($param['status'] !== 'all', fn(Builder $query): Builder => 
-            $query->where('status', $param['status'])
+        ->when($params['status'] !== 'all', fn(Builder $query): Builder => 
+            $query->where('status', $params['status'])
         )
-        // 依照分類篩選（使用分類的 slug）
-        ->when(!empty($param['category']), fn(Builder $query): Builder => 
+        ->when(!empty($params['category']), fn(Builder $query): Builder => 
             $query->whereHas('category', fn(Builder $q): Builder => 
-                $q->where('slug', $param['category'])
+                $q->where('slug', $params['category'])
             )
         )
-        // 依照標籤篩選（使用標籤的 slug，支援多選）
-        ->when(!empty($param['tags']), fn(Builder $query): Builder => 
+        ->when(!empty($params['tags']), fn(Builder $query): Builder => 
             $query->whereHas('tags', fn(Builder $q): Builder => 
-                $q->whereIn('slug', $param['tags'])
+                $q->whereIn('slug', $params['tags'])
             )
         )
-        ->orderBy($param['sort_by'] ?? 'created_at', $param['sort_direction'] ?? 'desc')
+        ->orderBy($params['sort_by'], $params['sort_direction'])
         ->paginate(
-            perPage: $param['per_page'] ?? 15,
-            page: $param['page'] ?? 1
+            perPage: $params['per_page'],
+            page: $params['page']
         );
     }
 

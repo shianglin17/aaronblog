@@ -72,45 +72,15 @@ class ListArticlesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'page' => [
-                'nullable',
-                'integer',
-                'min:1'
-            ],
-            'per_page' => [
-                'nullable',
-                'integer',
-                'min:1',
-                'max:100'
-            ],
-            'sort_by' => [
-                'nullable',
-                'string',
-                'in:' . implode(',', $this->allowedSortFields)
-            ],
-            'sort_direction' => [
-                'nullable',
-                'string',
-                'in:' . implode(',', $this->allowedSortDirections)
-            ],
-            'search' => [
-                'nullable',
-                'string',
-                'max:255'
-            ],
-            'status' => [
-                'nullable',
-                'string',
-                'in:' . implode(',', $this->allowedStatus)
-            ],
-            'category' => [
-                'nullable',
-                'string',
-                'max:255'
-            ],
-            'tags' => [
-                'nullable'
-            ]
+            'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'sort_by' => ['nullable','string','in:' . implode(',', $this->allowedSortFields)],
+            'sort_direction' => ['nullable','string','in:' . implode(',', $this->allowedSortDirections)],
+            'search' => ['nullable','string','max:255'],
+            'status' => ['nullable','string','in:' . implode(',', $this->allowedStatus)],
+            'category' => ['nullable','string','max:255'],
+            'tags' => ['nullable', 'array'],  // 明確要求陣列格式
+            'tags.*' => ['string']  // 標籤名稱或ID
         ];
     }
 
@@ -153,23 +123,10 @@ class ListArticlesRequest extends FormRequest
             'sort_direction' => $this->input('sort_direction') ?: $this->defaults['sort_direction'],
             'search' => $this->has('search') ? trim($this->input('search')) : null,
             'category' => $this->has('category') ? trim($this->input('category')) : null,
+            'tags' => $this->input('tags', $this->defaults['tags']),
         ];
-        
-        // 處理多標籤輸入 - 始終轉換為陣列
-        if ($this->has('tags')) {
-            $tags = $this->input('tags');
-            
-            if (is_array($tags)) {
-                // 如果已經是陣列，保持不變但清理每個元素
-                $mergeData['tags'] = array_filter(array_map('trim', $tags));
-            } else {
-                // 非陣列類型設為空陣列
-                $mergeData['tags'] = [];
-            }
-        } else {
-            $mergeData['tags'] = [];
-        }
 
+        // 處理 status 參數的路由感知邏輯
         if (request()->is('api/articles')) {
             // 公開路由：強制只顯示已發布文章，確保未認證用戶只能看到公開內容
             $mergeData['status'] = Article::STATUS_PUBLISHED;

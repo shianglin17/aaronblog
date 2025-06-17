@@ -36,15 +36,15 @@ class ArticleService
     /**
      * 獲取所有文章列表（含快取）
      *
-     * @param array $param 查詢參數
+     * @param array $params 查詢參數
      * @return LengthAwarePaginator
      */
-    public function getArticles(array $param): LengthAwarePaginator
+    public function getArticles(array $params): LengthAwarePaginator
     {
         // 使用快取服務
         return $this->cacheService->cacheArticleList(
-            $param,
-            fn() => $this->repository->getArticles($param)
+            $params,
+            fn() => $this->repository->getArticles($params)
         );
     }
     
