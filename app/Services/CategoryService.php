@@ -7,7 +7,6 @@ use App\Repositories\CategoryRepository;
 use App\Services\Cache\CategoryCacheService;
 use App\Exceptions\ResourceNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Str;
 
 class CategoryService
 {
@@ -29,14 +28,14 @@ class CategoryService
     public function getAllCategories(): Collection
     {
         return $this->cacheService->cacheCategoryList(
-            fn() => $this->repository->getAllCategories()
+            fn() => $this->repository->getAll()
         );
     }
 
     /**
-     * 獲取指定ID的分類（含快取）
+     * 根據ID獲取分類（含快取）
      *
-     * @param int $id 分類ID
+     * @param int $id
      * @return Category
      * @throws ResourceNotFoundException
      */
@@ -44,7 +43,7 @@ class CategoryService
     {
         $category = $this->cacheService->cacheCategoryDetail(
             $id,
-            fn() => $this->repository->getCategoryById($id)
+            fn() => $this->repository->getById($id)
         );
         
         if ($category === null) {
@@ -57,64 +56,52 @@ class CategoryService
     /**
      * 創建新分類
      *
-     * @param array $data 分類數據
+     * @param array $data
      * @return Category
      */
     public function createCategory(array $data): Category
     {
-        $category = $this->repository->createCategory($data);
-        
-        // 清除分類列表快取
+        $category = $this->repository->create($data);
+
         $this->cacheService->clearListCache();
-        
+
         return $category;
     }
 
     /**
      * 更新分類
      *
-     * @param int $id 分類ID
-     * @param array $data 更新數據
+     * @param int $id
+     * @param array $data
      * @return Category
-     * @throws ResourceNotFoundException
      */
     public function updateCategory(int $id, array $data): Category
     {
         $category = $this->getCategoryById($id);
 
-        $this->repository->updateCategory($category, $data);
-        
-        // 清除該分類的所有相關快取
+        $this->repository->update($category, $data);
+
         $this->cacheService->clearCategoryAllCache($id);
-        
-        return $category->refresh();
+
+        return $category->fresh();
     }
 
     /**
      * 刪除分類
      *
-     * @param int $id 分類ID
+     * @param int $id
      * @return bool
-     * @throws ResourceNotFoundException
      */
     public function deleteCategory(int $id): bool
     {
         $category = $this->getCategoryById($id);
 
-        // 檢查是否有關聯的文章
-        if ($category->articles()->count() > 0) {
-            // 可以選擇拒絕刪除，或是將關聯文章的分類設為 null
-            // 這裡選擇將關聯文章的分類設為 null
-            $category->articles()->update(['category_id' => null]);
-        }
-        
-        $result = $this->repository->deleteCategory($category);
-        
-        // 刪除成功後清除相關快取
+        $result = $this->repository->delete($category);
+
         if ($result) {
             $this->cacheService->clearCategoryAllCache($id);
         }
-        
+
         return $result;
     }
 } 

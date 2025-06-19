@@ -46,7 +46,7 @@ class ArticleService
     {
         $article = $this->cacheService->cacheArticleDetail(
             $id,
-            fn() => $this->repository->getArticleById($id)
+            fn() => $this->repository->getById($id)
         );
         
         if ($article === null) {
@@ -64,7 +64,7 @@ class ArticleService
      */
     public function createArticle(array $data): Article
     {
-        $article = $this->repository->createArticle($data);
+        $article = $this->repository->create($data);
 
         // 同步標籤關聯
         $this->syncArticleTags($article, $data);
@@ -87,13 +87,11 @@ class ArticleService
     {
         $article = $this->getArticleById($id);
 
-        // 更新文章
-        $this->repository->updateArticle($article, $data);
+        $this->repository->update($article, $data);
 
         // 同步標籤關聯
         $this->syncArticleTags($article, $data);
 
-        // 清除該文章的所有相關快取
         $this->cacheService->clearArticleAllCache($id);
 
         return $article->refresh();
@@ -127,8 +125,7 @@ class ArticleService
         // 清除標籤關聯
         $article->tags()->detach();
 
-        // 軟刪除文章
-        $result = $this->repository->deleteArticle($article);
+        $result = $this->repository->delete($article);
 
         // 刪除成功後清除相關快取
         if ($result !== null) {

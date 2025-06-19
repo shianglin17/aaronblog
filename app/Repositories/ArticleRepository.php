@@ -6,8 +6,37 @@ use App\Models\Article;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ArticleRepository
+/**
+ * @extends BaseRepository<Article>
+ */
+class ArticleRepository extends BaseRepository
 {
+    const DEFAULT_CONLUMNS = [
+        'id', 'title', 'slug', 'description', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
+    ];
+
+    public function __construct()
+    {
+        $this->model = new Article();
+    }
+
+    /**
+     * Override 父類別方法，提供優化的查詢邏輯
+     *
+     * @param int $id 文章ID
+     * @return Article|null
+     */
+    public function getById(int $id): ?Article
+    {
+        return Article::select(self::DEFAULT_CONLUMNS)
+        ->with([
+            'author:id,name',
+            'category:id,name,slug',
+            'tags:id,name,slug'
+        ])
+        ->find($id);
+    }
+
     /**
      * 獲取所有文章
      *
@@ -16,9 +45,7 @@ class ArticleRepository
      */
     public function getArticles(array $params): LengthAwarePaginator
     {
-        return Article::select([
-            'id', 'title', 'slug', 'description', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
-        ])
+        return Article::select(self::DEFAULT_CONLUMNS)
         ->with([
             'author:id,name',
             'category:id,name,slug',
@@ -47,58 +74,5 @@ class ArticleRepository
             perPage: $params['per_page'],
             page: $params['page']
         );
-    }
-
-    /**
-     * 獲取單篇文章
-     *
-     * @param int $id 文章ID
-     * @return Article|null
-     */
-    public function getArticleById(int $id): ?Article
-    {
-        return Article::select([
-            'id', 'title', 'slug', 'description', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
-        ])
-        ->with([
-            'author:id,name',
-            'category:id,name,slug',
-            'tags:id,name,slug'
-        ])
-        ->find($id);
-    }
-
-    /**
-     * 創建文章
-     *
-     * @param array $data 文章資料
-     * @return Article
-     */
-    public function createArticle(array $data): Article
-    {
-        return Article::create($data);
-    }
-
-    /**
-     * 更新文章
-     *
-     * @param Article $article 文章模型
-     * @param array $data 更新資料
-     * @return bool
-     */
-    public function updateArticle(Article $article, array $data): bool
-    {
-        return $article->update($data);
-    }
-
-    /**
-     * 刪除文章
-     *
-     * @param Article $article 文章模型
-     * @return bool
-     */
-    public function deleteArticle(Article $article): bool
-    {
-        return $article->delete();
     }
 }

@@ -28,14 +28,14 @@ class TagService
     public function getAllTags(): Collection
     {
         return $this->cacheService->cacheTagList(
-            fn() => $this->repository->getAllTags()
+            fn() => $this->repository->getAll()
         );
     }
 
     /**
-     * 獲取指定ID的標籤（含快取）
+     * 根據ID獲取標籤（含快取）
      *
-     * @param int $id 標籤ID
+     * @param int $id
      * @return Tag
      * @throws ResourceNotFoundException
      */
@@ -43,7 +43,7 @@ class TagService
     {
         $tag = $this->cacheService->cacheTagDetail(
             $id,
-            fn() => $this->repository->getTagById($id)
+            fn() => $this->repository->getById($id)
         );
         
         if ($tag === null) {
@@ -56,60 +56,52 @@ class TagService
     /**
      * 創建新標籤
      *
-     * @param array $data 標籤數據
+     * @param array $data
      * @return Tag
      */
     public function createTag(array $data): Tag
     {
-        $tag = $this->repository->createTag($data);
-        
-        // 清除標籤列表快取
+        $tag = $this->repository->create($data);
+
         $this->cacheService->clearListCache();
-        
+
         return $tag;
     }
 
     /**
      * 更新標籤
      *
-     * @param int $id 標籤ID
-     * @param array $data 更新數據
+     * @param int $id
+     * @param array $data
      * @return Tag
-     * @throws ResourceNotFoundException
      */
     public function updateTag(int $id, array $data): Tag
     {
         $tag = $this->getTagById($id);
 
-        $this->repository->updateTag($tag, $data);
-        
-        // 清除該標籤的所有相關快取
+        $this->repository->update($tag, $data);
+
         $this->cacheService->clearTagAllCache($id);
-        
-        return $tag->refresh();
+
+        return $tag->fresh();
     }
 
     /**
      * 刪除標籤
      *
-     * @param int $id 標籤ID
+     * @param int $id
      * @return bool
-     * @throws ResourceNotFoundException
      */
     public function deleteTag(int $id): bool
     {
         $tag = $this->getTagById($id);
 
-        // 刪除標籤前先解除與文章的關聯
-        $tag->articles()->detach();
-        
-        $result = $this->repository->deleteTag($tag);
-        
-        // 刪除成功後清除相關快取
+        $result = $this->repository->delete($tag);
+
         if ($result) {
             $this->cacheService->clearTagAllCache($id);
         }
-        
+
         return $result;
     }
 } 
