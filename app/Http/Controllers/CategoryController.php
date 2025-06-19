@@ -13,13 +13,14 @@ use App\Exceptions\ResourceNotFoundException;
 
 class CategoryController extends Controller
 {
-    protected readonly CategoryTransformer $transformer;
-    protected readonly CategoryService $categoryService;
-
-    public function __construct(CategoryTransformer $transformer, CategoryService $categoryService)
-    {
-        $this->transformer = $transformer;
-        $this->categoryService = $categoryService;
+    /**
+     * @param CategoryTransformer $transformer
+     * @param CategoryService $categoryService
+     */
+    public function __construct(
+        protected readonly CategoryTransformer $transformer,
+        protected readonly CategoryService $categoryService
+    ) {
     }
 
     /**

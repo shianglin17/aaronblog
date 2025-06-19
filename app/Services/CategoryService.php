@@ -12,25 +12,13 @@ use Illuminate\Support\Str;
 class CategoryService
 {
     /**
-     * @var CategoryRepository
-     */
-    protected CategoryRepository $repository;
-
-    /**
-     * @var CategoryCacheService
-     */
-    protected CategoryCacheService $cacheService;
-
-    /**
      * @param CategoryRepository $repository
      * @param CategoryCacheService $cacheService
      */
     public function __construct(
-        CategoryRepository $repository,
-        CategoryCacheService $cacheService
+        protected readonly CategoryRepository $repository,
+        protected readonly CategoryCacheService $cacheService
     ) {
-        $this->repository = $repository;
-        $this->cacheService = $cacheService;
     }
 
     /**

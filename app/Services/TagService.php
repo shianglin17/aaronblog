@@ -11,25 +11,13 @@ use Illuminate\Database\Eloquent\Collection;
 class TagService
 {
     /**
-     * @var TagRepository
-     */
-    protected TagRepository $repository;
-
-    /**
-     * @var TagCacheService
-     */
-    protected TagCacheService $cacheService;
-
-    /**
      * @param TagRepository $repository
      * @param TagCacheService $cacheService
      */
     public function __construct(
-        TagRepository $repository,
-        TagCacheService $cacheService
+        protected readonly TagRepository $repository,
+        protected readonly TagCacheService $cacheService
     ) {
-        $this->repository = $repository;
-        $this->cacheService = $cacheService;
     }
 
     /**

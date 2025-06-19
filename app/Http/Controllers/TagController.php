@@ -13,13 +13,14 @@ use App\Exceptions\ResourceNotFoundException;
 
 class TagController extends Controller
 {
-    protected readonly TagTransformer $transformer;
-    protected readonly TagService $tagService;
-
-    public function __construct(TagTransformer $transformer, TagService $tagService)
-    {
-        $this->transformer = $transformer;
-        $this->tagService = $tagService;
+    /**
+     * @param TagTransformer $transformer
+     * @param TagService $tagService
+     */
+    public function __construct(
+        protected readonly TagTransformer $transformer,
+        protected readonly TagService $tagService
+    ) {
     }
 
     /**

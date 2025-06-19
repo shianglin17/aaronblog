@@ -11,25 +11,13 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class ArticleService
 {
     /**
-     * @var ArticleRepository
-     */
-    protected ArticleRepository $repository;
-
-    /**
-     * @var ArticleCacheService
-     */
-    protected ArticleCacheService $cacheService;
-
-    /**
      * @param ArticleRepository $repository
      * @param ArticleCacheService $cacheService
      */
     public function __construct(
-        ArticleRepository $repository,
-        ArticleCacheService $cacheService
+        protected readonly ArticleRepository $repository,
+        protected readonly ArticleCacheService $cacheService
     ) {
-        $this->repository = $repository;
-        $this->cacheService = $cacheService;
     }
 
     /**
@@ -143,7 +131,7 @@ class ArticleService
         $result = $this->repository->deleteArticle($article);
 
         // 刪除成功後清除相關快取
-        if ($result) {
+        if ($result !== null) {
             $this->cacheService->clearArticleAllCache($id);
         }
 

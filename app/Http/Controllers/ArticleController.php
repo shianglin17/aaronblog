@@ -15,15 +15,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
-    protected readonly ArticleService $articleService;
-    protected readonly ArticleTransformer $articleTransformer;
-
+    /**
+     * @param ArticleService $articleService
+     * @param ArticleTransformer $articleTransformer
+     */
     public function __construct(
-        ArticleService $articleService,
-        ArticleTransformer $articleTransformer
+        protected readonly ArticleService $articleService,
+        protected readonly ArticleTransformer $articleTransformer
     ) {
-        $this->articleService = $articleService;
-        $this->articleTransformer = $articleTransformer;
     }
 
     /**
