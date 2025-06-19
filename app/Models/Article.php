@@ -54,14 +54,13 @@ class Article extends Model
     ];
 
     /**
-     * 應該被轉換成日期的屬性
+     * 屬性轉換
      *
-     * @var array<string>
+     * @var array<string, string>
      */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**

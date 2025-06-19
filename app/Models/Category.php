@@ -19,6 +19,16 @@ class Category extends Model
     ];
 
     /**
+     * 屬性轉換
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    /**
      * Get the articles that belong to this category.
      */
     public function articles(): HasMany
