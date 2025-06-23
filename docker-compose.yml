@@ -1,7 +1,7 @@
 version: '3.8'
 
-# 基礎配置 + 開發環境
-# 開發環境使用 MySQL，方便開發和測試
+# 開發環境配置
+# 使用 SQLite，與生產環境保持一致
 
 services:
   app:
@@ -16,7 +16,6 @@ services:
       - APP_DEBUG=true
       - APP_ENV=local
     depends_on:
-      - mysql
       - redis
     networks:
       - aaronblog-net
@@ -34,21 +33,6 @@ services:
     networks:
       - aaronblog-net
 
-  mysql:
-    image: mysql:8.0
-    container_name: aaronblog-mysql
-    ports:
-      - "3307:3306"  # 開發環境使用非標準端口
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-aaronblog}
-      MYSQL_USER: ${DB_USERNAME:-aaron}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-aaron}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-secret}
-    volumes:
-      - mysql-dev-data:/var/lib/mysql
-    networks:
-      - aaronblog-net
-
   redis:
     image: redis:7-alpine
     container_name: aaronblog-redis
@@ -56,10 +40,6 @@ services:
       - "6380:6379"  # 開發環境使用非標準端口
     networks:
       - aaronblog-net
-
-volumes:
-  mysql-dev-data:
-    driver: local
 
 networks:
   aaronblog-net:
