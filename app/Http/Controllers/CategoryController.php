@@ -9,7 +9,7 @@ use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Services\CategoryService;
 use App\Transformer\CategoryTransformer;
 use Illuminate\Http\JsonResponse;
-use App\Exceptions\ResourceNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CategoryController extends Controller
 {
@@ -43,7 +43,7 @@ class CategoryController extends Controller
      * 
      * @param int $id 分類ID
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function show(int $id): JsonResponse
     {
@@ -79,7 +79,7 @@ class CategoryController extends Controller
      * @param int $id 分類ID
      * @param UpdateCategoryRequest $request
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function update(int $id, UpdateCategoryRequest $request): JsonResponse
     {
@@ -97,12 +97,14 @@ class CategoryController extends Controller
      * 
      * @param int $id 分類ID
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function destroy(int $id): JsonResponse
     {
         $this->categoryService->deleteCategory($id);
         
-        return ResponseMaker::success(message: '分類刪除成功');
+        return ResponseMaker::success(
+            message: '分類刪除成功'
+        );
     }
 } 

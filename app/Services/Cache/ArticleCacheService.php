@@ -90,9 +90,9 @@ class ArticleCacheService
      * 
      * @param int $articleId 文章ID
      * @param callable $callback 資料獲取回調函數
-     * @return Article|null
+     * @return Article
      */
-    public function cacheArticleDetail(int $articleId, callable $callback): ?Article
+    public function cacheArticleDetail(int $articleId, callable $callback): Article
     {
         $cacheKey = $this->generateDetailCacheKey($articleId);
         

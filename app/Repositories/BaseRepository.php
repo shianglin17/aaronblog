@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * @template T of Model
@@ -26,11 +27,12 @@ abstract class BaseRepository
      * 根據 ID 獲取資源
      *
      * @param int $id
-     * @return T|null
+     * @return T
+     * @throws ModelNotFoundException
      */
-    public function getById(int $id): ?Model
+    public function getById(int $id): Model
     {
-        return $this->model->find($id);
+        return $this->model->findOrFail($id);
     }
 
     /**

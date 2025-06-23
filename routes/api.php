@@ -31,7 +31,7 @@ Route::prefix('tags')->middleware('throttle:30,1')->group(function () {
 
 // 認證相關路由
 Route::prefix('auth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1'); // 登入限制更嚴格
+    Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
 });

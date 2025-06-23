@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Article;
 use App\Repositories\ArticleRepository;
 use App\Services\Cache\ArticleCacheService;
-use App\Exceptions\ResourceNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ArticleService
@@ -40,20 +40,14 @@ class ArticleService
      *
      * @param int $id 文章ID
      * @return Article
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function getArticleById(int $id): Article
     {
-        $article = $this->cacheService->cacheArticleDetail(
+        return $this->cacheService->cacheArticleDetail(
             $id,
             fn() => $this->repository->getById($id)
         );
-        
-        if ($article === null) {
-            throw new ResourceNotFoundException('文章', $id);
-        }
-        
-        return $article;
     }
 
     /**
@@ -79,9 +73,9 @@ class ArticleService
      * 更新文章
      *
      * @param int $id 文章ID
-     * @param array $data 更新資料
+     * @param array $data 文章資料
      * @return Article
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function updateArticle(int $id, array $data): Article
     {
@@ -92,23 +86,10 @@ class ArticleService
         // 同步標籤關聯
         $this->syncArticleTags($article, $data);
 
+        // 清除相關快取
         $this->cacheService->clearArticleAllCache($id);
 
-        return $article->refresh();
-    }
-
-    /**
-     * 同步文章標籤關聯
-     *
-     * @param Article $article 文章模型
-     * @param array $data 資料陣列
-     * @return void
-     */
-    private function syncArticleTags(Article $article, array $data): void
-    {
-        if (isset($data['tags']) && is_array($data['tags'])) {
-            $article->tags()->sync($data['tags']);
-        }
+        return $article->fresh();
     }
 
     /**
@@ -116,22 +97,31 @@ class ArticleService
      *
      * @param int $id 文章ID
      * @return bool
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function deleteArticle(int $id): bool
     {
         $article = $this->getArticleById($id);
 
-        // 清除標籤關聯
-        $article->tags()->detach();
-
         $result = $this->repository->delete($article);
 
-        // 刪除成功後清除相關快取
-        if ($result !== null) {
-            $this->cacheService->clearArticleAllCache($id);
-        }
+        // 清除相關快取
+        $this->cacheService->clearArticleAllCache($id);
 
         return $result;
+    }
+
+    /**
+     * 同步文章標籤關聯
+     *
+     * @param Article $article
+     * @param array $data
+     * @return void
+     */
+    private function syncArticleTags(Article $article, array $data): void
+    {
+        if (isset($data['tag_ids'])) {
+            $article->tags()->sync($data['tag_ids']);
+        }
     }
 } 

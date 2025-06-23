@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Article;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -24,9 +25,10 @@ class ArticleRepository extends BaseRepository
      * Override 父類別方法，提供優化的查詢邏輯
      *
      * @param int $id 文章ID
-     * @return Article|null
+     * @return Article
+     * @throws ModelNotFoundException
      */
-    public function getById(int $id): ?Article
+    public function getById(int $id): Article
     {
         return Article::select(self::DEFAULT_CONLUMNS)
         ->with([
@@ -34,7 +36,7 @@ class ArticleRepository extends BaseRepository
             'category:id,name,slug',
             'tags:id,name,slug'
         ])
-        ->find($id);
+        ->findOrFail($id);
     }
 
     /**

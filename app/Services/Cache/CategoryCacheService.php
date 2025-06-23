@@ -72,9 +72,9 @@ class CategoryCacheService
      * 
      * @param int $categoryId 分類ID
      * @param callable $callback 資料獲取回調函數
-     * @return Category|null
+     * @return Category
      */
-    public function cacheCategoryDetail(int $categoryId, callable $callback): ?Category
+    public function cacheCategoryDetail(int $categoryId, callable $callback): Category
     {
         $cacheKey = $this->generateDetailCacheKey($categoryId);
         

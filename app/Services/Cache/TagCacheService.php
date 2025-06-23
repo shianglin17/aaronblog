@@ -72,9 +72,9 @@ class TagCacheService
      * 
      * @param int $tagId 標籤ID
      * @param callable $callback 資料獲取回調函數
-     * @return Tag|null
+     * @return Tag
      */
-    public function cacheTagDetail(int $tagId, callable $callback): ?Tag
+    public function cacheTagDetail(int $tagId, callable $callback): Tag
     {
         $cacheKey = $this->generateDetailCacheKey($tagId);
         

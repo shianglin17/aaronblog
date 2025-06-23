@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use App\Services\Cache\CategoryCacheService;
-use App\Exceptions\ResourceNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
 
 class CategoryService
@@ -37,20 +37,14 @@ class CategoryService
      *
      * @param int $id
      * @return Category
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function getCategoryById(int $id): Category
     {
-        $category = $this->cacheService->cacheCategoryDetail(
+        return $this->cacheService->cacheCategoryDetail(
             $id,
             fn() => $this->repository->getById($id)
         );
-        
-        if ($category === null) {
-            throw new ResourceNotFoundException('分類', $id);
-        }
-        
-        return $category;
     }
 
     /**
@@ -74,6 +68,7 @@ class CategoryService
      * @param int $id
      * @param array $data
      * @return Category
+     * @throws ModelNotFoundException
      */
     public function updateCategory(int $id, array $data): Category
     {
@@ -91,6 +86,7 @@ class CategoryService
      *
      * @param int $id
      * @return bool
+     * @throws ModelNotFoundException
      */
     public function deleteCategory(int $id): bool
     {
@@ -98,9 +94,7 @@ class CategoryService
 
         $result = $this->repository->delete($category);
 
-        if ($result) {
-            $this->cacheService->clearCategoryAllCache($id);
-        }
+        $this->cacheService->clearCategoryAllCache($id);
 
         return $result;
     }

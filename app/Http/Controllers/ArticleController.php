@@ -10,7 +10,7 @@ use App\Http\Requests\Article\CreateArticleRequest;
 use App\Http\Requests\Article\UpdateArticleRequest;
 use App\Http\Response\ResponseMaker;
 use App\Transformer\ArticleTransformer;
-use App\Exceptions\ResourceNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
@@ -43,7 +43,7 @@ class ArticleController extends Controller
      * @param int $id 文章ID
      * 
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function show(int $id): JsonResponse
     {
@@ -81,7 +81,7 @@ class ArticleController extends Controller
      * @param UpdateArticleRequest $request
      * 
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function update(int $id, UpdateArticleRequest $request): JsonResponse
     {
@@ -98,7 +98,7 @@ class ArticleController extends Controller
      * @param int $id 文章ID
      * 
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function destroy(int $id): JsonResponse
     {

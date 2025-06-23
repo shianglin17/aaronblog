@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Tag;
 use App\Repositories\TagRepository;
 use App\Services\Cache\TagCacheService;
-use App\Exceptions\ResourceNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
 
 class TagService
@@ -37,20 +37,14 @@ class TagService
      *
      * @param int $id
      * @return Tag
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function getTagById(int $id): Tag
     {
-        $tag = $this->cacheService->cacheTagDetail(
+        return $this->cacheService->cacheTagDetail(
             $id,
             fn() => $this->repository->getById($id)
         );
-        
-        if ($tag === null) {
-            throw new ResourceNotFoundException('標籤', $id);
-        }
-        
-        return $tag;
     }
 
     /**
@@ -74,6 +68,7 @@ class TagService
      * @param int $id
      * @param array $data
      * @return Tag
+     * @throws ModelNotFoundException
      */
     public function updateTag(int $id, array $data): Tag
     {
@@ -91,6 +86,7 @@ class TagService
      *
      * @param int $id
      * @return bool
+     * @throws ModelNotFoundException
      */
     public function deleteTag(int $id): bool
     {
@@ -98,9 +94,7 @@ class TagService
 
         $result = $this->repository->delete($tag);
 
-        if ($result) {
-            $this->cacheService->clearTagAllCache($id);
-        }
+        $this->cacheService->clearTagAllCache($id);
 
         return $result;
     }

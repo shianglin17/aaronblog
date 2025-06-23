@@ -9,7 +9,7 @@ use App\Http\Requests\Tag\UpdateTagRequest;
 use App\Services\TagService;
 use App\Transformer\TagTransformer;
 use Illuminate\Http\JsonResponse;
-use App\Exceptions\ResourceNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TagController extends Controller
 {
@@ -43,7 +43,7 @@ class TagController extends Controller
      * 
      * @param int $id 標籤ID
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function show(int $id): JsonResponse
     {
@@ -79,7 +79,7 @@ class TagController extends Controller
      * @param int $id 標籤ID
      * @param UpdateTagRequest $request
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function update(int $id, UpdateTagRequest $request): JsonResponse
     {
@@ -97,7 +97,7 @@ class TagController extends Controller
      * 
      * @param int $id 標籤ID
      * @return JsonResponse
-     * @throws ResourceNotFoundException
+     * @throws ModelNotFoundException
      */
     public function destroy(int $id): JsonResponse
     {
