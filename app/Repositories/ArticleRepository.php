@@ -61,6 +61,7 @@ class ArticleRepository extends BaseRepository
         ->when($params['status'] !== 'all', fn(Builder $query): Builder => 
             $query->where('status', $params['status'])
         )
+        // @todo 確認使用 slug 效能如何？以及是否是最佳實踐
         ->when(!empty($params['category']), fn(Builder $query): Builder => 
             $query->whereHas('category', fn(Builder $q): Builder => 
                 $q->where('slug', $params['category'])
