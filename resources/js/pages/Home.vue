@@ -5,32 +5,12 @@
       <p class="site-description">軟體開發紀錄、生活分享</p>
     </header>
 
-    <!-- 搜尋區域 -->
-    <div class="search-area">
-      <n-input-group>
-        <n-input 
-          v-model:value="searchQuery"
-          placeholder="搜尋文章..." 
-          @keydown.enter="searchArticles"
-          clearable
-        />
-        <n-button ghost @click="searchArticles">
-          <template #icon>
-            <n-icon><SearchOutline /></n-icon>
-          </template>
-        </n-button>
-      </n-input-group>
-    </div>
-    
-    <!-- 篩選器 -->
-    <n-spin :show="filtersLoading">
-      <ArticleFilter
-        v-if="categories.length > 0 || tags.length > 0"
-        :categories="categories"
-        :tags="tags"
-        @update:filters="handleFilterChange"
-      />
-    </n-spin>
+    <!-- 統一搜尋器 -->
+    <UnifiedSearchBar
+      :categories="categories"
+      :tags="tags"
+      @update:filters="handleFilterChange"
+    />
   
     <!-- 文章列表 -->
     <n-spin :show="loading" description="載入中...">
@@ -48,9 +28,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { SearchOutline } from '@vicons/ionicons5';
 import ArticleList from '../components/ArticleList.vue';
-import ArticleFilter from '../components/ArticleFilter.vue';
+import UnifiedSearchBar from '../components/UnifiedSearchBar.vue';
 import { articleApi, tagApi } from '../api/index';
 import type { Article, ArticleListParams } from '../types/article';
 import type { Category } from '../types/category';
@@ -63,7 +42,6 @@ const articles = ref<Article[]>([]);
 const loading = ref(true);
 const error = ref('');
 const pagination = ref<PaginationMeta | undefined>(undefined);
-const searchQuery = ref('');
 
 // 篩選狀態
 const categories = ref<Category[]>([]);
@@ -115,15 +93,9 @@ function changePageSize(pageSize: number) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 搜尋文章
-function searchArticles() {
-  currentParams.value.search = searchQuery.value;
-  currentParams.value.page = 1; // 重置頁碼
-  fetchArticles();
-}
-
-// 處理篩選變更
-function handleFilterChange(filters: { category?: string, tags?: string[] }) {
+// 處理篩選變更（整合搜尋和篩選）
+function handleFilterChange(filters: { search?: string, category?: string, tags?: string[] }) {
+  currentParams.value.search = filters.search;
   currentParams.value.category = filters.category || undefined;
   currentParams.value.tags = filters.tags;
   currentParams.value.page = 1; // 重置頁碼
@@ -184,10 +156,7 @@ onMounted(() => {
   letter-spacing: 0.5px;
 }
 
-.search-area {
-  max-width: 500px;
-  margin: 0 auto 20px;
-}
+
 
 /* 響應式設計 */
 @media (max-width: 768px) {
@@ -196,7 +165,7 @@ onMounted(() => {
   }
   
   .header {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
   }
   
   .site-title {
