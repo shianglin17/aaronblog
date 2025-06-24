@@ -64,8 +64,6 @@
       </div>
     </n-spin>
     
-    <!-- 使用 Footer 元件 -->
-    <Footer />
   </div>
 </template>
 
@@ -79,7 +77,6 @@ import {
   FolderOutline, 
   PricetagOutline 
 } from '@vicons/ionicons5';
-import Footer from '../components/Footer.vue';
 import { articleApi } from '../api/index';
 import type { Article } from '../types/article';
 import { formatDate } from '../utils/date';

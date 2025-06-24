@@ -2,7 +2,10 @@
     <n-config-provider :theme-overrides="themeOverrides">
         <n-message-provider>
             <div class="app-container">
-                <router-view></router-view>
+                <main class="main-content">
+                    <router-view></router-view>
+                </main>
+                <Footer />
             </div>
         </n-message-provider>
     </n-config-provider>
@@ -10,6 +13,7 @@
 
 <script setup lang="ts">
 import { defineOptions } from 'vue'
+import Footer from './components/Footer.vue'
 
 defineOptions({
     name: 'App'
@@ -72,6 +76,12 @@ body {
     min-height: 100vh;
     padding: 0;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
 }
 
 a {

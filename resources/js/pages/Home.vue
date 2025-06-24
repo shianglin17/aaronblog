@@ -43,8 +43,6 @@
       />
     </n-spin>
 
-    <!-- 使用 Footer 元件 -->
-    <Footer />
   </div>
 </template>
 
@@ -53,7 +51,6 @@ import { ref, onMounted } from 'vue';
 import { SearchOutline } from '@vicons/ionicons5';
 import ArticleList from '../components/ArticleList.vue';
 import ArticleFilter from '../components/ArticleFilter.vue';
-import Footer from '../components/Footer.vue';
 import { articleApi, tagApi } from '../api/index';
 import type { Article, ArticleListParams } from '../types/article';
 import type { Category } from '../types/category';
