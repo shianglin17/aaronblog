@@ -1,0 +1,1 @@
+import{q as a,A}from"./app-CiP0tL-o.js";const d={getList:()=>a.get(A.CATEGORY.LIST).then(t=>t.data),getById:t=>a.get(A.CATEGORY.DETAIL(t)).then(e=>e.data),create:t=>a.post(A.ADMIN.CATEGORY.CREATE,t).then(e=>e.data),update:t=>a.put(A.ADMIN.CATEGORY.UPDATE(t.id),t.data).then(e=>e.data),delete:t=>a.delete(A.ADMIN.CATEGORY.DELETE(t)).then(e=>e.data)};export{d as c};
