@@ -12,10 +12,9 @@
           type="text"
           placeholder="探索文章的精彩世界..."
           class="search-input"
-          @focus="handleFocus"
-          @blur="handleBlur"
+          @focus="isFocused = true"
+          @blur="isFocused = false"
           @keydown.enter="handleSearch"
-          @input="handleInput"
         />
         <div class="search-actions">
           <transition name="clear-fade">
@@ -30,7 +29,7 @@
           </transition>
           <div class="search-divider" v-if="searchQuery"></div>
           <button
-            @click="toggleAdvancedFilters"
+            @click="showAdvancedFilters = !showAdvancedFilters"
             class="filter-toggle"
             :class="{ 
               'is-active': showAdvancedFilters,
@@ -51,43 +50,24 @@
       </div>
     </div>
 
-    <!-- 搜尋建議/快速標籤 -->
-    <transition name="suggestions-slide">
-      <div v-if="isFocused && !searchQuery && popularTags.length" class="search-suggestions">
-        <div class="suggestions-label">熱門標籤</div>
-        <div class="suggestions-list">
-          <button
-            v-for="tag in popularTags"
-            :key="tag.slug"
-            @click="selectTag(tag.slug)"
-            class="suggestion-tag"
-          >
-            {{ tag.name }}
-          </button>
-        </div>
-      </div>
-    </transition>
+
 
     <!-- 進階篩選面板 -->
     <transition name="filters-expand">
       <div v-if="showAdvancedFilters" class="advanced-panel">
-        
         <div class="filters-grid">
           <div class="filter-group">
             <label class="filter-label">
               <n-icon size="16" class="label-icon"><FolderOutline /></n-icon>
               分類
             </label>
-            <div class="custom-select-wrapper">
-              <n-select
-                v-model:value="selectedCategory"
-                :options="categoryOptions"
-                placeholder="選擇分類"
-                clearable
-                :disabled="categories.length === 0"
-                class="custom-select"
-              />
-            </div>
+            <n-select
+              v-model:value="selectedCategory"
+              :options="categoryOptions"
+              placeholder="選擇分類"
+              clearable
+              :disabled="categories.length === 0"
+            />
           </div>
           
           <div class="filter-group">
@@ -95,18 +75,15 @@
               <n-icon size="16" class="label-icon"><PricetagsOutline /></n-icon>
               標籤
             </label>
-            <div class="custom-select-wrapper">
-              <n-select
-                v-model:value="selectedTags"
-                :options="tagOptions"
-                placeholder="選擇標籤"
-                multiple
-                clearable
-                :disabled="tags.length === 0"
-                class="custom-select"
-                max-tag-count="responsive"
-              />
-            </div>
+            <n-select
+              v-model:value="selectedTags"
+              :options="tagOptions"
+              placeholder="選擇標籤"
+              multiple
+              clearable
+              :disabled="tags.length === 0"
+              max-tag-count="responsive"
+            />
           </div>
         </div>
         
@@ -150,7 +127,6 @@
         </div>
         
         <button 
-          v-if="hasActiveFilters" 
           @click="clearAllFilters" 
           class="clear-all-button"
           title="清除所有篩選"
@@ -163,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineEmits, defineProps, watch, nextTick } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { 
   SearchOutline, 
   CloseOutline, 
@@ -210,8 +186,7 @@ const selectedTags = ref<string[]>([]);
 const showAdvancedFilters = ref(false);
 const isFocused = ref(false);
 
-// 計算熱門標籤（取前5個）
-const popularTags = computed(() => props.tags.slice(0, 5));
+
 
 // 計算選項
 const categoryOptions = computed(() =>
@@ -233,50 +208,7 @@ const hasActiveFilters = computed(() =>
   searchQuery.value || selectedCategory.value || selectedTags.value.length > 0
 );
 
-// 活躍篩選數量
-const activeFiltersCount = computed(() => {
-  let count = 0;
-  if (searchQuery.value) count++;
-  if (selectedCategory.value) count++;
-  count += selectedTags.value.length;
-  return count;
-});
 
-// 焦點處理
-const handleFocus = () => {
-  isFocused.value = true;
-};
-
-const handleBlur = () => {
-  // 延遲隱藏，避免點擊建議時立即消失
-  setTimeout(() => {
-    isFocused.value = false;
-  }, 200);
-};
-
-// 輸入處理
-const handleInput = () => {
-  // 可以在這裡添加即時搜尋邏輯
-};
-
-// 選擇標籤
-const selectTag = (tagSlug: string) => {
-  if (!selectedTags.value.includes(tagSlug)) {
-    selectedTags.value = [...selectedTags.value, tagSlug];
-    handleSearch();
-  }
-  searchInput.value?.blur();
-};
-
-// 切換進階篩選面板
-const toggleAdvancedFilters = () => {
-  showAdvancedFilters.value = !showAdvancedFilters.value;
-  if (showAdvancedFilters.value) {
-    nextTick(() => {
-      // 可以在這裡添加焦點管理
-    });
-  }
-};
 
 // 執行搜尋
 const handleSearch = () => {
@@ -382,8 +314,6 @@ watch(
   transform: translateY(-2px);
 }
 
-
-
 .search-input-wrapper {
   display: flex;
   align-items: center;
@@ -483,55 +413,7 @@ watch(
   background: #e5e7eb;
 }
 
-/* 搜尋建議 */
-.search-suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 2px solid #e8e5e0;
-  border-top: none;
-  border-radius: 0 0 16px 16px;
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  z-index: 10;
-}
 
-.suggestions-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.suggestions-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.suggestion-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-}
-
-.suggestion-tag:hover {
-  background: var(--primary-color);
-  color: white;
-  transform: translateY(-1px);
-}
 
 /* 進階篩選面板 */
 .advanced-panel {
@@ -541,12 +423,6 @@ watch(
   border-radius: 0 0 16px 16px;
   padding: 24px;
   margin-top: -2px;
-}
-
-.panel-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-color);
 }
 
 .filters-grid {
@@ -573,14 +449,6 @@ watch(
 
 .label-icon {
   color: var(--primary-color);
-}
-
-.custom-select-wrapper {
-  position: relative;
-}
-
-.custom-select {
-  width: 100%;
 }
 
 .panel-actions {
@@ -722,16 +590,7 @@ watch(
   transform: scale(0.8);
 }
 
-.suggestions-slide-enter-active,
-.suggestions-slide-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.suggestions-slide-enter-from,
-.suggestions-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-}
 
 .filters-expand-enter-active,
 .filters-expand-leave-active {
@@ -822,21 +681,6 @@ watch(
     border-radius: 0 0 12px 12px;
   }
   
-  .panel-title {
-    font-size: 16px;
-  }
-  
-  .suggestions-list {
-    gap: 6px;
-  }
-  
-  .suggestion-tag {
-    font-size: 13px;
-    padding: 5px 10px;
-  }
-  
-  .search-suggestions {
-    border-radius: 0 0 12px 12px;
-  }
+
 }
 </style> 
