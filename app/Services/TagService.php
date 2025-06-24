@@ -27,7 +27,7 @@ class TagService
      */
     public function getAllTags(): Collection
     {
-        return $this->cacheService->cacheTagList(
+        return $this->cacheService->cacheList(
             fn() => $this->repository->getAll()
         );
     }
@@ -41,7 +41,7 @@ class TagService
      */
     public function getTagById(int $id): Tag
     {
-        return $this->cacheService->cacheTagDetail(
+        return $this->cacheService->cacheDetail(
             $id,
             fn() => $this->repository->getById($id)
         );
@@ -76,7 +76,7 @@ class TagService
 
         $this->repository->update($tag, $data);
 
-        $this->cacheService->clearTagAllCache($id);
+        $this->cacheService->clearResourceAllCache($id);
 
         return $tag->fresh();
     }
@@ -94,7 +94,7 @@ class TagService
 
         $result = $this->repository->delete($tag);
 
-        $this->cacheService->clearTagAllCache($id);
+        $this->cacheService->clearResourceAllCache($id);
 
         return $result;
     }

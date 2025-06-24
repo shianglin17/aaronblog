@@ -30,8 +30,8 @@ class ArticleService
     {
         // 使用快取服務
         return $this->cacheService->cacheArticleList(
-            $params,
-            fn() => $this->repository->getArticles($params)
+            fn() => $this->repository->getArticles($params),
+            $params
         );
     }
     
@@ -44,7 +44,7 @@ class ArticleService
      */
     public function getArticleById(int $id): Article
     {
-        return $this->cacheService->cacheArticleDetail(
+        return $this->cacheService->cacheDetail(
             $id,
             fn() => $this->repository->getById($id)
         );
@@ -64,7 +64,7 @@ class ArticleService
         $this->syncArticleTags($article, $data);
 
         // 清除相關快取
-        $this->cacheService->clearAllListCache();
+        $this->cacheService->clearListCache();
 
         return $article;
     }
@@ -87,7 +87,7 @@ class ArticleService
         $this->syncArticleTags($article, $data);
 
         // 清除相關快取
-        $this->cacheService->clearArticleAllCache($id);
+        $this->cacheService->clearResourceAllCache($id);
 
         return $article->fresh();
     }
@@ -106,7 +106,7 @@ class ArticleService
         $result = $this->repository->delete($article);
 
         // 清除相關快取
-        $this->cacheService->clearArticleAllCache($id);
+        $this->cacheService->clearResourceAllCache($id);
 
         return $result;
     }

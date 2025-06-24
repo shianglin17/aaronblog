@@ -27,7 +27,7 @@ class CategoryService
      */
     public function getAllCategories(): Collection
     {
-        return $this->cacheService->cacheCategoryList(
+        return $this->cacheService->cacheList(
             fn() => $this->repository->getAll()
         );
     }
@@ -41,7 +41,7 @@ class CategoryService
      */
     public function getCategoryById(int $id): Category
     {
-        return $this->cacheService->cacheCategoryDetail(
+        return $this->cacheService->cacheDetail(
             $id,
             fn() => $this->repository->getById($id)
         );
@@ -76,7 +76,7 @@ class CategoryService
 
         $this->repository->update($category, $data);
 
-        $this->cacheService->clearCategoryAllCache($id);
+        $this->cacheService->clearResourceAllCache($id);
 
         return $category->fresh();
     }
@@ -94,7 +94,7 @@ class CategoryService
 
         $result = $this->repository->delete($category);
 
-        $this->cacheService->clearCategoryAllCache($id);
+        $this->cacheService->clearResourceAllCache($id);
 
         return $result;
     }
