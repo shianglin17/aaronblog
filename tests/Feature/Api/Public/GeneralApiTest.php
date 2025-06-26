@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\Public;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use \Illuminate\Support\Facades\Cache;
 
 /**
  * 通用 API 測試
@@ -18,17 +19,6 @@ use Tests\TestCase;
 class GeneralApiTest extends TestCase
 {
     use RefreshDatabase;
-
-    /**
-     * 在每個測試前執行
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        
-        // 清除所有快取，避免測試間的干擾
-        \Illuminate\Support\Facades\Cache::flush();
-    }
 
     /**
      * 測試 API 根路徑回傳工作訊息
@@ -81,10 +71,10 @@ class GeneralApiTest extends TestCase
     public function test_cache_isolation(): void
     {
         // Arrange: 設定快取
-        \Illuminate\Support\Facades\Cache::put('test_key', 'test_value', 60);
+        Cache::put('test_key', 'test_value', 60);
 
         // Assert: 確認快取存在
-        $this->assertEquals('test_value', \Illuminate\Support\Facades\Cache::get('test_key'));
+        $this->assertEquals('test_value', Cache::get('test_key'));
 
         // 注意：快取會在 setUp() 中被清除，所以每個測試都是乾淨的
     }

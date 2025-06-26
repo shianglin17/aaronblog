@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\Public;
+namespace Tests\Feature\Api\Public\Article;
 
 use App\Models\Article;
 use App\Models\Category;
@@ -20,17 +20,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class ArticleApiTest extends TestCase
 {
     use RefreshDatabase;
-
-    /**
-     * 在每個測試前執行
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        
-        // 清除所有快取，避免測試間的干擾
-        \Illuminate\Support\Facades\Cache::flush();
-    }
 
     /**
      * 測試取得文章列表 - 基本格式

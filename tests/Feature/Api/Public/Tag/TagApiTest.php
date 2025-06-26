@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\Public;
+namespace Tests\Feature\Api\Public\Tag;
 
 use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,18 +15,7 @@ use Tests\TestCase;
 class TagApiTest extends TestCase
 {
     use RefreshDatabase;
-
-    /**
-     * 在每個測試前執行
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        
-        // 清除所有快取，避免測試間的干擾
-        \Illuminate\Support\Facades\Cache::flush();
-    }
-
+    
     /**
      * 測試取得標籤列表回傳正確格式
      */
