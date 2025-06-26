@@ -1,84 +1,125 @@
 {
-  "_FormModal-!~{006}~.js": {
+  "_FormModal-!~{009}~.js": {
     "file": "assets/FormModal-zZOoafyE.css",
-    "src": "_FormModal-!~{006}~.js"
+    "src": "_FormModal-!~{009}~.js"
   },
-  "_FormModal-4VCFNR7_.js": {
-    "file": "assets/FormModal-4VCFNR7_.js",
+  "_FormModal-CrkAUENd.js": {
+    "file": "assets/FormModal-CrkAUENd.js",
     "name": "FormModal",
     "imports": [
-      "resources/js/app.ts"
+      "_vue-vendor-BzR9iUpD.js",
+      "resources/js/app.ts",
+      "_ui-vendor-DUNw84bt.js"
     ],
     "css": [
       "assets/FormModal-zZOoafyE.css"
     ]
   },
-  "_categoryApi-C43hInvx.js": {
-    "file": "assets/categoryApi-C43hInvx.js",
+  "_categoryApi-CymP0d69.js": {
+    "file": "assets/categoryApi-CymP0d69.js",
     "name": "categoryApi",
     "imports": [
       "resources/js/app.ts"
     ]
   },
+  "_markdown-!~{003}~.js": {
+    "file": "assets/markdown-D4JKo971.css",
+    "src": "_markdown-!~{003}~.js"
+  },
+  "_markdown-j6I5lR1l.js": {
+    "file": "assets/markdown-j6I5lR1l.js",
+    "name": "markdown",
+    "css": [
+      "assets/markdown-D4JKo971.css"
+    ]
+  },
+  "_ui-vendor-DUNw84bt.js": {
+    "file": "assets/ui-vendor-DUNw84bt.js",
+    "name": "ui-vendor",
+    "imports": [
+      "_vue-vendor-BzR9iUpD.js"
+    ]
+  },
+  "_vue-vendor-BzR9iUpD.js": {
+    "file": "assets/vue-vendor-BzR9iUpD.js",
+    "name": "vue-vendor"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-l0sNRNKZ.js",
-    "name": "app",
+    "file": "assets/app-DegZ7K56.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.ts": {
-    "file": "assets/app-HQUO8aee.js",
+    "file": "assets/app-B2aNZ5QZ.js",
     "name": "app",
     "src": "resources/js/app.ts",
     "isEntry": true,
+    "imports": [
+      "_vue-vendor-BzR9iUpD.js",
+      "_markdown-j6I5lR1l.js",
+      "_ui-vendor-DUNw84bt.js"
+    ],
     "dynamicImports": [
       "resources/js/pages/admin/ArticleManagement.vue",
       "resources/js/pages/admin/TagManagement.vue",
       "resources/js/pages/admin/CategoryManagement.vue"
     ],
     "css": [
-      "assets/app-Y4QkYnqr.css"
+      "assets/app-BHcvlJvD.css",
+      "assets/app-DegZ7K56.css"
     ]
   },
   "resources/js/pages/admin/ArticleManagement.vue": {
-    "file": "assets/ArticleManagement-CNErEe-q.js",
+    "file": "assets/ArticleManagement-BmFepCfS.js",
     "name": "ArticleManagement",
     "src": "resources/js/pages/admin/ArticleManagement.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_FormModal-4VCFNR7_.js",
+      "_FormModal-CrkAUENd.js",
+      "_vue-vendor-BzR9iUpD.js",
       "resources/js/app.ts",
-      "_categoryApi-C43hInvx.js"
+      "_categoryApi-CymP0d69.js",
+      "_ui-vendor-DUNw84bt.js",
+      "_markdown-j6I5lR1l.js"
     ],
     "css": [
-      "assets/ArticleManagement-CpFDEilE.css"
+      "assets/ArticleManagement-CpFDEilE.css",
+      "assets/app-DegZ7K56.css"
     ]
   },
   "resources/js/pages/admin/CategoryManagement.vue": {
-    "file": "assets/CategoryManagement-CK2JW6Eh.js",
+    "file": "assets/CategoryManagement-DK_5Qiyt.js",
     "name": "CategoryManagement",
     "src": "resources/js/pages/admin/CategoryManagement.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_FormModal-4VCFNR7_.js",
+      "_FormModal-CrkAUENd.js",
       "resources/js/app.ts",
-      "_categoryApi-C43hInvx.js"
+      "_categoryApi-CymP0d69.js",
+      "_vue-vendor-BzR9iUpD.js",
+      "_ui-vendor-DUNw84bt.js",
+      "_markdown-j6I5lR1l.js"
     ],
     "css": [
-      "assets/CategoryManagement-N_hYN6ff.css"
+      "assets/CategoryManagement-N_hYN6ff.css",
+      "assets/app-DegZ7K56.css"
     ]
   },
   "resources/js/pages/admin/TagManagement.vue": {
-    "file": "assets/TagManagement-BR2-qXAn.js",
+    "file": "assets/TagManagement-wZUeu0AX.js",
     "name": "TagManagement",
     "src": "resources/js/pages/admin/TagManagement.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_FormModal-4VCFNR7_.js",
-      "resources/js/app.ts"
+      "_FormModal-CrkAUENd.js",
+      "resources/js/app.ts",
+      "_vue-vendor-BzR9iUpD.js",
+      "_ui-vendor-DUNw84bt.js",
+      "_markdown-j6I5lR1l.js"
     ],
     "css": [
-      "assets/TagManagement-DV1WBf6K.css"
+      "assets/TagManagement-DV1WBf6K.css",
+      "assets/app-DegZ7K56.css"
     ]
   }
 }
