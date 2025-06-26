@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Tag;
 use App\Repositories\TagRepository;
 use App\Services\Cache\TagCacheService;
+use App\Exceptions\ResourceInUseException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -87,10 +88,17 @@ class TagService
      * @param int $id
      * @return bool
      * @throws ModelNotFoundException
+     * @throws ResourceInUseException
      */
     public function deleteTag(int $id): bool
     {
         $tag = $this->getTagById($id);
+
+        // 檢查是否有文章正在使用此標籤
+        if ($tag->articles()->exists()) {
+            $usageCount = $tag->articles()->count();
+            throw new ResourceInUseException('標籤', $id, '文章', $usageCount);
+        }
 
         $result = $this->repository->delete($tag);
 

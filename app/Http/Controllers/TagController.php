@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tag;
 use App\Http\Response\ResponseMaker;
 use App\Http\Requests\Tag\CreateTagRequest;
 use App\Http\Requests\Tag\UpdateTagRequest;
@@ -98,6 +97,7 @@ class TagController extends Controller
      * @param int $id 標籤ID
      * @return JsonResponse
      * @throws ModelNotFoundException
+     * @throws ResourceInUseException
      */
     public function destroy(int $id): JsonResponse
     {

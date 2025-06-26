@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Http\Response\ResponseMaker;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
@@ -98,6 +97,7 @@ class CategoryController extends Controller
      * @param int $id 分類ID
      * @return JsonResponse
      * @throws ModelNotFoundException
+     * @throws ResourceInUseException
      */
     public function destroy(int $id): JsonResponse
     {
