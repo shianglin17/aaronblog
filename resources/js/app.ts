@@ -3,6 +3,9 @@ import App from './App.vue'
 import router from './router'
 import naive from 'naive-ui'
 
+// 引入樣式檔案
+import '../css/app.css'
+
 // 創建 Vue 應用
 const app = createApp(App)
 

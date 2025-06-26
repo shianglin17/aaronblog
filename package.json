@@ -17,7 +17,11 @@
         "vite": "^5.1.4"
     },
     "dependencies": {
+        "@types/markdown-it": "^14.1.2",
         "@vicons/ionicons5": "^0.13.0",
+        "github-markdown-css": "^5.8.1",
+        "highlight.js": "^11.11.1",
+        "markdown-it": "^14.1.0",
         "naive-ui": "^2.41.0",
         "vue": "^3.4.19",
         "vue-router": "^4.3.0"

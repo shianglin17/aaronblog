@@ -53,9 +53,7 @@
           </div>
         </div>
         
-        <div class="article-content">
-          {{ article.content }}
-        </div>
+        <div class="article-content markdown-body" v-html="renderedContent"></div>
       </div>
       
       <!-- 空資料提示 -->
@@ -80,6 +78,7 @@ import {
 import { articleApi } from '../api/index';
 import type { Article } from '../types/article';
 import { formatDate } from '../utils/date';
+import { useMarkdown } from '../composables/useMarkdown';
 
 // 定義接收的 props
 const props = defineProps<{
@@ -92,10 +91,18 @@ const router = useRouter();
 const article = ref<Article | null>(null);
 const loading = ref(true);
 const error = ref('');
+const { renderMarkdown } = useMarkdown();
+
 const isAdmin = computed(() => {
   // 從本地儲存檢查是否為管理員
   // 這裡可以根據實際的驗證方式調整
   return localStorage.getItem('is_admin') === 'true';
+});
+
+// 渲染 markdown 內容
+const renderedContent = computed(() => {
+  if (!article.value?.content) return '';
+  return renderMarkdown(article.value.content);
 });
 
 onMounted(async () => {
@@ -195,14 +202,7 @@ const goBack = () => {
   color: white;
 }
 
-.article-content {
-  line-height: 1.8;
-  font-size: 1.05rem;
-  color: var(--text-color);
-  white-space: pre-line;
-  margin-top: 24px;
-  padding: 0 8px;
-}
+
 
 .error-message {
   padding: 30px;
