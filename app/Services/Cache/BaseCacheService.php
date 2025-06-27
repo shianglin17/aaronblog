@@ -79,7 +79,7 @@ abstract class BaseCacheService implements CacheServiceInterface
     public function clearDetailCache(int $id): void
     {
         $cacheKey = $this->generateDetailCacheKey($id);
-        Cache::forget($cacheKey);
+        Cache::tags([$this->getCacheTag('detail')])->forget($cacheKey);
     }
 
     /**
