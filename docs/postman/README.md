@@ -10,29 +10,44 @@
 
 ## API 分類
 
-### 文章 API
+### 文章 API（公開）
 
-- `GET /api/article/list` - 獲取文章列表，支持分頁、排序、搜尋、標籤和分類篩選
-- `GET /api/article/{id}` - 獲取單篇文章
-- `POST /api/article` - 創建文章（需管理員權限）
-- `PUT /api/article/{id}` - 更新文章（需管理員權限）
-- `DELETE /api/article/{id}` - 刪除文章（需管理員權限）
+- `GET /api/articles` - 獲取文章列表，支持分頁、排序、搜尋、標籤和分類篩選
+- `GET /api/articles/{id}` - 獲取單篇文章
 
-### 分類 API
+### 分類 API（公開）
+
 - `GET /api/categories` - 獲取所有分類
+- `GET /api/categories/{id}` - 獲取分類詳情
 
-### 標籤 API
+### 標籤 API（公開）
+
 - `GET /api/tags` - 獲取所有標籤
 - `GET /api/tags/{id}` - 獲取標籤詳情
-- `POST /api/admin/tags` - 創建標籤（需管理員權限）
-- `PUT /api/admin/tags/{id}` - 更新標籤（需管理員權限）
-- `DELETE /api/admin/tags/{id}` - 刪除標籤（需管理員權限）
 
 ### 認證 API
 
 - `POST /api/auth/login` - 管理員登入
 - `POST /api/auth/logout` - 管理員登出
 - `GET /api/auth/user` - 獲取當前用戶資訊
+
+### 管理員 API（需認證）
+
+#### 文章管理
+- `GET /api/admin/articles` - 獲取文章列表（管理員）
+- `POST /api/admin/articles` - 創建文章
+- `PUT /api/admin/articles/{id}` - 更新文章
+- `DELETE /api/admin/articles/{id}` - 刪除文章
+
+#### 分類管理
+- `POST /api/admin/categories` - 創建分類
+- `PUT /api/admin/categories/{id}` - 更新分類
+- `DELETE /api/admin/categories/{id}` - 刪除分類
+
+#### 標籤管理
+- `POST /api/admin/tags` - 創建標籤
+- `PUT /api/admin/tags/{id}` - 更新標籤
+- `DELETE /api/admin/tags/{id}` - 刪除標籤
 
 ## 使用方法
 
@@ -61,7 +76,7 @@
 
 ```json
 {
-  "baseUrl": "https://api.aaronblog.com",
+  "baseUrl": "https://aaronlei.com",
   "token": ""
 }
 ```
@@ -75,9 +90,10 @@
 
 ## 注意事項
 
-- 某些 API 需要管理員權限，必須先登入取得 token
+- 管理員相關 API 需要認證，必須先登入取得 token
+- 公開 API（文章、分類、標籤的查詢）無需認證
 - 文章列表 API 的篩選參數都是選填的
-- 生產環境的 API 可能會有速率限制
+- 生產環境的 API 有速率限制（每分鐘 30 次請求）
 
 ## API 路徑說明
 
@@ -88,21 +104,25 @@
 ```
 
 其中：
-- `{{baseUrl}}` 是環境變數，對應開發環境的 `http://localhost:8000` 或生產環境的 `https://api.aaronblog.com`
+- `{{baseUrl}}` 是環境變數，對應開發環境的 `http://localhost:8000` 或生產環境的 `https://aaronlei.com`
 - `/api` 是 API 的固定前綴
-- `[資源]` 是 API 資源類型，如 `article`
-- `[操作]` 是對資源的操作，如 `list`
+- `[資源]` 是 API 資源類型，如 `articles`、`categories`、`tags`
+- `[操作]` 是對資源的操作，如 `list`、`show`
 
-例如，獲取文章列表的完整 URL 是：
-- 開發環境：`http://localhost:8000/api/article/list`
-- 生產環境：`https://api.aaronblog.com/api/article/list`
+### 公開 API 路徑範例：
+- 開發環境：`http://localhost:8000/api/articles`
+- 生產環境：`https://aaronlei.com/api/articles`
+
+### 管理員 API 路徑範例：
+- 開發環境：`http://localhost:8000/api/admin/articles`
+- 生產環境：`https://aaronlei.com/api/admin/articles`
 
 ## 文章標籤篩選格式
 
 API 標準化使用陣列格式進行標籤篩選：
 
 ```
-GET /api/article/list?tags[]=laravel&tags[]=php
+GET /api/articles?tags[]=laravel&tags[]=php
 ```
 
 這種格式更清晰表達了多標籤的語義，並能正確處理包含特殊字元的標籤名稱。
@@ -116,6 +136,12 @@ GET /api/article/list?tags[]=laravel&tags[]=php
 3. **映射機制**：前端應在內部維護 ID 與 slug 的映射關係
 
 這種混合策略兼顧了系統效能與 SEO/使用者體驗。
+
+## 速率限制
+
+- **公開 API**：每分鐘 30 次請求
+- **管理員 API**：每分鐘 30 次請求
+- **認證 API**：無額外限制
 
 ## 更新 Collection
 
@@ -135,4 +161,13 @@ GET /api/article/list?tags[]=laravel&tags[]=php
 1. 點擊右上角的齒輪圖示，然後選擇您的環境
 2. 點擊編輯按鈕
 3. 點擊右上角的三個點 (...)，然後選擇 "Export"
-4. 下載 JSON 檔案並替換儲存庫中的對應環境檔案 
+4. 下載 JSON 檔案並替換儲存庫中的對應環境檔案
+
+## API 測試順序建議
+
+1. **先測試公開 API**：測試文章、分類、標籤的查詢功能
+2. **登入獲取 token**：使用 `/api/auth/login` 取得認證 token
+3. **測試管理員 API**：測試需要認證的 CRUD 操作
+4. **測試認證相關**：測試 `/api/auth/user` 和 `/api/auth/logout`
+
+這樣的順序可以確保測試的順利進行，並且能夠有效驗證 API 的完整功能。 
