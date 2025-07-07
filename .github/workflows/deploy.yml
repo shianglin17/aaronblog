@@ -65,8 +65,8 @@ jobs:
           REDIS_PASSWORD: null
           REDIS_DATABASE: 0
 
-  build-and-deploy:
-    name: Build Frontend and Deploy
+  build-frontend:
+    name: Build Frontend Assets
     needs: test
     runs-on: ubuntu-latest
     if: success()
@@ -87,6 +87,23 @@ jobs:
       - name: Build frontend assets
         run: npm run build
       
+      - name: Upload frontend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: public/build/
+          retention-days: 1
+
+  build-docker:
+    name: Build/Push Docker Image
+    needs: test
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       
@@ -105,6 +122,22 @@ jobs:
           tags: aaronlei17/aaronblog-app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to Production
+    needs: [build-frontend, build-docker]
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download frontend artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: public/build/
       
       - name: Deploy to GCP VM
         uses: appleboy/ssh-action@v1.0.3
@@ -197,24 +230,25 @@ jobs:
               fi
             fi
 
-  notify-success:
+  notify:
     name: Notify Success
-    needs: build-and-deploy
+    needs: deploy
     runs-on: ubuntu-latest
     if: success()
     
     steps:
-      - name: Send success notification
+      - name: Notify deployment success
         run: |
           echo "🎉 部署成功！"
-          echo "時間: $(date)"
-          echo "提交: ${{ github.sha }}"
-          echo "分支: ${{ github.ref_name }}"
-          echo "作者: ${{ github.actor }}"
+          echo "✅ 測試通過"
+          echo "✅ 前端構建完成"
+          echo "✅ Docker 映像構建完成"
+          echo "✅ 部署到生產環境成功"
+          echo "📅 部署時間: $(date)"
 
   notify-failure:
     name: Notify Failure
-    needs: [test, build-and-deploy]
+    needs: [test, deploy]
     runs-on: ubuntu-latest
     if: failure()
     
