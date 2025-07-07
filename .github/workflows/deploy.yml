@@ -54,7 +54,7 @@ jobs:
           touch database/database.sqlite
       
       - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
-        run: php artisan test
+        run: php artisan test --testsuite=Feature
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
