@@ -1,0 +1,228 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # 允許手動觸發
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    # 添加 Redis 服務
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, json, curl, zip, pdo, sqlite, pdo_sqlite, redis
+          tools: composer:v2
+      
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      
+      - name: Install PHP dependencies
+        run: composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
+      
+      - name: Create SQLite database
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+      
+      - name: Run Laravel tests
+        run: |
+          php artisan config:clear
+          php artisan test
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+          # 添加 Redis 設定，讓 github action 測試環境使用 Redis 快取
+          CACHE_STORE: redis
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          REDIS_PASSWORD: null
+          REDIS_DATABASE: 0
+
+  build-and-deploy:
+    name: Build Frontend and Deploy
+    needs: test
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install frontend dependencies
+        run: npm ci
+      
+      - name: Build frontend assets
+        run: npm run build
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: aaronlei17/aaronblog-app:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Deploy to GCP VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USER }}
+          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          script: |
+            echo "開始部署新版本..."
+            
+            # 進入專案目錄
+            cd ~/aaronblog
+            
+            # 建立備份
+            echo "建立前端資源備份..."
+            if [ -d "public/build" ]; then
+              cp -r public/build public/build.backup.$(date +%Y%m%d-%H%M%S)
+            fi
+            
+            # 拉取最新後端程式碼（前端資源透過 git pull）
+            echo "拉取最新程式碼..."
+            git pull origin main
+            
+            # 拉取最新 Docker image（還原 README 步驟）
+            echo "拉取最新 Docker image..."
+            docker pull aaronlei17/aaronblog-app:latest
+      
+      - name: Upload frontend assets
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USER }}
+          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          source: "public/build/"
+          target: "~/aaronblog/public/"
+          strip_components: 1
+          # 註：原始 README 流程是透過 git push 包含前端資源
+          # 但為了避免在 repo 中產生額外的 commit，使用 SCP 上傳
+          # 效果相同：讓 VM 上的 public/build 目錄有最新的前端資源
+      
+      - name: Restart services
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USER }}
+          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          script: |
+            echo "重啟服務..."
+            cd ~/aaronblog
+            
+            # 重啟 Docker 服務（還原 README 步驟）
+            docker-compose -f docker-compose.gcp.yml down
+            docker-compose -f docker-compose.gcp.yml up -d
+            
+            # 等待服務啟動（可以從 15 秒減少到 10 秒）
+            echo "等待服務啟動..."
+            sleep 10
+            
+            # 驗證部署成功
+            echo "驗證部署狀態..."
+            if docker-compose -f docker-compose.gcp.yml ps | grep -q "Up"; then
+              echo "✅ 部署成功！"
+              
+              # 清理舊的備份（保留最近3個）
+              find ~/aaronblog/public -name "build.backup.*" -type d | sort -r | tail -n +4 | xargs rm -rf
+              
+            else
+              echo "❌ 部署失敗！開始回滾..."
+              
+              # 回滾前端資源
+              LATEST_BACKUP=$(find ~/aaronblog/public -name "build.backup.*" -type d | sort -r | head -n 1)
+              if [ -n "$LATEST_BACKUP" ]; then
+                rm -rf ~/aaronblog/public/build
+                cp -r "$LATEST_BACKUP" ~/aaronblog/public/build
+                echo "已回滾前端資源"
+              fi
+              
+              # 重新啟動服務
+              docker-compose -f docker-compose.gcp.yml down
+              docker-compose -f docker-compose.gcp.yml up -d
+              
+              sleep 8  # 回滾時可以稍微減少等待時間
+              
+              if docker-compose -f docker-compose.gcp.yml ps | grep -q "Up"; then
+                echo "✅ 回滾成功！"
+                exit 1
+              else
+                echo "❌ 回滾也失敗了！請手動檢查！"
+                exit 1
+              fi
+            fi
+
+  notify-success:
+    name: Notify Success
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Send success notification
+        run: |
+          echo "🎉 部署成功！"
+          echo "時間: $(date)"
+          echo "提交: ${{ github.sha }}"
+          echo "分支: ${{ github.ref_name }}"
+          echo "作者: ${{ github.actor }}"
+
+  notify-failure:
+    name: Notify Failure
+    needs: [test, build-and-deploy]
+    runs-on: ubuntu-latest
+    if: failure()
+    
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "❌ 部署失敗！"
+          echo "時間: $(date)"
+          echo "提交: ${{ github.sha }}"
+          echo "分支: ${{ github.ref_name }}"
+          echo "作者: ${{ github.actor }}"
+          echo "失敗原因: 請檢查上述步驟的日誌"
+          
+          # 這裡可以添加更多通知方式，例如：
+          # - 發送 Email
+          # - 發送 Slack 消息
+          # - 發送 Discord 消息
+          # - 發送推送通知 

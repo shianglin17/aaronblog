@@ -1,6 +1,6 @@
 /.phpunit.cache
 /node_modules
-# /public/build  # 註解掉，讓 git 追蹤建構檔案
+/public/build
 /public/hot
 /public/storage
 /storage/*.key
