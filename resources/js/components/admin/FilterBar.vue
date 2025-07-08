@@ -27,6 +27,7 @@
         :options="STATUS_OPTIONS"
         placeholder="狀態"
         clearable
+        class="status-filter"
         @update:value="handleStatusChange"
       />
       
@@ -104,5 +105,9 @@ function handleStatusChange(value: string) {
 <style scoped>
 .filter-bar {
   margin-bottom: 16px;
+}
+
+.status-filter {
+  width: 120px;
 }
 </style> 
