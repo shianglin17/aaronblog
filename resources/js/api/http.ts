@@ -9,18 +9,29 @@ const http = axios.create({
     'X-Requested-With': 'XMLHttpRequest',
     'Accept': 'application/json'
   },
-  withCredentials: false
+  withCredentials: true // 啟用 Cookie 認證
 });
 
-// 請求攔截器 - 處理授權等
+// 請求攔截器 - 處理 CSRF Token
 http.interceptors.request.use(
-  (config) => {
-    // 從本地存儲獲取 token
-    const token = localStorage.getItem('auth_token');
+  async (config) => {
+    // 避免對 CSRF cookie 端點的無限循環
+    if (config.url !== '/sanctum/csrf-cookie' && 
+        ['post', 'put', 'patch', 'delete'].includes(config.method?.toLowerCase() || '')) {
+      try {
+        // 先獲取 CSRF cookie
+        await axios.get('/sanctum/csrf-cookie');
+      } catch (error) {
+        // 忽略 CSRF cookie 請求的錯誤
+      }
+    }
     
-    // 如果有 token，則將其添加到請求頭
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // 獲取 CSRF Token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    
+    // 如果有 CSRF Token，則將其添加到請求頭
+    if (csrfToken) {
+      config.headers['X-CSRF-TOKEN'] = csrfToken;
     }
     
     return config;
@@ -36,13 +47,14 @@ http.interceptors.response.use(
     return response;
   },
   (error) => {
-    // 可以在這裡統一處理錯誤，如未授權(401)、禁止訪問(403)等
-    if (error.response) {
-      // 处理响应错误
-      if (error.response.status === 401) {
-        // 未授权，可以执行登出或跳转到登录页
+    // 統一處理錯誤
+    if (error.response?.status === 401) {
+      // 檢查是否為認證檢查請求，如果是則不重定向
+      const isAuthCheck = error.config?.headers?.['X-Skip-Auth-Redirect'] === 'true';
+      if (!isAuthCheck) {
+        // 未授權，重定向到登入頁面
         console.log('未授權，請重新登入');
-        // 可以觸發登出操作或跳轉
+        window.location.href = '/login';
       }
     }
     
