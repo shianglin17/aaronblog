@@ -98,17 +98,8 @@ const userAvatar = computed(() => {
 
 // 用戶名稱首字母
 const userInitials = computed(() => {
-  // 從本地存儲獲取用戶數據
-  const userDataStr = localStorage.getItem('user_data');
-  if (!userDataStr) return '';
-  
-  try {
-    const userData = JSON.parse(userDataStr);
-    return userData.name.charAt(0).toUpperCase();
-  } catch (error) {
-    console.error('解析用戶數據失敗', error);
-    return '';
-  }
+  if (!user.value || !user.value.name) return '';
+  return user.value.name.charAt(0).toUpperCase();
 });
 
 // 處理用戶菜單選擇
@@ -117,7 +108,8 @@ async function handleUserMenuSelect(key: string) {
     try {
       await authApi.logout();
       message.success('登出成功');
-      router.push('/login');
+      // 登出後重新載入頁面以獲取新的 CSRF token，避免後續登入時的 CSRF 錯誤
+      window.location.href = '/login';
     } catch (error) {
       message.error('登出失敗');
       console.error(error);
@@ -126,14 +118,16 @@ async function handleUserMenuSelect(key: string) {
 }
 
 // 獲取當前用戶資訊
-function fetchUserInfo() {
-  const userDataStr = localStorage.getItem('user_data');
-  if (userDataStr) {
-    try {
-      user.value = JSON.parse(userDataStr);
-    } catch (error) {
-      console.error('解析用戶數據失敗', error);
+async function fetchUserInfo() {
+  try {
+    const response = await authApi.getCurrentUser();
+    if (response.status === 'success') {
+      user.value = response.data;
     }
+  } catch (error) {
+    console.error('獲取用戶資訊失敗:', error);
+    // 如果獲取用戶資訊失敗，重定向到登入頁面
+    router.push('/login');
   }
 }
 

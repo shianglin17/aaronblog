@@ -35,10 +35,7 @@
             <n-icon size="16" class="meta-icon"><TimeOutline /></n-icon>
             {{ formatDate(article.created_at) }}
           </time>
-          <!-- 文章狀態只在後台顯示 -->
-          <span v-if="isAdmin" class="article-status" :class="article.status">
-            {{ article.status === 'published' ? '已發佈' : '草稿' }}
-          </span>
+
         </div>
         
         <div class="article-tags" v-if="article.tags && article.tags.length > 0">
@@ -93,11 +90,7 @@ const loading = ref(true);
 const error = ref('');
 const { renderMarkdown } = useMarkdown();
 
-const isAdmin = computed(() => {
-  // 從本地儲存檢查是否為管理員
-  // 這裡可以根據實際的驗證方式調整
-  return localStorage.getItem('is_admin') === 'true';
-});
+
 
 // 渲染 markdown 內容
 const renderedContent = computed(() => {
