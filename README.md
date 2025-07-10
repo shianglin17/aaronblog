@@ -9,11 +9,15 @@
 ## 技術選型
 
 前端 : Vue 3, TypeScript
-後端 : Laravel 12
 前端畫面套件 : naive ui
-後端認證 : Sanctum 
+
+後端 : Laravel 12
+資料庫 : SQLite
+登入 : session cookie
+
 容器 : docker
 伺服器 : GCP-VM
+CI/CD : Github action
 
 # 關於部署 :
 

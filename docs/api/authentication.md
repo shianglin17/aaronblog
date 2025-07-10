@@ -2,16 +2,35 @@
 
 ## 認證方式
 
-使用 Bearer Token 認證：
-```
-Authorization: Bearer {token}
-```
+使用 Session Cookie 認證：
+- 認證資訊儲存在 HTTP-only Cookie 中
+- 自動由瀏覽器管理，無需手動處理
+- 提供最高的安全性保護
 
-## Token 管理
+## 認證流程
 
-- **有效期**：24 小時
-- **取得方式**：透過 `/api/auth/login` 登入取得
-- **刷新方式**：Token 過期後需重新登入
+1. **取得 CSRF Token**：
+```
+   GET /sanctum/csrf-cookie
+   ```
+
+2. **登入**：
+   ```
+   POST /api/auth/login
+   Content-Type: application/json
+   X-XSRF-TOKEN: {csrf_token}
+   
+   {
+     "email": "user@example.com",
+     "password": "password"
+   }
+   ```
+
+3. **存取受保護的 API**：
+   ```
+   GET /api/auth/user
+   Accept: application/json
+   ```
 
 ## 請求標頭
 
@@ -19,7 +38,7 @@ Authorization: Bearer {token}
 ```
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer {your_token}
+X-XSRF-TOKEN: {csrf_token}
 ```
 
 ## 認證錯誤
