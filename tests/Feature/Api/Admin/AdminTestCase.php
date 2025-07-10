@@ -29,6 +29,6 @@ abstract class AdminTestCase extends TestCase
         
         // 建立並認證測試用戶
         $this->authenticatedUser = User::factory()->create();
-        $this->actingAs($this->authenticatedUser, 'sanctum');
+        $this->actingAs($this->authenticatedUser, 'web');
     }
 } 
