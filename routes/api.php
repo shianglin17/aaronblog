@@ -32,12 +32,12 @@ Route::prefix('tags')->middleware('throttle:30,1')->group(function () {
 // 認證相關路由
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:web');
+    Route::get('/user', [AuthController::class, 'user'])->middleware('auth:web');
 });
 
 // 管理後台 API - 需要認證
-Route::prefix('admin')->middleware(['auth:sanctum', 'throttle:30,1'])->group(function () {
+Route::prefix('admin')->middleware(['auth:web', 'throttle:30,1'])->group(function () {
     // 文章管理
     Route::prefix('articles')->group(function () {
         Route::get('/', [ArticleController::class, 'index']);
