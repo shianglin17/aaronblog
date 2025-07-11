@@ -19,7 +19,7 @@ PUT /api/admin/tags/{id}
 | 名稱          | 必填 | 描述                                   |
 |---------------|------|--------------------------------------|
 | Accept        | 是   | 指定回應格式，固定為 `application/json` |
-| Authorization | 是   | Bearer token 用於認證                  |
+| X-XSRF-TOKEN  | 是   | CSRF Token 用於認證                 |
 | Content-Type  | 是   | 指定請求格式，固定為 `application/json` |
 
 ## 請求參數
@@ -35,7 +35,7 @@ PUT /api/admin/tags/{id}
 PUT /api/admin/tags/7 HTTP/1.1
 Host: api.aaronblog.com
 Accept: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+X-XSRF-TOKEN: csrf_token_value
 Content-Type: application/json
 
 {

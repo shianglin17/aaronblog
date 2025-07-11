@@ -68,7 +68,7 @@
 ```json
 {
   "baseUrl": "http://localhost:8000",
-  "token": ""
+  "csrfToken": ""
 }
 ```
 
@@ -77,23 +77,24 @@
 ```json
 {
   "baseUrl": "https://aaronlei.com",
-  "token": ""
+  "csrfToken": ""
 }
 ```
 
 ## 認證流程
 
-1. 呼叫 `/api/auth/login` API，傳入用戶名和密碼
-2. API 回應中會包含 token
-3. 將 token 複製到環境變數中的 `token` 欄位
-4. 之後所有需要認證的 API 請求會自動加上 Authorization header
+1. 呼叫 `/sanctum/csrf-cookie` 獲取 CSRF Cookie
+2. 呼叫 `/api/auth/login` API，傳入用戶名和密碼（需要 CSRF Token）
+3. API 回應中會包含用戶資訊，Session Cookie 會自動設定
+4. 之後所有需要認證的 API 請求會自動使用 Session Cookie，並需要提供 CSRF Token
 
 ## 注意事項
 
-- 管理員相關 API 需要認證，必須先登入取得 token
+- 管理員相關 API 需要認證，必須先登入建立 Session
 - 公開 API（文章、分類、標籤的查詢）無需認證
 - 文章列表 API 的篩選參數都是選填的
 - 生產環境的 API 有速率限制（每分鐘 30 次請求）
+- 所有需要認證的 API 都需要提供 CSRF Token
 
 ## API 路徑說明
 
@@ -166,8 +167,9 @@ GET /api/articles?tags[]=laravel&tags[]=php
 ## API 測試順序建議
 
 1. **先測試公開 API**：測試文章、分類、標籤的查詢功能
-2. **登入獲取 token**：使用 `/api/auth/login` 取得認證 token
-3. **測試管理員 API**：測試需要認證的 CRUD 操作
-4. **測試認證相關**：測試 `/api/auth/user` 和 `/api/auth/logout`
+2. **獲取 CSRF Token**：使用 `/sanctum/csrf-cookie` 取得 CSRF Cookie
+3. **登入建立 Session**：使用 `/api/auth/login` 建立認證 Session
+4. **測試管理員 API**：測試需要認證的 CRUD 操作
+5. **測試認證相關**：測試 `/api/auth/user` 和 `/api/auth/logout`
 
 這樣的順序可以確保測試的順利進行，並且能夠有效驗證 API 的完整功能。 

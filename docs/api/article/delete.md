@@ -2,7 +2,7 @@
 
 ## 接口說明
 
-此接口用於刪除文章，實際是軟刪除，將文章標記為已刪除。
+此接口用於刪除文章，將文章從資料庫中永久刪除。
 
 - 請求方式：DELETE
 - 請求地址：`/api/admin/articles/{id}`
@@ -14,7 +14,7 @@
 
 | 參數名 | 必填 | 類型 | 說明 |
 | --- | --- | --- | --- |
-| Authorization | 是 | string | Bearer {token} |
+| X-XSRF-TOKEN | 是 | string | CSRF Token |
 
 ### Path Parameters
 

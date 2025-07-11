@@ -6,7 +6,7 @@
 
 ## 描述
 
-用於用戶（管理員）登入系統。成功登入後將返回用戶資訊和 API Token。
+用於用戶（管理員）登入系統。成功登入後將建立 Session Cookie 並返回用戶資訊。
 
 ## 請求頭
 
@@ -14,6 +14,7 @@
 |--------------|--------|------|---------------------|
 | Accept       | string | 是   | application/json    |
 | Content-Type | string | 是   | application/json    |
+| X-XSRF-TOKEN | string | 是   | CSRF Token（從 /sanctum/csrf-cookie 獲取）|
 
 ## 請求參數
 
@@ -48,8 +49,7 @@
     "email_verified_at": "2024-05-10T10:00:00.000000Z",
     "created_at": "2024-05-10T10:00:00.000000Z",
     "updated_at": "2024-05-10T10:00:00.000000Z"
-  },
-  "token": "1|laravel_sanctum_vGkjdhf76..."
+  }
   }
 }
 ```
@@ -88,6 +88,7 @@
 
 ## 備註
 
-- 成功登入後返回的 Token 應保存在客戶端
-- 所有需要認證的 API 呼叫都需要在請求頭中加入 `Authorization: Bearer {token}`
-- Token 有效期由系統設定決定 
+- 成功登入後系統會建立 Session Cookie，瀏覽器會自動管理
+- 所有需要認證的 API 呼叫都需要在請求頭中加入 `X-XSRF-TOKEN: {csrf_token}`
+- 在登入前需要先呼叫 `/sanctum/csrf-cookie` 獲取 CSRF Token
+- Session 有效期由系統設定決定 

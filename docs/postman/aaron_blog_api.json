@@ -414,7 +414,7 @@
                 }
               ]
             },
-            "description": "刪除指定的文章（軟刪除）"
+            "description": "刪除指定的文章（永久刪除）"
           },
           "response": [
             {

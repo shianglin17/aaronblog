@@ -19,7 +19,7 @@ DELETE /api/admin/tags/{id}
 | 名稱          | 必填 | 描述                                   |
 |---------------|------|--------------------------------------|
 | Accept        | 是   | 指定回應格式，固定為 `application/json` |
-| Authorization | 是   | Bearer token 用於認證                  |
+| X-XSRF-TOKEN  | 是   | CSRF Token 用於認證                 |
 
 ## 請求示例
 
@@ -27,7 +27,7 @@ DELETE /api/admin/tags/{id}
 DELETE /api/admin/tags/7 HTTP/1.1
 Host: api.aaronblog.com
 Accept: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+X-XSRF-TOKEN: csrf_token_value
 ```
 
 ## 回應格式
@@ -66,4 +66,4 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 
 - 此 API 需要認證
 - 刪除標籤會同時解除該標籤與所有文章的關聯，但不會刪除關聯的文章
-- 刪除後的標籤會被軟刪除（soft delete），在資料庫中仍然存在但不會出現在查詢結果中 
+- 刪除後的標籤會被永久刪除，從資料庫中完全移除 

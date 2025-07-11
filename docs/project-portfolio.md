@@ -16,8 +16,8 @@
 
 **後端技術**
 - **框架**：Laravel 12（最新版本）+ PHP 8.2+
-- **認證**：Laravel Sanctum API Token 認證
-- **資料庫**：生產環境 SQLite（資源優化）
+- **認證**：Laravel Sanctum Session Cookie 認證
+- **資料庫**：SQLite 檔案型資料庫（資源優化）
 - **快取**：Redis 7 + 自定義快取服務層
 - **API 設計**：RESTful API + 統一回應格式
 
@@ -59,7 +59,7 @@
 ### 雲端成本優化
 **挑戰**：在 GCP 免費層 VM（1GB RAM）上運行完整應用
 **解決方案**：
-- 生產環境採用 SQLite 替代 MySQL，節省記憶體
+- 生產環境採用 SQLite 檔案型資料庫，節省記憶體
 - Redis 記憶體限制設定（100MB + LRU 淘汰策略）
 - Docker 資源配置優化
 

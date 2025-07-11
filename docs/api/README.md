@@ -10,7 +10,7 @@
 ## 核心概念
 
 - [錯誤處理](error-handling.md) - HTTP 狀態碼、錯誤回應格式
-- [認證機制](authentication.md) - Bearer Token 認證
+- [認證機制](authentication.md) - Session Cookie 認證
 - [分頁規範](pagination.md) - 分頁參數與回應格式
 - [通用參數](common-parameters.md) - 排序、搜尋、日期格式
 - [Rate Limiting](rate-limiting.md) - 請求頻率限制

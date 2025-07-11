@@ -12,7 +12,7 @@ GET /api/articles/{id}
 **請求標頭**
 ```
 Accept: application/json
-Authorization: Bearer {token}
+X-XSRF-TOKEN: {csrf_token}  // 選填，若要訪問草稿文章則必填
 ```
 
 ## 請求參數

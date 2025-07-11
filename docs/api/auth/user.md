@@ -13,7 +13,7 @@
 | 名稱          | 類型   | 必填 | 描述                          |
 |--------------|--------|------|------------------------------|
 | Accept       | string | 是   | application/json             |
-| Authorization| string | 是   | Bearer {token}               |
+| X-XSRF-TOKEN | string | 否   | CSRF Token（建議提供）         |
 
 ## 請求參數
 
@@ -54,6 +54,7 @@
 
 ## 備註
 
-- 此 API 呼叫需要在請求頭中提供有效的 Bearer Token
+- 此 API 呼叫需要有效的 Session Cookie（由瀏覽器自動提供）
 - 用於前端獲取當前登入用戶的基本資訊
-- 可用於驗證用戶是否已登入 
+- 可用於驗證用戶是否已登入
+- 如果用戶未登入，會返回 401 未授權錯誤 

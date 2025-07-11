@@ -15,7 +15,7 @@
 | 參數名 | 必填 | 類型 | 說明 |
 | --- | --- | --- | --- |
 | Content-Type | 是 | string | application/json |
-| Authorization | 是 | string | Bearer {token} |
+| X-XSRF-TOKEN | 是 | string | CSRF Token |
 
 ### Body
 
