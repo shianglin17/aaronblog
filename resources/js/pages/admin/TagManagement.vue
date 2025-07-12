@@ -65,7 +65,6 @@ import FilterBar from '../../components/admin/FilterBar.vue';
 import FormModal from '../../components/admin/FormModal.vue';
 import { TAG_COLUMNS, TAG_FORM_RULES } from '../../constants';
 import { useTags, useTagForm, useTagDelete } from '../../composables/useTag';
-import type { Tag } from '../../types/tag';
 
 // 消息提示
 const message = useMessage();
@@ -77,7 +76,6 @@ const searchQuery = ref('');
 const {
   tags,
   loading,
-  params,
   pagination,
   fetchTags,
   handleSearch,

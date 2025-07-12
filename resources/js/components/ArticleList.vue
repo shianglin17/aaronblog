@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { 
   PersonOutline, 
   TimeOutline, 

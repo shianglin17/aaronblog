@@ -1,6 +1,6 @@
 import { ref, reactive, computed, watch } from 'vue';
 import { articleApi, categoryApi, tagApi } from '../api';
-import { ERROR_MESSAGES, STATUS_OPTIONS } from '../constants';
+import { ERROR_MESSAGES, STATUS_OPTIONS, DEFAULT_ARTICLE_FORM } from '../constants';
 import type { Article, ArticleListParams, CreateArticleParams } from '../types/article';
 import type { Category } from '../types/category';
 import type { Tag } from '../types/tag';
@@ -203,15 +203,10 @@ export function useArticles(message: any) {
   };
 }
 
-// 定義文章表單的初始狀態常量
+// 使用統一的表單初始狀態
 const INITIAL_ARTICLE_FORM_STATE = {
-  title: '',
-  slug: '',
-  description: '',
-  content: '',
-  category_id: null,
-  status: 'draft' as const, // 根據您的最新更改，新文章默認為草稿
-  tags: [] as number[] // 明確標籤為數字陣列
+  ...DEFAULT_ARTICLE_FORM,
+  tags: [] as number[] // 明確標籤為數字陣列類型
 };
 
 /**

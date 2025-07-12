@@ -69,7 +69,6 @@ import FilterBar from '../../components/admin/FilterBar.vue';
 import FormModal from '../../components/admin/FormModal.vue';
 import { CATEGORY_COLUMNS, CATEGORY_FORM_RULES } from '../../constants';
 import { useCategories, useCategoryForm, useCategoryDelete } from '../../composables/useCategory';
-import type { Category } from '../../types/category';
 
 // 消息提示
 const message = useMessage();
@@ -81,7 +80,6 @@ const searchQuery = ref('');
 const {
   categories,
   loading,
-  params,
   pagination,
   fetchCategories,
   handleSearch,

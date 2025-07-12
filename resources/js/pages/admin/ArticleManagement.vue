@@ -111,7 +111,6 @@ import ArticleFilterBar from '../../components/admin/ArticleFilterBar.vue';
 import FormModal from '../../components/admin/FormModal.vue';
 import { ARTICLE_COLUMNS, ARTICLE_FORM_RULES } from '../../constants';
 import { useArticles, useArticleForm, useArticleDelete, useOptions } from '../../composables/useArticle';
-import type { Article } from '../../types/article';
 
 // 消息提示
 const message = useMessage();
