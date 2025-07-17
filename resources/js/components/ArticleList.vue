@@ -131,18 +131,19 @@ const handlePageChange = (page: number) => {
 .articles {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--card-gap);
 }
 
 .article-item {
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
-  padding: 20px 28px 30px 28px;
-  background: var(--background-color); /* 與主背景一致，最佳實踐 */
-  border-radius: 6px;
-  box-sizing: border-box;
-  transition: box-shadow 0.22s cubic-bezier(.4,0,.2,1), background 0.22s cubic-bezier(.4,0,.2,1), transform 0.18s cubic-bezier(.4,0,.2,1);
-  box-shadow: none;
+  background: var(--card-background);
+  border-radius: var(--card-border-radius);
+  padding: var(--card-padding);
+  box-shadow: var(--card-shadow);
+  border: var(--card-border);
+  transition: var(--card-transition);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
 .article-title {
@@ -197,18 +198,20 @@ const handlePageChange = (page: number) => {
 }
 
 .article-tag {
-  background-color: var(--tag-bg, #f0f0f0);
-  color: var(--text-secondary);
+  background-color: var(--tag-background);
+  color: var(--tag-color);
   font-size: 0.85rem;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: var(--tag-padding);
+  border-radius: var(--tag-border-radius);
   display: inline-block;
-  transition: background-color 0.2s, color 0.2s;
+  transition: var(--card-transition);
+  font-weight: 500;
 }
 
 .article-tag:hover {
-  background-color: var(--primary-color, #7d6e5d);
-  color: white;
+  background-color: var(--tag-hover-background);
+  color: var(--tag-hover-color);
+  transform: translateY(-1px);
 }
 
 .article-description {
@@ -269,11 +272,12 @@ const handlePageChange = (page: number) => {
 /* 響應式設計 */
 @media (max-width: 768px) {
   .articles {
-    gap: 12px;
+    gap: 16px;
   }
 
   .article-item {
-    padding-bottom: 25px;
+    padding: 20px;
+    border-radius: 8px;
   }
   
   .article-title {
@@ -288,11 +292,28 @@ const handlePageChange = (page: number) => {
   }
 }
 
-/* 新增可點擊卡片的互動樣式 */
+@media (max-width: 480px) {
+  .article-item {
+    padding: 16px;
+  }
+  
+  .article-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* 文章卡片互動效果 */
 .article-item:hover, .article-item:focus {
-  background: #f3f1ef; /* hover 時更細膩的低調變化 */
-  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.06); /* hover 時陰影略明顯但仍低調 */
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
   outline: none;
-  transform: scale(1.01);
+}
+
+.article-item:focus {
+  border-color: var(--primary-color);
+}
+
+.article-item:active {
+  transform: translateY(0);
 }
 </style>

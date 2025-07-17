@@ -1,27 +1,33 @@
 <template>
   <div class="container">
-    <header class="header">
-      <h1 class="site-title">Aaron 的部落格</h1>
-      <p class="site-description">軟體開發紀錄、生活分享</p>
+    <header class="hero-section animate-fade-in">
+      <div class="hero-content">
+        <h1 class="site-title">Aaron 的部落格</h1>
+        <p class="site-description">軟體開發紀錄、生活分享</p>
+      </div>
     </header>
 
     <!-- 統一搜尋器 -->
-    <UnifiedSearchBar
-      :categories="categories"
-      :tags="tags"
-      @update:filters="handleFilterChange"
-    />
+    <div class="search-wrapper animate-fade-in-delay">
+      <UnifiedSearchBar
+        :categories="categories"
+        :tags="tags"
+        @update:filters="handleFilterChange"
+      />
+    </div>
   
     <!-- 文章列表 -->
-    <n-spin :show="loading" description="載入中...">
-      <ArticleList 
-        :articles="articles" 
-        :error="error"
-        :pagination="pagination"
-        @page-change="changePage"
-        @page-size-change="changePageSize"
-      />
-    </n-spin>
+    <div class="content-wrapper animate-fade-in-delay-2">
+      <n-spin :show="loading" description="載入中...">
+        <ArticleList 
+          :articles="articles" 
+          :error="error"
+          :pagination="pagination"
+          @page-change="changePage"
+          @page-size-change="changePageSize"
+        />
+      </n-spin>
+    </div>
 
   </div>
 </template>
@@ -131,29 +137,45 @@ onMounted(() => {
 
 <style scoped>
 .container {
-  max-width: 860px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 40px 20px;
 }
 
-.header {
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, var(--hero-bg-start), var(--hero-bg-end));
+  border-radius: var(--hero-border-radius);
+  padding: var(--hero-padding);
+  margin-bottom: var(--hero-margin-bottom);
+  box-shadow: var(--hero-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
   text-align: center;
-  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
 }
 
 .site-title {
-  font-size: 2.2rem;
-  font-weight: 300;
-  margin-bottom: 12px;
-  letter-spacing: 1px;
-  color: var(--text-color);
+  font-size: var(--title-font-size);
+  font-weight: var(--title-font-weight);
+  margin-bottom: var(--title-margin-bottom);
+  letter-spacing: var(--title-letter-spacing);
+  color: var(--title-color);
+  text-shadow: var(--title-text-shadow);
 }
 
 .site-description {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  font-weight: 300;
-  letter-spacing: 0.5px;
+  font-size: var(--description-font-size);
+  color: var(--description-color);
+  font-weight: var(--description-font-weight);
+  letter-spacing: var(--description-letter-spacing);
+  max-width: var(--description-max-width);
+  margin: 0 auto;
+  line-height: var(--description-line-height);
 }
 
 
@@ -164,16 +186,71 @@ onMounted(() => {
     padding: 20px 16px;
   }
   
-  .header {
-    margin-bottom: 20px;
+  .hero-section {
+    padding: 40px 20px;
+    margin-bottom: 30px;
+    border-radius: 12px;
   }
   
   .site-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
   
-  .search-area {
-    margin-bottom: 30px;
+  .site-description {
+    font-size: 1rem;
+    max-width: 100%;
   }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 32px 16px;
+  }
+  
+  .site-title {
+    font-size: 1.75rem;
+  }
+  
+  .site-description {
+    font-size: 0.95rem;
+  }
+}
+
+/* 動畫效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-fade-in-delay {
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.animate-fade-in-delay-2 {
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+/* 為加載狀態添加脈衝效果 */
+.n-spin-container {
+  transition: var(--card-transition);
+}
+
+.search-wrapper {
+  margin-bottom: 48px;
+  transition: var(--card-transition);
+}
+
+.content-wrapper {
+  transition: var(--card-transition);
 }
 </style>

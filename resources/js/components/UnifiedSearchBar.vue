@@ -294,31 +294,27 @@ watch(
 
 /* 主搜尋區域 */
 .search-main {
-  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-  border: 2px solid #e8e5e0;
-  border-radius: 16px;
+  background: var(--search-background);
+  border: var(--search-border);
+  border-radius: var(--search-border-radius);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: var(--card-transition);
+  box-shadow: var(--search-shadow);
   position: relative;
 }
 
 .search-main.is-focused {
   border-color: var(--primary-color);
-  box-shadow: 
-    0 8px 32px rgba(125, 110, 93, 0.15),
-    0 2px 8px rgba(125, 110, 93, 0.1),
-    0 0 0 4px rgba(125, 110, 93, 0.05);
+  box-shadow: var(--search-shadow-focus);
   transform: translateY(-2px);
 }
 
 .search-input-wrapper {
   display: flex;
   align-items: center;
-  padding: 6px 20px;
+  padding: var(--search-padding);
   gap: 16px;
+  min-height: var(--search-input-height);
 }
 
 .search-icon {
