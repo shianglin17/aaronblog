@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-router'
 import Home from '../pages/Home.vue'
 import ArticleDetail from '../pages/ArticleDetail.vue'
+import About from '../pages/About.vue'
+import SiteInfo from '../pages/SiteInfo.vue'
 import Login from '../pages/Login.vue'
 import { authApi } from '../api/index'
 
@@ -18,6 +20,16 @@ const routes = [
             slug: route.params.slug,
             id: Number(route.query.id) 
         })
+    },
+    {
+        path: '/about',
+        name: 'about',
+        component: About
+    },
+    {
+        path: '/site-info',
+        name: 'site-info',
+        component: SiteInfo
     },
     {
         path: '/login',

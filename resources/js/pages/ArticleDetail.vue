@@ -1,23 +1,23 @@
 <template>
   <div class="container">
+    <!-- 返回按鈕 - 只在文章加載完成後顯示 -->
+    <div v-if="article && !loading" class="navigation-back">
+      <n-button quaternary type="primary" @click="goBack">
+        <template #icon>
+          <n-icon><ArrowBackOutline /></n-icon>
+        </template>
+        返回文章列表
+      </n-button>
+    </div>
+    
     <n-spin :show="loading" description="載入中...">
       <!-- 錯誤訊息 -->
       <div v-if="error" class="error-message">
         {{ error }}
       </div>
       
-      <!-- 返回按鈕 - 移至文章內容外部 -->
-      <div v-else-if="article" class="navigation-back">
-        <n-button quaternary type="primary" @click="goBack">
-          <template #icon>
-            <n-icon><ArrowBackOutline /></n-icon>
-          </template>
-          返回文章列表
-        </n-button>
-      </div>
-      
       <!-- 文章內容 -->
-      <div v-if="article" class="article-detail">
+      <div v-else-if="article" class="article-detail">
         <h1 class="article-title">{{ article.title }}</h1>
         
         <!-- 文章元數據區塊 -->
@@ -131,12 +131,11 @@ const goBack = () => {
 }
 
 .navigation-back {
-  margin: 30px 0 20px;
+  margin: 30px 0 10px;
 }
 
 .article-detail {
   padding: 20px 24px;
-  margin-top: 10px;
 }
 
 .article-title {
@@ -181,18 +180,20 @@ const goBack = () => {
 }
 
 .article-tag {
-  background-color: var(--tag-bg, #f0f0f0);
-  color: var(--text-secondary);
+  background-color: var(--tag-background);
+  color: var(--tag-color);
   font-size: 0.85rem;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: var(--tag-padding);
+  border-radius: var(--tag-border-radius);
   display: inline-block;
-  transition: background-color 0.2s, color 0.2s;
+  transition: var(--card-transition);
+  font-weight: 500;
 }
 
 .article-tag:hover {
-  background-color: var(--primary-color, #7d6e5d);
-  color: white;
+  background-color: var(--tag-hover-background);
+  color: var(--tag-hover-color);
+  transform: translateY(-1px);
 }
 
 
@@ -238,7 +239,7 @@ const goBack = () => {
   }
   
   .navigation-back {
-    margin: 20px 0 10px;
+    margin: 20px 0 5px;
   }
   
   .article-detail {

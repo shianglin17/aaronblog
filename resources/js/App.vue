@@ -2,6 +2,7 @@
     <n-config-provider :theme-overrides="themeOverrides">
         <n-message-provider>
             <div class="app-container">
+                <Navigation />
                 <main class="main-content">
                     <router-view></router-view>
                 </main>
@@ -13,6 +14,7 @@
 
 <script setup lang="ts">
 import { defineOptions } from 'vue'
+import Navigation from './components/Navigation.vue'
 import Footer from './components/Footer.vue'
 
 defineOptions({
@@ -100,6 +102,20 @@ const themeOverrides = {
     --search-shadow-focus: 0 8px 32px rgba(125, 110, 93, 0.15), 0 2px 8px rgba(125, 110, 93, 0.1), 0 0 0 4px rgba(125, 110, 93, 0.05);
     --search-input-height: 48px;
     --search-padding: 6px 20px;
+    
+    /* 導航欄變數 */
+    --nav-height: 64px;
+    --nav-background: rgba(248, 245, 242, 0.85);
+    --nav-scrolled-background: rgba(248, 245, 242, 0.95);
+    --nav-mobile-background: rgba(248, 245, 242, 0.98);
+    --nav-backdrop-filter: blur(20px);
+    --nav-border: 1px solid rgba(125, 110, 93, 0.1);
+    --nav-scrolled-shadow: 0 2px 20px rgba(125, 110, 93, 0.1);
+    --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --nav-brand-color: var(--text-color);
+    --nav-link-color: var(--text-secondary);
+    --nav-link-hover-background: rgba(125, 110, 93, 0.08);
+    --nav-link-active-background: rgba(125, 110, 93, 0.12);
 }
 
 * {
@@ -134,6 +150,7 @@ body {
 
 .main-content {
     flex: 1;
+    padding-top: var(--nav-height);
 }
 
 a {
