@@ -54,9 +54,11 @@ class ArticleRepository extends BaseRepository
             'tags:id,name,slug'
         ])
         ->when(!empty($params['search']), fn(Builder $query): Builder => 
-            $query->where('title', 'like', "%{$params['search']}%")
-                  ->orWhere('content', 'like', "%{$params['search']}%")
-                  ->orWhere('description', 'like', "%{$params['search']}%")
+            $query->where(function(Builder $q) use ($params): Builder {
+                return $q->where('title', 'like', "%{$params['search']}%")
+                         ->orWhere('content', 'like', "%{$params['search']}%")
+                         ->orWhere('description', 'like', "%{$params['search']}%");
+            })
         )
         ->when($params['status'] !== 'all', fn(Builder $query): Builder => 
             $query->where('status', $params['status'])

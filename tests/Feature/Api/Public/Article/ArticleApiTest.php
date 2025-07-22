@@ -423,4 +423,28 @@ class ArticleApiTest extends TestCase
         // Laravel 預設的 ModelNotFoundException 處理會回傳 HTML 頁面
         // 如果需要 JSON 格式，需要自定義異常處理
     }
+
+    /**
+     * 測試搜尋時不會出現草稿文章
+     */
+    public function test_search_does_not_include_draft_articles(): void
+    {
+        // Arrange: 建立包含相同關鍵字的已發布和草稿文章
+        Article::factory()->published()->create(['title' => 'Laravel 最佳實踐']);
+        Article::factory()->draft()->create(['title' => 'Laravel 進階技巧']);
+        Article::factory()->published()->create(['title' => 'Vue.js 入門']);
+        Article::factory()->draft()->create(['title' => 'Laravel 開發指南']);
+
+        // Act: 搜尋包含 "Laravel" 的文章
+        $response = $this->getJson('/api/articles?search=Laravel');
+
+        // Assert: 驗證只回傳已發布的文章
+        $response->assertStatus(200);
+        
+        $responseData = $response->json('data');
+        $this->assertCount(1, $responseData); // 只應該有 1 篇已發布的 Laravel 文章
+        
+        $this->assertEquals('Laravel 最佳實踐', $responseData[0]['title']);
+        $this->assertEquals('published', $responseData[0]['status']);
+    }
 } 
