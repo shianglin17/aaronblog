@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-rou
 import Home from '../pages/Home.vue'
 import ArticleDetail from '../pages/ArticleDetail.vue'
 import Login from '../pages/Login.vue'
-import { authApi } from '../api/index'
+import { useAuthStore } from '../stores/auth'
 
 const routes = [
     {
@@ -64,19 +64,11 @@ const router = createRouter({
 
 // 全局路由守衛
 router.beforeEach(async (to, from, next) => {
-    // 檢查認證狀態
-    const checkAuth = async (): Promise<boolean> => {
-        try {
-            const response = await authApi.checkAuth();
-            return response.status === 'success';
-        } catch {
-            return false;
-        }
-    };
+    const authStore = useAuthStore();
 
     if (to.meta.requiresAuth) {
         // 需要認證的頁面
-        const isAuthenticated = await checkAuth();
+        const isAuthenticated = await authStore.checkAuth();
         if (isAuthenticated) {
             next();
         } else {
@@ -84,7 +76,7 @@ router.beforeEach(async (to, from, next) => {
         }
     } else if (to.meta.requiresGuest) {
         // 訪客專用頁面（如登入頁）
-        const isAuthenticated = await checkAuth();
+        const isAuthenticated = await authStore.checkAuth();
         if (isAuthenticated) {
             next({ name: 'admin-articles', replace: true });
         } else {

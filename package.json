@@ -23,6 +23,7 @@
         "highlight.js": "^11.11.1",
         "markdown-it": "^14.1.0",
         "naive-ui": "^2.41.0",
+        "pinia": "^3.0.3",
         "vue": "^3.4.19",
         "vue-router": "^4.3.0"
     }

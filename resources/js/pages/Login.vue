@@ -59,12 +59,12 @@
         <n-button 
           type="primary" 
           block 
-          :loading="isLoading" 
+          :loading="authStore.isLoading" 
           attr-type="submit"
           size="large"
           class="login-button"
         >
-          {{ isLoading ? '登入中...' : '登入' }}
+          {{ authStore.isLoading ? '登入中...' : '登入' }}
         </n-button>
       </n-form>
     </div>
@@ -76,12 +76,12 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { FormRules, FormInst } from 'naive-ui';
 import { MailOutline, LockClosedOutline } from '@vicons/ionicons5';
-import { authApi } from '../api/index';
+import { useAuthStore } from '../stores/auth';
 import type { LoginParams } from '../types/auth';
 
 const router = useRouter();
+const authStore = useAuthStore();
 const formRef = ref<FormInst | null>(null);
-const isLoading = ref(false);
 const errorMessage = ref('');
 
 // 統一輸入框樣式
@@ -112,15 +112,15 @@ async function handleLogin() {
   
   try {
     await formRef.value?.validate();
-    isLoading.value = true;
-    const response = await authApi.login(form);
     
-    if (response.status === 'success') {
+    const result = await authStore.login(form.email, form.password);
+    
+    if (result.success) {
       // 成功登入，導向管理頁面
       router.push('/admin');
     } else {
-      // 處理一般錯誤（不應該走到這裡，因為非成功回應會拋出錯誤）
-      errorMessage.value = response.message || '登入失敗，請稍後再試';
+      // 顯示錯誤訊息
+      errorMessage.value = result.message || '登入失敗，請稍後再試';
     }
   } catch (error: any) {
     // 處理表單驗證錯誤
@@ -129,39 +129,9 @@ async function handleLogin() {
       return;
     }
     
-    // 處理API錯誤
-    if (error.response) {
-      const { status, data } = error.response;
-      
-      if (status === 401) {
-        // 認證失敗
-        errorMessage.value = data.message || '電子郵件或密碼不正確';
-      } else if (status === 422) {
-        // 驗證錯誤
-        errorMessage.value = data.message || '請檢查您輸入的資料';
-        
-        // 如果有具體驗證錯誤，顯示第一條錯誤
-        if (data.meta && data.meta.errors) {
-          const errors = data.meta.errors;
-          // 取得第一個錯誤訊息
-          for (const field in errors) {
-            if (errors[field] && Array.isArray(errors[field]) && errors[field].length > 0) {
-              errorMessage.value = errors[field][0];
-              break;
-            }
-          }
-        }
-      } else {
-        // 其他錯誤
-        errorMessage.value = data.message || '登入失敗，請稍後再試';
-      }
-    } else {
-      // 網路錯誤或其他非預期錯誤
-      errorMessage.value = '無法連接到伺服器，請檢查您的網路連接並稍後再試';
-      console.error('登入錯誤:', error);
-    }
-  } finally {
-    isLoading.value = false;
+    // 其他非預期錯誤
+    errorMessage.value = '無法連接到伺服器，請檢查您的網路連接並稍後再試';
+    console.error('登入錯誤:', error);
   }
 }
 </script>
