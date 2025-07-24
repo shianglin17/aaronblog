@@ -22,6 +22,10 @@ class SqlLogServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // 只在開發環境或明確啟用時記錄 SQL
+        if (config('app.env') === 'local' || env('ENABLE_SQL_LOG', false)) {
+            $this->enableSqlLogging();
+        }
     }
 
     /**

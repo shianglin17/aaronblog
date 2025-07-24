@@ -12,6 +12,8 @@ services:
       - ./public:/var/www/public:ro
       # SQLite 資料庫檔案掛載到 storage 目錄（Laravel 最佳實踐）
       - sqlite-storage:/var/www/storage/app/database
+      # 日誌檔案掛載，確保容器重啟後日誌不會丟失
+      - ./storage/logs:/var/www/storage/logs
       - .env:/var/www/.env
     # 記憶體限制，適合免費層 VM (1GB RAM)
     mem_limit: 512m
