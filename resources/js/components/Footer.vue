@@ -23,14 +23,14 @@
       <!-- 版權資訊 -->
       <div class="copyright">
         <p>© {{ currentYear }} Aaron 的個人部落格</p>
-        <p class="description">分享軟體開發與生活點滴</p>
+        <p class="version">{{ currentVersion }}</p>
       </div>
     </div>
   </footer>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { 
   LogoInstagram, 
   LogoLinkedin,
@@ -42,6 +42,11 @@ import { SOCIAL_MEDIA_LIST } from '../constants/socialMedia';
  * 計算當前年份
  */
 const currentYear = computed(() => new Date().getFullYear());
+
+/**
+ * 當前版本
+ */
+const currentVersion = ref('v1.0.0');
 
 /**
  * 社交媒體清單
@@ -62,6 +67,34 @@ function getSocialIcon(iconName: string) {
   
   return iconMap[iconName as keyof typeof iconMap] || ChatboxEllipses;
 }
+
+/**
+ * 獲取最新版本資訊
+ */
+const fetchLatestVersion = async () => {
+  try {
+    const response = await fetch('https://api.github.com/repos/shianglin17/aaronblog/tags', {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'AaronBlog-Frontend'
+      }
+    });
+
+    if (response.ok) {
+      const tags = await response.json();
+      if (tags && tags.length > 0) {
+        const latestTag = tags[0];
+        currentVersion.value = latestTag.name;
+      }
+    }
+  } catch (error) {
+    console.warn('無法獲取版本資訊:', error);
+  }
+};
+
+onMounted(() => {
+  fetchLatestVersion();
+});
 </script>
 
 <style scoped>
@@ -140,7 +173,7 @@ function getSocialIcon(iconName: string) {
   margin-bottom: 2px;
 }
 
-.copyright .description {
+.copyright .version {
   font-size: 0.75rem;
   opacity: 0.8;
 }
@@ -173,7 +206,7 @@ function getSocialIcon(iconName: string) {
     font-size: 0.8rem;
   }
   
-  .copyright .description {
+  .copyright .version {
     font-size: 0.7rem;
   }
 }
@@ -195,6 +228,10 @@ function getSocialIcon(iconName: string) {
   .social-link {
     width: 28px;
     height: 28px;
+  }
+  
+  .copyright .version {
+    font-size: 0.65rem;
   }
 }
 </style> 
