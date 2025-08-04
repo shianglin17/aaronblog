@@ -29,5 +29,4 @@ export interface User {
 // 登入回應
 export interface AuthResponse {
   user: User;
-  token: string;
 } 

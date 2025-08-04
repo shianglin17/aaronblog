@@ -49,7 +49,7 @@
                       :src="userAvatar"
                       color="#8f8072"
                     >{{ userInitials }}</n-avatar>
-                    <span class="user-name">{{ user ? user.name : '管理員' }}</span>
+                    <span class="user-name">{{ authStore.user ? authStore.user.name : '管理員' }}</span>
                     <n-icon><chevron-down-outline /></n-icon>
                   </n-button>
                 </n-dropdown>
@@ -68,17 +68,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useMessage } from 'naive-ui';
 import { ChevronDownOutline } from '@vicons/ionicons5';
-import { authApi } from '../../api/index';
-import type { User } from '../../types/auth';
+import { useAuthStore } from '../../stores/auth';
 
 const router = useRouter();
 const route = useRoute();
 const message = useMessage();
-const user = ref<User | null>(null);
+const authStore = useAuthStore();
 
 // 當前路由
 const currentRoute = computed(() => route.path);
@@ -98,15 +97,15 @@ const userAvatar = computed(() => {
 
 // 用戶名稱首字母
 const userInitials = computed(() => {
-  if (!user.value || !user.value.name) return '';
-  return user.value.name.charAt(0).toUpperCase();
+  if (!authStore.user || !authStore.user.name) return '';
+  return authStore.user.name.charAt(0).toUpperCase();
 });
 
 // 處理用戶菜單選擇
 async function handleUserMenuSelect(key: string) {
   if (key === 'logout') {
     try {
-      await authApi.logout();
+      await authStore.logout();
       message.success('登出成功');
       // 登出後重新載入頁面以獲取新的 CSRF token，避免後續登入時的 CSRF 錯誤
       window.location.href = '/login';
@@ -116,25 +115,6 @@ async function handleUserMenuSelect(key: string) {
     }
   }
 }
-
-// 獲取當前用戶資訊
-async function fetchUserInfo() {
-  try {
-    const response = await authApi.getCurrentUser();
-    if (response.status === 'success') {
-      user.value = response.data;
-    }
-  } catch (error) {
-    console.error('獲取用戶資訊失敗:', error);
-    // 如果獲取用戶資訊失敗，重定向到登入頁面
-    router.push('/login');
-  }
-}
-
-// 組件掛載時獲取用戶資訊
-onMounted(() => {
-  fetchUserInfo();
-});
 </script>
 
 <style scoped>
