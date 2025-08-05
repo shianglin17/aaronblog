@@ -342,24 +342,23 @@ const goBack = () => {
 /* 響應式設計 */
 @media (max-width: 768px) {
   .container {
-    padding: 0 20px;
+    padding: 16px;
+    max-width: 100%;
   }
   
   .navigation-back {
     margin: 20px 0 10px;
   }
   
-  .container {
-    padding: 20px;
-  }
-  
   .article-detail {
-    padding: 24px;
+    padding: 20px;
+    margin-top: 16px;
   }
   
   .article-title {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     margin-bottom: 20px;
+    line-height: 1.4;
   }
   
   .article-meta {
@@ -369,11 +368,73 @@ const goBack = () => {
   }
   
   .article-content {
-    font-size: 1rem;
+    margin-top: 24px;
   }
   
   .markdown-wrapper {
-    padding: 0 4px;
+    padding: 24px 20px;
+    border-radius: 8px;
+  }
+  
+  .markdown-body {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  
+  /* 優化中小螢幕的 markdown 內容 */
+  .markdown-body h1,
+  .markdown-body h2,
+  .markdown-body h3 {
+    margin: 1.2em 0 0.6em 0;
+  }
+  
+  .markdown-body pre {
+    margin: 1.2em 0;
+    padding: 12px;
+    font-size: 0.9rem;
+    overflow-x: auto;
+  }
+  
+  .markdown-body blockquote {
+    padding: 0 12px;
+    margin: 1.2em 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .article-detail {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  
+  .article-title {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+  
+  .article-meta-wrapper {
+    margin-bottom: 24px;
+  }
+  
+  .markdown-wrapper {
+    padding: 20px 16px;
+  }
+  
+  .markdown-body {
+    font-size: 0.95rem;
+  }
+  
+  .markdown-body pre {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+  
+  .markdown-body code {
+    font-size: 0.85em;
   }
 }
 </style> 
