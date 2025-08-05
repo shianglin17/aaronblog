@@ -199,20 +199,6 @@ const clearSearch = () => {
   emit('clear-search');
 };
 
-const clearCategory = () => {
-  selectedCategory.value = '';
-  emit('clear-category-filter');
-};
-
-const removeTag = (tagSlug: string) => {
-  selectedTags.value = selectedTags.value.filter(tag => tag !== tagSlug);
-  if (selectedTags.value.length === 0) {
-    emit('clear-tag-filter');
-  } else {
-    emit('tag-filter', selectedTags.value);
-  }
-};
-
 const clearAllFilters = () => {
   searchQuery.value = '';
   selectedCategory.value = '';
@@ -220,17 +206,6 @@ const clearAllFilters = () => {
   emit('clear-all-filters');
   showFilters.value = false;
   showMobileMenu.value = false;
-};
-
-// 輔助函數
-const getCategoryName = (slug: string): string => {
-  const category = props.categories?.find(c => c.slug === slug);
-  return category ? category.name : slug;
-};
-
-const getTagName = (slug: string): string => {
-  const tag = props.tags?.find(t => t.slug === slug);
-  return tag ? tag.name : slug;
 };
 </script>
 

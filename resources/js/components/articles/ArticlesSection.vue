@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { CloseOutline, RefreshOutline, SearchOutline, FolderOutline, PricetagOutline } from '@vicons/ionicons5';
+import { RefreshOutline, SearchOutline, FolderOutline, PricetagOutline } from '@vicons/ionicons5';
 import ArticleList from '../ArticleList.vue';
 import type { Article, ArticleListParams } from '../../types/article';
 import type { Category } from '../../types/category';
@@ -99,21 +99,6 @@ const activeFilter = computed(() => {
            (props.currentParams.tags && props.currentParams.tags.length > 0));
 });
 
-const activeFilterText = computed(() => {
-  if (props.currentParams.search) return `關鍵字：${props.currentParams.search}`;
-  if (props.currentParams.category) {
-    const category = props.categories.find(c => c.slug === props.currentParams.category);
-    return `分類：${category?.name || props.currentParams.category}`;
-  }
-  if (props.currentParams.tags && props.currentParams.tags.length > 0) {
-    const tagNames = props.currentParams.tags.map(tagSlug => {
-      const tag = props.tags.find(t => t.slug === tagSlug);
-      return tag?.name || tagSlug;
-    });
-    return `標籤：${tagNames.join(', ')}`;
-  }
-  return '';
-});
 
 // 事件處理
 const handlePageChange = (page: number) => {

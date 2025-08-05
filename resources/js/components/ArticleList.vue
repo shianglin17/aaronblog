@@ -260,23 +260,6 @@ const handlePageChange = (page: number) => {
   font-family: "Times New Roman", serif;
 }
 
-.read-more-link {
-  display: inline-flex;
-  align-items: center;
-  color: var(--primary-color, #7d6e5d);
-  margin-left: 6px;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
-.read-more-icon {
-  transition: transform 0.2s;
-}
-
-.read-more-link:hover .read-more-icon {
-  transform: translateX(3px);
-}
 
 .pagination {
   margin-top: 40px;

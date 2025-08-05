@@ -117,10 +117,6 @@ const handleSearch = (query: string) => {
   fetchArticles();
 };
 
-const handleSearchInput = () => {
-  // 可以實現即時搜尋，但這裡暫時不用
-};
-
 const clearSearch = () => {
   currentParams.value.search = undefined;
   currentParams.value.page = 1;
@@ -130,12 +126,6 @@ const clearSearch = () => {
 // 分類和標籤篩選
 const filterByCategory = (categorySlug: string) => {
   currentParams.value.category = categorySlug;
-  currentParams.value.page = 1;
-  fetchArticles();
-};
-
-const filterByTag = (tagSlug: string) => {
-  currentParams.value.tags = [tagSlug];
   currentParams.value.page = 1;
   fetchArticles();
 };

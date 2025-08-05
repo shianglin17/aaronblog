@@ -235,25 +235,6 @@ const goBack = () => {
   margin: 30px 0;
 }
 
-.article-status {
-  background-color: var(--tag-bg, #f0f0f0);
-  font-size: 0.85rem;
-  padding: 2px 8px;
-  border-radius: 12px;
-  display: inline-block;
-}
-
-.article-status.published {
-  background: var(--success-light);
-  color: var(--success-color);
-  border: 1px solid var(--success-color);
-}
-
-.article-status.draft {
-  background: var(--warning-light);
-  color: var(--warning-color);
-  border: 1px solid var(--warning-color);
-}
 
 /* 文章內容區域 */
 .article-content {
