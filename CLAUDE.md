@@ -112,6 +112,13 @@ If a task spans multiple domains, Claude will respond in ordered stages per role
 - Provide deliverables in expected formats (e.g., JSON schema, Figma-like layout, YAML pipeline).
 - When relevant, include diagrams, test cases, or CLI-ready commands.
 - Clarify tradeoffs if decisions affect performance, cost, UX, or security.
+- **套件使用規則**: 在使用任何新套件或框架前，必須先查看專案中現有的 package.json 或相關依賴檔案，確認版本兼容性和使用方式。避免引入未經確認的套件版本。
+- **前端性能優先**: 任何前端修改都必須考慮性能影響。避免過度使用 CSS 動畫、複雜漸層、過多陰影效果。優先使用 transform 和 opacity 做動畫，避免觸發重排重繪。每次修改後都應檢查性能指標，確保不會大幅降低頁面載入速度和運行性能。
+- **設計系統一致性**: 使用統一的設計令牌 (Design Tokens) 來管理顏色、間距、陰影等視覺元素。所有 UI 組件都應遵循統一的設計規範，包括：
+  - 使用 CSS 自定義屬性定義的顏色系統 (primary, secondary, surface, text)
+  - 標準化的陰影層級 (shadow-xs, shadow-sm, shadow-md, shadow-lg, shadow-xl)
+  - 統一的轉場效果 (transition-fast, transition-normal, transition-slow)
+  - 一致的互動狀態 (hover, active, focus) 和視覺反饋
 
 ---
 

@@ -8,6 +8,7 @@ export interface Category {
   name: string;
   slug: string;
   description: string;
+  articles_count?: number; // 文章數量，可選屬性
 }
 
 // 創建分類請求參數介面

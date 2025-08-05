@@ -50,7 +50,11 @@
           </div>
         </div>
         
-        <div class="article-content markdown-body" v-html="renderedContent"></div>
+        <div class="article-content">
+          <div class="markdown-wrapper">
+            <div class="markdown-body" v-html="renderedContent"></div>
+          </div>
+        </div>
       </div>
       
       <!-- 空資料提示 -->
@@ -63,8 +67,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, defineProps } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { 
   ArrowBackOutline,
   PersonOutline, 
@@ -83,7 +87,6 @@ const props = defineProps<{
   id?: number;
 }>();
 
-const route = useRoute();
 const router = useRouter();
 const article = ref<Article | null>(null);
 const loading = ref(true);
@@ -127,7 +130,9 @@ const goBack = () => {
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 32px;
+  background: var(--background-color);
+  min-height: 100vh;
 }
 
 .navigation-back {
@@ -135,8 +140,12 @@ const goBack = () => {
 }
 
 .article-detail {
-  padding: 20px 24px;
-  margin-top: 10px;
+  background: var(--surface-secondary);
+  padding: 40px;
+  margin-top: 20px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
 }
 
 .article-title {
@@ -162,10 +171,11 @@ const goBack = () => {
 }
 
 .meta-icon {
-  margin-right: 4px;
-  color: var(--text-secondary);
+  margin-right: 6px;
+  color: var(--brand-primary);
   display: inline-flex;
   transform: translateY(1px);
+  opacity: 0.8;
 }
 
 .article-tags {
@@ -181,36 +191,48 @@ const goBack = () => {
 }
 
 .article-tag {
-  background-color: var(--tag-bg, #f0f0f0);
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  padding: 2px 8px;
-  border-radius: 12px;
+  background: var(--brand-light);
+  color: var(--brand-primary);
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 20px;
   display: inline-block;
-  transition: background-color 0.2s, color 0.2s;
+  transition: var(--transition-normal);
+  font-weight: 600;
+  border: 1px solid rgba(139, 69, 19, 0.2);
+  cursor: pointer;
 }
 
 .article-tag:hover {
-  background-color: var(--primary-color, #7d6e5d);
+  background: var(--brand-gradient);
   color: white;
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 
 
 .error-message {
-  padding: 30px;
-  color: #e74c3c;
+  padding: 24px;
+  color: var(--error-color);
   text-align: center;
-  border: 1px solid #f9e4e4;
-  border-radius: 4px;
-  background-color: #fdf2f2;
+  border: 1px solid var(--error-color);
+  border-radius: 12px;
+  background: var(--error-light);
+  box-shadow: var(--shadow-sm);
   margin: 30px 0;
 }
 
 .empty-message {
-  padding: 60px 0;
+  padding: 60px 24px;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
+  background: var(--surface-secondary);
+  border-radius: 16px;
+  border: 2px dashed var(--border-color);
+  font-size: 1.1rem;
+  margin: 30px 0;
 }
 
 .article-status {
@@ -222,13 +244,99 @@ const goBack = () => {
 }
 
 .article-status.published {
-  background-color: #e6f7e6;
-  color: #2e7d32;
+  background: var(--success-light);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
 }
 
 .article-status.draft {
-  background-color: #fff8e1;
-  color: #ff8f00;
+  background: var(--warning-light);
+  color: var(--warning-color);
+  border: 1px solid var(--warning-color);
+}
+
+/* 文章內容區域 */
+.article-content {
+  margin-top: 32px;
+}
+
+.markdown-wrapper {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.markdown-body {
+  line-height: 1.75;
+  color: var(--text-color);
+  font-size: 1.05rem;
+}
+
+/* Markdown 內容樣式優化 */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  color: var(--text-color);
+  margin: 1.5em 0 0.75em 0;
+  font-weight: 600;
+}
+
+.markdown-body h1:first-child,
+.markdown-body h2:first-child,
+.markdown-body h3:first-child {
+  margin-top: 0;
+}
+
+.markdown-body p {
+  margin: 1em 0;
+  line-height: 1.8;
+}
+
+.markdown-body code {
+  background: var(--surface-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'SF Mono', Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  color: var(--brand-primary);
+}
+
+.markdown-body pre {
+  background: var(--surface-tertiary);
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  border: 1px solid var(--border-color);
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+  color: var(--text-color);
+}
+
+.markdown-body blockquote {
+  border-left: 4px solid var(--brand-primary);
+  padding: 0 16px;
+  margin: 1.5em 0;
+  background: var(--brand-light);
+  border-radius: 0 8px 8px 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  margin: 1em 0;
+  padding-left: 1.5em;
+}
+
+.markdown-body li {
+  margin: 0.5em 0;
 }
 
 /* 響應式設計 */
@@ -241,8 +349,12 @@ const goBack = () => {
     margin: 20px 0 10px;
   }
   
+  .container {
+    padding: 20px;
+  }
+  
   .article-detail {
-    padding: 16px;
+    padding: 24px;
   }
   
   .article-title {
@@ -258,6 +370,9 @@ const goBack = () => {
   
   .article-content {
     font-size: 1rem;
+  }
+  
+  .markdown-wrapper {
     padding: 0 4px;
   }
 }

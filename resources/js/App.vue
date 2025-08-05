@@ -21,20 +21,27 @@ defineOptions({
 
 const themeOverrides = {
     common: {
-        primaryColor: '#7d6e5d',
-        primaryColorHover: '#8f8072',
-        primaryColorPressed: '#6d5e4d',
-        borderRadius: '4px',
-        fontWeight: '400',
-        textColor1: '#333333',
-        textColor2: '#4e4e4e'
+        primaryColor: '#8b4513',
+        primaryColorHover: '#d2691e',
+        primaryColorPressed: '#6b3410',
+        borderRadius: '8px',
+        fontWeight: '500',
+        textColor1: '#2d1810',
+        textColor2: '#5a4037',
+        borderColor: '#efebe6'
     },
     Card: {
-        borderRadius: '8px'
+        borderRadius: '12px',
+        color: '#ffffff'
     },
     Button: {
-        textColor: '#4e4e4e',
-        borderRadius: '4px'
+        textColor: '#5a4037',
+        borderRadius: '8px',
+        colorHover: '#fdf8f3'
+    },
+    Input: {
+        borderRadius: '8px',
+        borderHover: '#d2691e'
     }
 }
 </script>
@@ -42,13 +49,63 @@ const themeOverrides = {
 <style>
 /* （:root 內）：這些在全站任何地方都可以通過 var() 函數訪問 */
 :root {
-    /* 基礎色彩 */
-    --background-color: #f8f5f2;
-    --text-color: #333333;
-    --text-secondary: #666666;
-    --border-color: #e0ddd7;
-    --primary-color: #7d6e5d;
-    --primary-hover: #8f8072;
+    /* 溫暖棕色系設計系統 */
+    --background-color: #fefdfb; /* 溫暖背景色 */
+    --text-color: #2d1810; /* 深棕色文字 */
+    --text-secondary: #5a4037; /* 次要文字 */
+    --text-tertiary: #8d6e63; /* 三級文字 */
+    --border-color: #efebe6; /* 溫和邊框 */
+    
+    /* 漸層主色調系統 */
+    --primary-50: #f7fafc;
+    --primary-100: #edf2f7;
+    --primary-200: #e2e8f0;
+    --primary-300: #cbd5e0;
+    --primary-400: #a0aec0;
+    --primary-500: #2d3748; /* 主色 */
+    --primary-600: #4a5568;
+    --primary-700: #1a202c;
+    --primary-800: #171923;
+    --primary-900: #0d1117;
+    
+    /* 品牌色彩系統 - 溫暖棕色系 */
+    --brand-primary: #8b4513; /* 深棕色 */
+    --brand-secondary: #d2691e; /* 巧克力色 */
+    --brand-tertiary: #daa520; /* 金棕色 */
+    --brand-gradient: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 60%, var(--brand-tertiary) 100%);
+    --brand-light: #fdf8f3;
+    
+    /* 語義色彩 */
+    --success-color: #38a169; /* 成功綠 */
+    --success-light: #f0fff4;
+    --warning-color: #ed8936; /* 警告橙 */
+    --warning-light: #fffaf0;
+    --error-color: #e53e3e; /* 錯誤紅 */
+    --error-light: #fed7d7;
+    --info-color: #3182ce; /* 資訊藍 */
+    --info-light: #ebf8ff;
+    
+    /* 表面層次系統 - 溫暖色調 */
+    --surface-color: #ffffff; /* 純白卡片 */
+    --surface-elevated: #ffffff; /* 懸浮卡片 */
+    --surface-hover: #fdf8f3; /* hover 背景 */
+    --surface-active: #f9f2ec; /* active 背景 */
+    --surface-secondary: #faf7f2; /* 次要背景 */
+    --surface-tertiary: #f3ede5; /* 三級背景 */
+    
+    /* 陰影系統 - 溫暖色調 */
+    --shadow-xs: 0 1px 2px 0 rgba(139, 69, 19, 0.08);
+    --shadow-sm: 0 1px 3px 0 rgba(139, 69, 19, 0.12), 0 1px 2px 0 rgba(139, 69, 19, 0.08);
+    --shadow-md: 0 4px 6px -1px rgba(139, 69, 19, 0.12), 0 2px 4px -1px rgba(139, 69, 19, 0.08);
+    --shadow-lg: 0 10px 15px -3px rgba(139, 69, 19, 0.12), 0 4px 6px -2px rgba(139, 69, 19, 0.06);
+    --shadow-xl: 0 20px 25px -5px rgba(139, 69, 19, 0.12), 0 10px 10px -5px rgba(139, 69, 19, 0.06);
+    
+    /* 互動狀態 */
+    --hover-opacity: 0.8;
+    --active-scale: 0.95;
+    --transition-fast: 0.15s ease-out;
+    --transition-normal: 0.2s ease-out;
+    --transition-slow: 0.3s ease-out;
     
     /* Hero 區域變數 */
     --hero-bg-start: #fdfcfb;

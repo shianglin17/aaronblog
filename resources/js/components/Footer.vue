@@ -149,9 +149,10 @@ onMounted(() => {
 }
 
 .social-link:hover {
-  color: var(--primary-color);
-  background-color: rgba(125, 110, 93, 0.08);
+  color: var(--brand-primary);
+  background: var(--brand-light);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .social-icon {

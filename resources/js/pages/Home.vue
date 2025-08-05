@@ -1,41 +1,51 @@
 <template>
-  <div class="container">
-    <header class="hero-section animate-fade-in">
-      <div class="hero-content">
-        <h1 class="site-title">Aaron 的部落格</h1>
-        <p class="site-description">軟體開發紀錄、生活分享</p>
-      </div>
-    </header>
+  <div class="home-layout">
+    <!-- 頂部導航區域 -->
+    <TopNavigation 
+      :categories="categories"
+      :tags="tags"
+      @search="handleSearch"
+      @search-input="handleSearchInput"
+      @clear-search="clearSearch"
+      @category-filter="filterByCategory"
+      @tag-filter="filterByTag"
+      @clear-category-filter="clearCategoryFilter"
+      @clear-tag-filter="clearTagFilter"
+    />
 
-    <!-- 統一搜尋器 -->
-    <div class="search-wrapper animate-fade-in-delay">
-      <UnifiedSearchBar
+    <!-- 主要內容區域 -->
+    <div class="main-layout">
+      <!-- 左側個人介紹 -->
+      <ProfileSidebar 
+        :stats="{
+          totalArticles,
+          totalCategories,
+          totalTags
+        }"
+      />
+
+      <!-- 右側文章列表 -->
+      <ArticlesSection 
+        :articles="articles"
+        :loading="loading"
+        :error="error"
+        :pagination="pagination"
+        :current-params="currentParams"
         :categories="categories"
         :tags="tags"
-        @update:filters="handleFilterChange"
+        @page-change="changePage"
+        @page-size-change="changePageSize"
+        @clear-all-filters="clearAllFilters"
       />
     </div>
-  
-    <!-- 文章列表 -->
-    <div class="content-wrapper animate-fade-in-delay-2">
-      <n-spin :show="loading" description="載入中...">
-        <ArticleList 
-          :articles="articles" 
-          :error="error"
-          :pagination="pagination"
-          @page-change="changePage"
-          @page-size-change="changePageSize"
-        />
-      </n-spin>
-    </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import ArticleList from '../components/ArticleList.vue';
-import UnifiedSearchBar from '../components/UnifiedSearchBar.vue';
+import { ref, computed, onMounted } from 'vue';
+import TopNavigation from '../components/layout/TopNavigation.vue';
+import ProfileSidebar from '../components/profile/ProfileSidebar.vue';
+import ArticlesSection from '../components/articles/ArticlesSection.vue';
 import { articleApi, tagApi } from '../api/index';
 import type { Article, ArticleListParams } from '../types/article';
 import type { Category } from '../types/category';
@@ -49,15 +59,19 @@ const loading = ref(true);
 const error = ref('');
 const pagination = ref<PaginationMeta | undefined>(undefined);
 
-// 篩選狀態
+// 篩選和導航狀態
 const categories = ref<Category[]>([]);
 const tags = ref<Tag[]>([]);
-const filtersLoading = ref(true);
 
 const currentParams = ref<ArticleListParams>({
   ...DEFAULT_PAGINATION_PARAMS,
   status: 'published'
 });
+
+// 計算屬性
+const totalArticles = computed(() => pagination.value?.total_items || 0);
+const totalCategories = computed(() => categories.value.length);
+const totalTags = computed(() => tags.value.length);
 
 // 獲取文章列表
 async function fetchArticles() {
@@ -65,10 +79,9 @@ async function fetchArticles() {
   error.value = '';
   
   try {
-    // 確保請求參數中總是包含 status=published
     const params: ArticleListParams = {
       ...currentParams.value,
-      status: 'published' // 強制覆蓋，確保前台只顯示已發布文章
+      status: 'published'
     };
     
     const response = await articleApi.getList(params);
@@ -86,34 +99,70 @@ async function fetchArticles() {
 function changePage(page: number) {
   currentParams.value.page = page;
   fetchArticles();
-  // 頁面滾動到頂部
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // 切換每頁條數
 function changePageSize(pageSize: number) {
   currentParams.value.per_page = pageSize;
-  currentParams.value.page = 1; // 重置頁碼
+  currentParams.value.page = 1;
   fetchArticles();
-  // 頁面滾動到頂部
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 處理篩選變更（整合搜尋和篩選）
-function handleFilterChange(filters: { search?: string, category?: string, tags?: string[] }) {
-  currentParams.value.search = filters.search;
-  currentParams.value.category = filters.category || undefined;
-  currentParams.value.tags = filters.tags;
-  currentParams.value.page = 1; // 重置頁碼
+// 搜尋處理
+const handleSearch = (query: string) => {
+  currentParams.value.search = query || undefined;
+  currentParams.value.page = 1;
   fetchArticles();
-}
+};
+
+const handleSearchInput = () => {
+  // 可以實現即時搜尋，但這裡暫時不用
+};
+
+const clearSearch = () => {
+  currentParams.value.search = undefined;
+  currentParams.value.page = 1;
+  fetchArticles();
+};
+
+// 分類和標籤篩選
+const filterByCategory = (categorySlug: string) => {
+  currentParams.value.category = categorySlug;
+  currentParams.value.page = 1;
+  fetchArticles();
+};
+
+const filterByTag = (tagSlug: string) => {
+  currentParams.value.tags = [tagSlug];
+  currentParams.value.page = 1;
+  fetchArticles();
+};
+
+const clearCategoryFilter = () => {
+  currentParams.value.category = undefined;
+  currentParams.value.page = 1;
+  fetchArticles();
+};
+
+const clearTagFilter = () => {
+  currentParams.value.tags = undefined;
+  currentParams.value.page = 1;
+  fetchArticles();
+};
+
+const clearAllFilters = () => {
+  currentParams.value.search = undefined;
+  currentParams.value.category = undefined;
+  currentParams.value.tags = undefined;
+  currentParams.value.page = 1;
+  fetchArticles();
+};
 
 // 獲取分類和標籤數據
 async function fetchFilters() {
-  filtersLoading.value = true;
-  
   try {
-    // 並行請求以提高效率
     const [categoriesResponse, tagsResponse] = await Promise.all([
       articleApi.getAllCategories(),
       tagApi.getList()
@@ -123,8 +172,6 @@ async function fetchFilters() {
     tags.value = tagsResponse.data;
   } catch (err) {
     console.error('獲取篩選數據失敗:', err);
-  } finally {
-    filtersLoading.value = false;
   }
 }
 
@@ -136,121 +183,43 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.container {
-  max-width: 900px;
+/* 主要佈局 */
+.home-layout {
+  min-height: 100vh;
+  background: var(--background-color);
+}
+
+/* 主要內容佈局 */
+.main-layout {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 32px 24px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 40px;
+  align-items: start;
 }
 
-/* Hero Section */
-.hero-section {
-  background: linear-gradient(135deg, var(--hero-bg-start), var(--hero-bg-end));
-  border-radius: var(--hero-border-radius);
-  padding: var(--hero-padding);
-  margin-bottom: var(--hero-margin-bottom);
-  box-shadow: var(--hero-shadow);
-  position: relative;
-  overflow: hidden;
+/* 響應式設計 - 改善層次感 */
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 300px 1fr;
+    gap: 32px;
+    padding: 32px 20px;
+  }
 }
 
-.hero-content {
-  text-align: center;
-  position: relative;
-  z-index: 2;
-}
-
-.site-title {
-  font-size: var(--title-font-size);
-  font-weight: var(--title-font-weight);
-  margin-bottom: var(--title-margin-bottom);
-  letter-spacing: var(--title-letter-spacing);
-  color: var(--title-color);
-  text-shadow: var(--title-text-shadow);
-}
-
-.site-description {
-  font-size: var(--description-font-size);
-  color: var(--description-color);
-  font-weight: var(--description-font-weight);
-  letter-spacing: var(--description-letter-spacing);
-  max-width: var(--description-max-width);
-  margin: 0 auto;
-  line-height: var(--description-line-height);
-}
-
-
-
-/* 響應式設計 */
 @media (max-width: 768px) {
-  .container {
-    padding: 20px 16px;
-  }
-  
-  .hero-section {
-    padding: 40px 20px;
-    margin-bottom: 30px;
-    border-radius: 12px;
-  }
-  
-  .site-title {
-    font-size: 2rem;
-  }
-  
-  .site-description {
-    font-size: 1rem;
-    max-width: 100%;
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-section {
-    padding: 32px 16px;
+  .main-layout {
+    padding: 20px 12px;
   }
-  
-  .site-title {
-    font-size: 1.75rem;
-  }
-  
-  .site-description {
-    font-size: 0.95rem;
-  }
-}
-
-/* 動畫效果 */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.animate-fade-in-delay {
-  animation: fadeInUp 0.6s ease-out 0.2s both;
-}
-
-.animate-fade-in-delay-2 {
-  animation: fadeInUp 0.6s ease-out 0.4s both;
-}
-
-/* 為加載狀態添加脈衝效果 */
-.n-spin-container {
-  transition: var(--card-transition);
-}
-
-.search-wrapper {
-  margin-bottom: 48px;
-  transition: var(--card-transition);
-}
-
-.content-wrapper {
-  transition: var(--card-transition);
 }
 </style>

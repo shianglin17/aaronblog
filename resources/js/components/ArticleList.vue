@@ -135,23 +135,24 @@ const handlePageChange = (page: number) => {
 }
 
 .article-item {
-  background: var(--card-background);
-  border-radius: var(--card-border-radius);
-  padding: var(--card-padding);
-  box-shadow: var(--card-shadow);
-  border: var(--card-border);
-  transition: var(--card-transition);
+  background: var(--surface-elevated);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  transition: var(--transition-normal);
   cursor: pointer;
   position: relative;
   overflow: hidden;
 }
 
 .article-title {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 16px;
   color: var(--text-color);
   line-height: 1.4;
+  transition: var(--transition-normal);
 }
 
 .article-title a {
@@ -160,8 +161,11 @@ const handlePageChange = (page: number) => {
   transition: color 0.2s;
 }
 
-.article-title a:hover {
-  color: var(--primary-color, #7d6e5d);
+.article-title:hover {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .article-meta-wrapper {
@@ -179,10 +183,11 @@ const handlePageChange = (page: number) => {
 }
 
 .meta-icon {
-  margin-right: 4px;
-  color: var(--text-secondary);
+  margin-right: 6px;
+  color: var(--brand-primary);
   display: inline-flex;
   transform: translateY(1px);
+  opacity: 0.8;
 }
 
 .article-tags {
@@ -198,20 +203,23 @@ const handlePageChange = (page: number) => {
 }
 
 .article-tag {
-  background-color: var(--tag-background);
-  color: var(--tag-color);
-  font-size: 0.85rem;
-  padding: var(--tag-padding);
-  border-radius: var(--tag-border-radius);
+  background: var(--brand-light);
+  color: var(--brand-primary);
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 16px;
   display: inline-block;
-  transition: var(--card-transition);
-  font-weight: 500;
+  transition: var(--transition-normal);
+  font-weight: 600;
+  border: 1px solid rgba(102, 126, 234, 0.2);
 }
 
 .article-tag:hover {
-  background-color: var(--tag-hover-background);
-  color: var(--tag-hover-color);
+  background: var(--brand-gradient);
+  color: white;
+  border-color: transparent;
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .article-description {
@@ -255,18 +263,23 @@ const handlePageChange = (page: number) => {
 }
 
 .error-message {
-  padding: 20px;
-  color: #e74c3c;
+  padding: 24px;
+  color: var(--error-color);
   text-align: center;
-  border: 1px solid #f9e4e4;
-  border-radius: 4px;
-  background-color: #fdf2f2;
+  border: 1px solid var(--error-color);
+  border-radius: 12px;
+  background: var(--error-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .empty-message {
-  padding: 50px 0;
+  padding: 60px 24px;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
+  background: var(--surface-secondary);
+  border-radius: 16px;
+  border: 2px dashed var(--border-color);
+  font-size: 1.1rem;
 }
 
 /* 響應式設計 */
@@ -302,18 +315,19 @@ const handlePageChange = (page: number) => {
   }
 }
 
-/* 文章卡片互動效果 */
+/* 文章卡片互動效果 - 現代化 */
 .article-item:hover, .article-item:focus {
-  box-shadow: var(--card-shadow-hover);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
   outline: none;
+  border-color: var(--brand-primary);
 }
 
 .article-item:focus {
-  border-color: var(--primary-color);
+  box-shadow: var(--shadow-lg), 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
 .article-item:active {
-  transform: translateY(0);
+  transform: translateY(-2px) scale(var(--active-scale));
 }
 </style>
