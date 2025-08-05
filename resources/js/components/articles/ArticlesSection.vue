@@ -1,15 +1,40 @@
 <template>
   <main class="articles-main">
     <div class="articles-header">
-      <h2 class="section-title">
-        {{ currentFilter }}
-        <span class="articles-count">({{ totalArticles }})</span>
-      </h2>
-      <div v-if="activeFilter" class="active-filter">
-        <span class="filter-text">{{ activeFilterText }}</span>
-        <button @click="handleClearAllFilters" class="clear-filter-btn">
-          <n-icon size="14"><CloseOutline /></n-icon>
+      <div class="header-main">
+        <h2 class="section-title">
+          {{ currentFilter }}
+          <span class="articles-count">{{ totalArticles }}</span>
+        </h2>
+        <button 
+          v-if="activeFilter" 
+          @click="handleClearAllFilters" 
+          class="clear-all-button"
+          title="清除所有篩選"
+        >
+          <n-icon size="16"><RefreshOutline /></n-icon>
+          重置
         </button>
+      </div>
+      
+      <!-- 簡化的篩選指示器 -->
+      <div v-if="activeFilter" class="filter-indicators">
+        <span v-if="currentParams.search" class="filter-chip search-chip">
+          <n-icon size="12"><SearchOutline /></n-icon>
+          {{ currentParams.search }}
+        </span>
+        <span v-if="currentParams.category" class="filter-chip category-chip">
+          <n-icon size="12"><FolderOutline /></n-icon>
+          {{ getCategoryName(currentParams.category) }}
+        </span>
+        <span 
+          v-for="tag in (currentParams.tags || [])" 
+          :key="tag" 
+          class="filter-chip tag-chip"
+        >
+          <n-icon size="12"><PricetagOutline /></n-icon>
+          {{ getTagName(tag) }}
+        </span>
       </div>
     </div>
 
@@ -29,7 +54,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { CloseOutline } from '@vicons/ionicons5';
+import { CloseOutline, RefreshOutline, SearchOutline, FolderOutline, PricetagOutline } from '@vicons/ionicons5';
 import ArticleList from '../ArticleList.vue';
 import type { Article, ArticleListParams } from '../../types/article';
 import type { Category } from '../../types/category';
@@ -102,6 +127,17 @@ const handlePageSizeChange = (pageSize: number) => {
 const handleClearAllFilters = () => {
   emit('clear-all-filters');
 };
+
+// 輔助函數
+const getCategoryName = (slug: string): string => {
+  const category = props.categories.find(c => c.slug === slug);
+  return category ? category.name : slug;
+};
+
+const getTagName = (slug: string): string => {
+  const tag = props.tags.find(t => t.slug === slug);
+  return tag ? tag.name : slug;
+};
 </script>
 
 <style scoped>
@@ -111,58 +147,92 @@ const handleClearAllFilters = () => {
 }
 
 .articles-header {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border-color);
+}
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .section-title {
   font-size: 1.125rem;
   font-weight: 500;
   color: var(--text-color);
-  margin-bottom: 8px;
+  margin: 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
 }
 
 .articles-count {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   font-weight: 400;
+  background: var(--surface-secondary);
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
-.active-filter {
+.clear-all-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: rgba(139, 69, 19, 0.1);
-  border-radius: 20px;
-  border: 1px solid rgba(139, 69, 19, 0.2);
-  margin-top: 8px;
-  width: fit-content;
-}
-
-.filter-text {
-  font-size: 0.85rem;
-  color: var(--brand-primary);
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
-.clear-filter-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 2px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
+.clear-all-button:hover {
+  background: var(--surface-hover);
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
 }
 
-.clear-filter-btn:hover {
-  background: rgba(139, 69, 19, 0.2);
+.filter-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.search-chip {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1e40af;
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.category-chip {
+  background: var(--brand-light);
   color: var(--brand-primary);
+  border-color: rgba(139, 69, 19, 0.2);
+}
+
+.tag-chip {
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803d;
+  border-color: rgba(34, 197, 94, 0.2);
 }
 
 .articles-content {
@@ -172,17 +242,67 @@ const handleClearAllFilters = () => {
 
 /* 響應式設計 */
 @media (max-width: 768px) {
+  .header-main {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  
   .section-title {
-    font-size: 1.25rem;
+    font-size: 1.05rem;
+    flex: 1;
   }
   
-  .active-filter {
-    padding: 6px 10px;
-    margin-top: 12px;
+  .articles-count {
+    font-size: 0.75rem;
+    padding: 2px 6px;
   }
   
-  .filter-text {
-    font-size: 0.8rem;
+  .clear-all-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+  
+  .filter-indicators {
+    gap: 6px;
+  }
+  
+  .filter-chip {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .articles-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+  
+  .header-main {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .section-title {
+    font-size: 1rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .articles-count {
+    font-size: 0.7rem;
+    padding: 1px 5px;
+  }
+  
+  .filter-chip {
+    padding: 2px 6px;
+    font-size: 0.65rem;
   }
 }
 </style>

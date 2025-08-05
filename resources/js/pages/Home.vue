@@ -1,16 +1,16 @@
 <template>
   <div class="home-layout">
-    <!-- 頂部導航區域 -->
-    <TopNavigation 
+    <!-- 緊湊式導航區域 -->
+    <CompactNavigation 
       :categories="categories"
       :tags="tags"
       @search="handleSearch"
-      @search-input="handleSearchInput"
       @clear-search="clearSearch"
       @category-filter="filterByCategory"
-      @tag-filter="filterByTag"
+      @tag-filter="filterByTags"
       @clear-category-filter="clearCategoryFilter"
       @clear-tag-filter="clearTagFilter"
+      @clear-all-filters="clearAllFilters"
     />
 
     <!-- 主要內容區域 -->
@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import TopNavigation from '../components/layout/TopNavigation.vue';
+import CompactNavigation from '../components/layout/CompactNavigation.vue';
 import ProfileSidebar from '../components/profile/ProfileSidebar.vue';
 import ArticlesSection from '../components/articles/ArticlesSection.vue';
 import { articleApi, tagApi } from '../api/index';
@@ -140,6 +140,12 @@ const filterByTag = (tagSlug: string) => {
   fetchArticles();
 };
 
+const filterByTags = (tagSlugs: string[]) => {
+  currentParams.value.tags = tagSlugs.length > 0 ? tagSlugs : undefined;
+  currentParams.value.page = 1;
+  fetchArticles();
+};
+
 const clearCategoryFilter = () => {
   currentParams.value.category = undefined;
   currentParams.value.page = 1;
@@ -200,26 +206,36 @@ onMounted(() => {
   align-items: start;
 }
 
-/* 響應式設計 - 改善層次感 */
+/* 響應式設計 - 大幅改善中小螢幕體驗 */
+@media (max-width: 1200px) {
+  .main-layout {
+    max-width: 1000px;
+    grid-template-columns: 280px 1fr;
+    gap: 28px;
+    padding: 28px 20px;
+  }
+}
+
 @media (max-width: 1024px) {
   .main-layout {
-    grid-template-columns: 300px 1fr;
-    gap: 32px;
-    padding: 32px 20px;
+    grid-template-columns: 260px 1fr;
+    gap: 24px;
+    padding: 24px 16px;
   }
 }
 
 @media (max-width: 768px) {
   .main-layout {
     grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 24px 16px;
+    gap: 16px;
+    padding: 20px 16px;
   }
 }
 
 @media (max-width: 480px) {
   .main-layout {
-    padding: 20px 12px;
+    padding: 16px 12px;
+    gap: 12px;
   }
 }
 </style>

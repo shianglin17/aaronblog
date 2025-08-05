@@ -13,44 +13,60 @@
             <n-icon size="16"><CodeOutline /></n-icon>
           </div>
         </div>
-        <h1 class="profile-name">{{ profileData.name }}</h1>
-        <p class="profile-title">{{ profileData.title }}</p>
+        <div class="profile-basic-info">
+          <h1 class="profile-name">{{ profileData.name }}</h1>
+          <p class="profile-title">{{ profileData.title }}</p>
+        </div>
+        <!-- 中小螢幕展開按鈕 -->
+        <button 
+          @click="toggleExpanded" 
+          class="expand-toggle"
+          :class="{ 'is-expanded': isExpanded }"
+        >
+          <n-icon size="16">
+            <ChevronDownOutline v-if="!isExpanded" />
+            <ChevronUpOutline v-else />
+          </n-icon>
+        </button>
       </div>
 
-      <!-- 個人簡介 -->
-      <div class="profile-bio">
-        <p>{{ profileData.bio }}</p>
-      </div>
+      <!-- 可摺疊內容區域 -->
+      <div class="collapsible-content" :class="{ 'is-expanded': isExpanded }">
+        <!-- 個人簡介 -->
+        <div class="profile-bio">
+          <p>{{ profileData.bio }}</p>
+        </div>
 
-      <!-- 技能標籤 -->
-      <div class="profile-skills">
-        <h3 class="skills-title">技術專長</h3>
-        <div class="skills-tags">
-          <span 
-            v-for="skill in profileData.skills" 
-            :key="skill" 
-            class="skill-tag"
-          >
-            {{ skill }}
-          </span>
+        <!-- 技能標籤 -->
+        <div class="profile-skills">
+          <h3 class="skills-title">技術專長</h3>
+          <div class="skills-tags">
+            <span 
+              v-for="skill in profileData.skills" 
+              :key="skill" 
+              class="skill-tag"
+            >
+              {{ skill }}
+            </span>
+          </div>
         </div>
-      </div>
 
-      <!-- 統計資訊 -->
-      <div class="profile-stats">
-        <div class="stat-item">
-          <span class="stat-number">{{ stats.totalArticles }}</span>
-          <span class="stat-label">文章</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-number">{{ stats.totalCategories }}</span>
-          <span class="stat-label">分類</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-number">{{ stats.totalTags }}</span>
-          <span class="stat-label">標籤</span>
+        <!-- 統計資訊 -->
+        <div class="profile-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ stats.totalArticles }}</span>
+            <span class="stat-label">文章</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">{{ stats.totalCategories }}</span>
+            <span class="stat-label">分類</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">{{ stats.totalTags }}</span>
+            <span class="stat-label">標籤</span>
+          </div>
         </div>
       </div>
     </div>
@@ -58,7 +74,8 @@
 </template>
 
 <script setup lang="ts">
-import { CodeOutline } from '@vicons/ionicons5';
+import { ref } from 'vue';
+import { CodeOutline, ChevronDownOutline, ChevronUpOutline } from '@vicons/ionicons5';
 
 // 定義 props 介面
 interface ProfileData {
@@ -88,6 +105,13 @@ withDefaults(defineProps<{
     skills: ['Laravel', 'MySQL', 'Vue.js', 'TypeScript', 'Docker']
   })
 });
+
+// 摺疊狀態（僅在中小螢幕使用）
+const isExpanded = ref(false);
+
+const toggleExpanded = () => {
+  isExpanded.value = !isExpanded.value;
+};
 </script>
 
 <style scoped>
@@ -128,6 +152,39 @@ withDefaults(defineProps<{
 .profile-header {
   text-align: center;
   margin-bottom: 24px;
+}
+
+/* 展開按鈕（預設隱藏，僅中小螢幕顯示） */
+.expand-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: var(--transition-normal);
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-toggle:hover {
+  background: var(--brand-light);
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.expand-toggle.is-expanded {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  background: var(--brand-light);
+}
+
+/* 可摺疊內容區域（桌面版始終顯示） */
+.collapsible-content {
+  overflow: hidden;
 }
 
 .avatar-container {
@@ -283,15 +340,40 @@ withDefaults(defineProps<{
   margin: 0 16px;
 }
 
-/* 響應式設計 */
+/* 響應式設計 - 大幅優化 */
 @media (max-width: 1024px) {
   .profile-card {
-    padding: 20px;
+    padding: 16px;
   }
   
   .profile-avatar {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
+  }
+  
+  .avatar-badge {
+    width: 28px;
+    height: 28px;
+    bottom: 4px;
+    right: 4px;
+  }
+  
+  .profile-name {
+    font-size: 1.25rem;
+  }
+  
+  .profile-bio {
+    margin-bottom: 16px;
+    padding: 12px 0;
+  }
+  
+  .profile-skills {
+    margin-bottom: 16px;
+  }
+  
+  .skill-tag {
+    padding: 4px 10px;
+    font-size: 0.75rem;
   }
 }
 
@@ -302,20 +384,238 @@ withDefaults(defineProps<{
   }
   
   .profile-card {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--surface-elevated) 0%, rgba(139, 69, 19, 0.02) 100%);
+    border: 1px solid rgba(139, 69, 19, 0.1);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .profile-card::before {
+    background: var(--brand-gradient);
+    opacity: 0.6;
+    height: 3px;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    margin-bottom: 0;
+    gap: 16px;
+    position: relative;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(139, 69, 19, 0.1);
+  }
+  
+  .profile-basic-info {
+    flex: 1;
+  }
+  
+  .avatar-container {
+    margin-bottom: 0;
+    flex-shrink: 0;
   }
   
   .profile-avatar {
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
+    border: 3px solid var(--brand-light);
+  }
+  
+  .avatar-badge {
+    width: 20px;
+    height: 20px;
+    bottom: 2px;
+    right: 2px;
+    border: 2px solid white;
   }
   
   .profile-name {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  
+  .profile-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  /* 展開按鈕在中小螢幕顯示 */
+  .expand-toggle {
+    display: flex;
+    width: 28px;
+    height: 28px;
+  }
+  
+  /* 可摺疊內容動畫 */
+  .collapsible-content {
+    max-height: 0;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-top: 0;
+  }
+  
+  .collapsible-content.is-expanded {
+    max-height: 1000px;
+    opacity: 1;
+    padding-top: 16px;
+  }
+  
+  .profile-bio {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: rgba(139, 69, 19, 0.05);
+    border-radius: 12px;
+    border-left: 3px solid var(--brand-primary);
+  }
+  
+  .profile-bio p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0;
+    color: var(--text-secondary);
+  }
+  
+  .profile-skills {
+    margin-bottom: 16px;
+  }
+  
+  .skills-title {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+    color: var(--brand-primary);
+    font-weight: 700;
+  }
+  
+  .skills-tags {
+    gap: 6px;
+  }
+  
+  .skill-tag {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--brand-gradient);
+    color: white;
+    border: none;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .skill-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .profile-stats {
+    padding: 16px 0 0;
+    border-top: 1px solid rgba(139, 69, 19, 0.1);
+    background: rgba(139, 69, 19, 0.03);
+    margin: 0 -20px 0;
+    border-radius: 0 0 16px 16px;
+    padding: 16px 20px;
   }
   
   .stat-number {
     font-size: 1.1rem;
+    font-weight: 800;
+  }
+  
+  .stat-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  
+  .stat-divider {
+    height: 20px;
+    margin: 0 16px;
+    background: rgba(139, 69, 19, 0.2);
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-card {
+    padding: 16px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--surface-elevated) 0%, rgba(139, 69, 19, 0.03) 100%);
+  }
+  
+  .profile-header {
+    gap: 12px;
+    padding-bottom: 12px;
+  }
+  
+  .profile-avatar {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .avatar-badge {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .profile-name {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  
+  .profile-title {
+    font-size: 0.85rem;
+  }
+  
+  .expand-toggle {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .collapsible-content.is-expanded {
+    padding-top: 12px;
+  }
+  
+  .profile-bio {
+    padding: 10px 14px;
+    margin-bottom: 12px;
+  }
+  
+  .profile-bio p {
+    font-size: 0.8rem;
+  }
+  
+  .profile-skills {
+    margin-bottom: 12px;
+  }
+  
+  .skills-tags {
+    gap: 4px;
+  }
+  
+  .skill-tag {
+    padding: 3px 8px;
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+  
+  .profile-stats {
+    padding: 12px 16px;
+    margin: 0 -16px 0;
+  }
+  
+  .stat-number {
+    font-size: 1rem;
+    font-weight: 800;
+  }
+  
+  .stat-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+  
+  .stat-divider {
+    height: 16px;
+    margin: 0 12px;
   }
 }
 </style>
