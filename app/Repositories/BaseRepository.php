@@ -20,7 +20,7 @@ abstract class BaseRepository
      */
     public function getAll(): Collection
     {
-        return $this->model->all();
+        return $this->model->newQuery()->withCount('articles')->get();
     }
 
     /**
@@ -32,7 +32,7 @@ abstract class BaseRepository
      */
     public function getById(int $id): Model
     {
-        return $this->model->findOrFail($id);
+        return $this->model->newQuery()->withCount('articles')->findOrFail($id);
     }
 
     /**

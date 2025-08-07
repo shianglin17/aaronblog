@@ -19,6 +19,7 @@ class TagTransformer
             'id' => $tag->id,
             'name' => $tag->name,
             'slug' => $tag->slug,
+            'articles_count' => $tag->articles_count,
             'created_at' => $tag->created_at
         ];
     }

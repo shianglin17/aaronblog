@@ -20,6 +20,7 @@ class CategoryTransformer
             'name' => $category->name,
             'slug' => $category->slug,
             'description' => $category->description,
+            'articles_count' => $category->articles_count,
             'created_at' => $category->created_at
         ];
     }
