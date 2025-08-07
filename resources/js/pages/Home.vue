@@ -2,8 +2,8 @@
   <div class="home-layout">
     <!-- 緊湊式導航區域 -->
     <CompactNavigation 
-      :categories="categories"
-      :tags="tags"
+      :categories="staticDataStore.categories"
+      :tags="staticDataStore.tags"
       @search="handleSearch"
       @clear-search="clearSearch"
       @category-filter="filterByCategory"
@@ -31,8 +31,8 @@
         :error="error"
         :pagination="pagination"
         :current-params="currentParams"
-        :categories="categories"
-        :tags="tags"
+        :categories="staticDataStore.categories"
+        :tags="staticDataStore.tags"
         @page-change="changePage"
         @page-size-change="changePageSize"
         @clear-all-filters="clearAllFilters"
@@ -46,22 +46,20 @@ import { ref, computed, onMounted } from 'vue';
 import CompactNavigation from '../components/layout/CompactNavigation.vue';
 import ProfileSidebar from '../components/profile/ProfileSidebar.vue';
 import ArticlesSection from '../components/articles/ArticlesSection.vue';
-import { articleApi, tagApi } from '../api/index';
+import { articleApi } from '../api/index';
+import { useStaticDataStore } from '../stores/staticData';
 import type { Article, ArticleListParams } from '../types/article';
-import type { Category } from '../types/category';
-import type { Tag } from '../types/tag';
 import type { PaginationMeta } from '../types/common';
 import { DEFAULT_PAGINATION_PARAMS } from '../constants/pagination';
 
-// 狀態管理
+// Pinia stores
+const staticDataStore = useStaticDataStore();
+
+// Article state
 const articles = ref<Article[]>([]);
 const loading = ref(true);
 const error = ref('');
 const pagination = ref<PaginationMeta | undefined>(undefined);
-
-// 篩選和導航狀態
-const categories = ref<Category[]>([]);
-const tags = ref<Tag[]>([]);
 
 const currentParams = ref<ArticleListParams>({
   ...DEFAULT_PAGINATION_PARAMS,
@@ -70,8 +68,8 @@ const currentParams = ref<ArticleListParams>({
 
 // 計算屬性
 const totalArticles = computed(() => pagination.value?.total_items || 0);
-const totalCategories = computed(() => categories.value.length);
-const totalTags = computed(() => tags.value.length);
+const totalCategories = computed(() => staticDataStore.categories.length);
+const totalTags = computed(() => staticDataStore.tags.length);
 
 // 獲取文章列表
 async function fetchArticles() {
@@ -156,25 +154,17 @@ const clearAllFilters = () => {
   fetchArticles();
 };
 
-// 獲取分類和標籤數據
-async function fetchFilters() {
+// 初始化資料載入
+onMounted(async () => {
   try {
-    const [categoriesResponse, tagsResponse] = await Promise.all([
-      articleApi.getAllCategories(),
-      tagApi.getList()
-    ]);
+    // 載入靜態資料（分類、標籤） - 只載入一次
+    await staticDataStore.ensureLoaded();
     
-    categories.value = categoriesResponse.data;
-    tags.value = tagsResponse.data;
-  } catch (err) {
-    console.error('獲取篩選數據失敗:', err);
+    // 載入文章列表
+    await fetchArticles();
+  } catch (error) {
+    console.error('初始化資料載入失敗:', error);
   }
-}
-
-// 掛載時獲取文章
-onMounted(() => {
-  fetchArticles();
-  fetchFilters();
 });
 </script>
 

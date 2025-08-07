@@ -1,18 +1,31 @@
-import { ref, reactive, computed, watch } from 'vue';
-import { articleApi, categoryApi, tagApi } from '../api';
+import { ref, reactive, computed, readonly, watch } from 'vue';
+import { articleApi } from '../api';
 import { ERROR_MESSAGES, STATUS_OPTIONS, DEFAULT_ARTICLE_FORM } from '../constants';
+import { useStaticDataStore } from '../stores/staticData';
 import type { Article, ArticleListParams, CreateArticleParams } from '../types/article';
-import type { Category } from '../types/category';
-import type { Tag } from '../types/tag';
-import type { SelectOption } from 'naive-ui';
+
+// 型別定義
+type FilterOption = {
+  label: string;
+  value: string | number;
+};
+
 
 /**
  * 文章列表管理邏輯
+ * 
+ * 提供文章列表的篩選、分頁、搜尋等功能
+ * 使用統一的 staticDataStore 管理分類與標籤資料
  */
 export function useArticles(message: any) {
-  // 文章列表狀態
+  const staticDataStore = useStaticDataStore();
+  
+  // 核心狀態
   const articles = ref<Article[]>([]);
   const loading = ref(false);
+  const error = ref<string | null>(null);
+  
+  // API 參數
   const params = ref<ArticleListParams>({
     page: 1,
     per_page: 10,
@@ -22,7 +35,7 @@ export function useArticles(message: any) {
     tags: []
   });
   
-  // 分頁
+  // 分頁狀態
   const pagination = ref({
     currentPage: 1,
     perPage: 10,
@@ -34,34 +47,36 @@ export function useArticles(message: any) {
   const statusOptions = ref(STATUS_OPTIONS);
   const categoryFilter = ref<string | undefined>(undefined);
   const tagFilters = ref<string[]>([]);
-  const categoryOptions = ref<SelectOption[]>([]);
-  const tagOptions = ref<SelectOption[]>([]);
   
-  // 加載篩選選項
-  async function loadFilterOptions() {
+  // 從 store 獲取篩選選項（響應式）
+  const categoryOptions = computed<FilterOption[]>(() => [
+    { label: '全部', value: 'all' },
+    ...staticDataStore.categories.map(category => ({
+      label: `${category.name}${category.articles_count ? ` (${category.articles_count})` : ''}`,
+      value: category.slug
+    }))
+  ]);
+  
+  const tagOptions = computed<FilterOption[]>(() => 
+    staticDataStore.tags.map(tag => ({
+      label: `${tag.name}${tag.articles_count ? ` (${tag.articles_count})` : ''}`,
+      value: tag.slug
+    }))
+  );
+  
+  /**
+   * 確保篩選選項已載入
+   * 使用 store 的統一載入機制
+   */
+  async function loadFilterOptions(): Promise<void> {
     try {
-      const [categoriesResponse, tagsResponse] = await Promise.all([
-        categoryApi.getList(),
-        tagApi.getList()
-      ]);
-      
-      // 處理分類選項
-      categoryOptions.value = [
-        { label: '全部', value: 'all' },
-        ...categoriesResponse.data.map((category: Category) => ({
-          label: category.name,
-          value: category.slug
-        }))
-      ];
-      
-      // 處理標籤選項
-      tagOptions.value = tagsResponse.data.map((tag: Tag) => ({
-        label: tag.name,
-        value: tag.slug
-      }));
-    } catch (error) {
-      message.error('獲取篩選選項失敗');
-      console.error(error);
+      await staticDataStore.ensureLoaded();
+      error.value = null;
+    } catch (err) {
+      const errorMsg = '獲取篩選選項失敗';
+      error.value = errorMsg;
+      message.error(errorMsg);
+      console.error('[useArticles] Failed to load filter options:', err);
     }
   }
   
@@ -174,23 +189,26 @@ export function useArticles(message: any) {
   }
   
   return {
-    // 狀態
+    // 核心狀態
     articles,
     loading,
+    error: readonly(error),
     params,
     pagination,
     filterVisible,
     
-    // 選項
+    // 篩選選項
     statusOptions,
     categoryOptions,
     tagOptions,
     categoryFilter,
     tagFilters,
     
-    // 方法
+    // 核心功能
     fetchArticles,
     loadFilterOptions,
+    
+    // 事件處理
     handleSearch,
     handleStatusChange,
     handleCategoryChange,
@@ -361,38 +379,59 @@ export function useArticleDelete(message: any, onSuccess: () => void) {
 }
 
 /**
- * 選項數據獲取邏輯
+ * 表單選項數據管理
+ * 
+ * 提供文章編輯表單使用的分類與標籤選項
+ * 使用 ID 作為 value 以便於表單提交
  */
 export function useOptions(message: any) {
-  const categoryOptions = ref<SelectOption[]>([]);
-  const tagOptions = ref<SelectOption[]>([]);
+  const staticDataStore = useStaticDataStore();
+  const error = ref<string | null>(null);
   
-  // 加載選項數據
-  async function loadOptions() {
+  // 表單用選項（使用 ID）
+  const categoryOptions = computed<FilterOption[]>(() => 
+    staticDataStore.categories.map(category => ({
+      label: category.name,
+      value: category.id
+    }))
+  );
+  
+  const tagOptions = computed<FilterOption[]>(() => 
+    staticDataStore.tags.map(tag => ({
+      label: tag.name,
+      value: tag.id
+    }))
+  );
+  
+  // 載入狀態（從 store 獲取）
+  const loading = computed(() => staticDataStore.loading.global);
+  
+  /**
+   * 載入選項數據
+   * 使用 store 的統一管理機制
+   */
+  async function loadOptions(): Promise<void> {
     try {
-      const [categoriesResponse, tagsResponse] = await Promise.all([
-        categoryApi.getList(),
-        tagApi.getList()
-      ]);
-      
-      categoryOptions.value = categoriesResponse.data.map((category: Category) => ({
-        label: category.name,
-        value: category.id
-      }));
-      
-      tagOptions.value = tagsResponse.data.map((tag: Tag) => ({
-        label: tag.name,
-        value: tag.id
-      }));
-    } catch (error) {
-      message.error('獲取選項失敗');
-      console.error(error);
+      await staticDataStore.ensureLoaded();
+      error.value = null;
+    } catch (err) {
+      const errorMsg = '獲取選項失敗';
+      error.value = errorMsg;
+      message.error(errorMsg);
+      console.error('[useOptions] Failed to load options:', err);
     }
   }
   
   return {
+    // Data
     categoryOptions,
     tagOptions,
+    
+    // State
+    loading,
+    error: readonly(error),
+    
+    // Actions
     loadOptions
   };
 } 

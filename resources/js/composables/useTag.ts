@@ -1,89 +1,94 @@
 import { ref, reactive, computed } from 'vue';
 import { tagApi } from '../api';
 import { ERROR_MESSAGES } from '../constants';
+import { useStaticDataStore } from '../stores/staticData';
+import { usePagination } from './usePagination';
 import type { Tag, CreateTagParams } from '../types/tag';
 
 /**
  * 標籤列表管理邏輯
  */
 export function useTags(message: any) {
-  // 標籤列表狀態
-  const tags = ref<Tag[]>([]);
-  const loading = ref(false);
-  const params = ref({
-    page: 1,
-    per_page: 10,
-    search: '',
-    sort_by: 'created_at' as 'created_at' | 'updated_at' | 'name',
-    sort_direction: 'desc' as 'asc' | 'desc'
-  });
+  const staticDataStore = useStaticDataStore();
   
-  // 分頁
-  const pagination = ref({
-    currentPage: 1,
-    perPage: 10,
-    totalItems: 0
-  });
+  // 搜尋與排序狀態
+  const searchText = ref('');
+  const sortBy = ref<'name' | 'created_at'>('created_at');
+  const sortDirection = ref<'asc' | 'desc'>('desc');
   
-  // 獲取標籤列表
-  async function fetchTags() {
-    loading.value = true;
+  // 分頁邏輯
+  const {
+    handlePageChange,
+    handlePageSizeChange,
+    resetToFirstPage,
+    paginateData,
+    createPaginationInfo
+  } = usePagination(10);
+  
+  // 篩選後的標籤
+  const filteredTags = computed(() => {
+    let result = staticDataStore.tags;
     
+    // 搜尋篩選
+    if (searchText.value) {
+      const search = searchText.value.toLowerCase();
+      result = result.filter(tag => 
+        tag.name.toLowerCase().includes(search) ||
+        tag.slug.toLowerCase().includes(search)
+      );
+    }
+    
+    // 排序
+    result = [...result].sort((a, b) => {
+      const aValue = a[sortBy.value];
+      const bValue = b[sortBy.value];
+      const direction = sortDirection.value === 'asc' ? 1 : -1;
+      return aValue > bValue ? direction : -direction;
+    });
+    
+    return result;
+  });
+  
+  // 分頁後的結果
+  const tags = computed(() => paginateData(filteredTags.value));
+  
+  // 分頁資訊
+  const pagination = computed(() => createPaginationInfo(filteredTags.value.length));
+  
+  // 載入狀態
+  const loading = computed(() => staticDataStore.loading.tags);
+  
+  // 初始化載入
+  async function fetchTags() {
     try {
-      const response = await tagApi.getList();
-      tags.value = response.data;
-      
-      if (response.meta?.pagination) {
-        pagination.value = {
-          currentPage: response.meta.pagination.current_page,
-          perPage: response.meta.pagination.per_page,
-          totalItems: response.meta.pagination.total_items
-        };
-      }
+      await staticDataStore.ensureLoaded();
     } catch (error) {
       message.error(ERROR_MESSAGES.FETCH_FAILED);
       console.error(error);
-    } finally {
-      loading.value = false;
     }
   }
   
-  // 搜尋處理
+  // 搜尋
   function handleSearch(value: string) {
-    params.value.search = value;
-    params.value.page = 1;
-    fetchTags();
+    searchText.value = value;
+    resetToFirstPage();
   }
   
-  // 分頁處理
-  function handlePageChange(page: number) {
-    params.value.page = page;
-    fetchTags();
-  }
-  
-  // 每頁筆數變更
-  function handlePageSizeChange(pageSize: number) {
-    params.value.per_page = pageSize;
-    params.value.page = 1;
-    fetchTags();
-  }
-  
-  // 排序處理
+  // 排序
   function handleSorterChange(sorter: { columnKey: string, order: 'ascend' | 'descend' | false } | null) {
-    if (sorter) {
-      params.value.sort_by = sorter.columnKey as 'created_at' | 'updated_at' | 'name';
-      params.value.sort_direction = sorter.order === 'ascend' ? 'asc' : 'desc';
+    if (sorter && sorter.order) {
+      sortBy.value = sorter.columnKey as 'name' | 'created_at';
+      sortDirection.value = sorter.order === 'ascend' ? 'asc' : 'desc';
     } else {
-      params.value.sort_by = 'created_at';
-      params.value.sort_direction = 'desc';
+      sortBy.value = 'created_at';
+      sortDirection.value = 'desc';
     }
-    fetchTags();
+    resetToFirstPage();
   }
   
   return {
     tags,
     loading,
-    params,
     pagination,
     fetchTags,
     handleSearch,
@@ -97,6 +102,8 @@ export function useTags(message: any) {
  * 標籤表單管理邏輯
  */
 export function useTagForm(message: any, onSuccess: () => void) {
+  const staticDataStore = useStaticDataStore();
+  
   // 表單狀態
   const DEFAULT_FORM = {
     name: '',
@@ -133,25 +140,45 @@ export function useTagForm(message: any, onSuccess: () => void) {
     showForm.value = true;
   }
   
-  // 表單提交
-  async function handleFormSubmit(data: CreateTagParams) {
+  // 表單提交（樂觀更新策略）
+  async function handleFormSubmit(data: CreateTagParams): Promise<void> {
+    const isEditMode = isEdit.value && editingId.value;
+    
     try {
-      if (isEdit.value && editingId.value) {
-        await tagApi.update({
-          id: editingId.value,
+      let result;
+      
+      if (isEditMode) {
+        result = await tagApi.update({
+          id: editingId.value!,
           data
         });
+        
+        if (result?.data) {
+          const updated = staticDataStore.updateTag(result.data);
+          if (!updated) {
+            console.warn('[useTagForm] Tag update in store failed, forcing reload');
+            await staticDataStore.ensureLoaded(true);
+          }
+        }
+        
         message.success('標籤更新成功');
       } else {
-        await tagApi.create(data);
+        result = await tagApi.create(data);
+        
+        if (result?.data) {
+          staticDataStore.addTag(result.data);
+        }
+        
         message.success('標籤創建成功');
       }
       
       showForm.value = false;
       onSuccess();
+      
     } catch (error) {
-      message.error(isEdit.value ? ERROR_MESSAGES.UPDATE_FAILED : ERROR_MESSAGES.CREATE_FAILED);
-      console.error(error);
+      const errorMsg = isEditMode ? ERROR_MESSAGES.UPDATE_FAILED : ERROR_MESSAGES.CREATE_FAILED;
+      message.error(errorMsg);
+      console.error(`[useTagForm] ${isEditMode ? 'Update' : 'Create'} failed:`, error);
     }
   }
   
@@ -171,6 +198,8 @@ export function useTagForm(message: any, onSuccess: () => void) {
  * 標籤刪除邏輯
  */
 export function useTagDelete(message: any, onSuccess: () => void) {
+  const staticDataStore = useStaticDataStore();
+  
   const showDeleteConfirm = ref(false);
   const deletingId = ref<number | null>(null);
   const deletingTag = ref<Tag | null>(null);
@@ -189,17 +218,31 @@ export function useTagDelete(message: any, onSuccess: () => void) {
     showDeleteConfirm.value = false;
   }
   
-  // 刪除標籤
-  async function handleDelete() {
-    if (!deletingId.value) return;
+  // 刪除標籤（樂觀更新策略）
+  async function handleDelete(): Promise<void> {
+    if (!deletingId.value) {
+      console.warn('[useTagDelete] No tag ID to delete');
+      return;
+    }
+    
+    const tagId = deletingId.value;
+    const tagName = deletingTag.value?.name || `ID: ${tagId}`;
     
     try {
-      await tagApi.delete(deletingId.value);
-      message.success('標籤刪除成功');
+      await tagApi.delete(tagId);
+      
+      const removed = staticDataStore.removeTag(tagId);
+      if (!removed) {
+        console.warn(`[useTagDelete] Tag ${tagId} not found in store, forcing reload`);
+        await staticDataStore.ensureLoaded(true);
+      }
+      
+      message.success(`標籤「${tagName}」刪除成功`);
       onSuccess();
+      
     } catch (error) {
       message.error(ERROR_MESSAGES.DELETE_FAILED);
-      console.error(error);
+      console.error(`[useTagDelete] Failed to delete tag ${tagId}:`, error);
     } finally {
       deletingId.value = null;
       deletingTag.value = null;

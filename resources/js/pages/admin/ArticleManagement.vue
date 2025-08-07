@@ -168,9 +168,13 @@ const {
 
 // 初始化
 onMounted(() => {
-  fetchArticles();
-  loadOptions();
-  loadFilterOptions();
+  // 同時載入文章和靜態資料（分類標籤）
+  Promise.all([
+    fetchArticles(),
+    loadOptions()
+  ]).catch(error => {
+    console.error('Failed to initialize article management:', error);
+  });
 });
 </script>
 
