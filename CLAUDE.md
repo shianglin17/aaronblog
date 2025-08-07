@@ -124,6 +124,14 @@ If a task spans multiple domains, Claude will respond in ordered stages per role
 - **Single Source of Truth**: Maintain one authoritative data source for each piece of state.
 - **Predictable State Updates**: State changes should be explicit and traceable.
 - **Minimal State**: Keep only the minimal state necessary; derive everything else through computed properties.
+
+### Testing Principles
+- **Reality-Based Testing**: All tests must reflect actual API functionality. Never create tests for non-existent features or endpoints.
+- **API-First Testing**: Test logic should be derived from real API routes and controller methods, not imagined functionality.
+- **Test-to-Reality Mapping**: Before writing any test, verify the corresponding API endpoint exists and functions as expected.
+- **Avoid Phantom Features**: Do not test batch operations, admin features, or complex workflows unless they are explicitly implemented in the codebase.
+- **Data Structure Validation**: Ensure test assertions match actual API response structures, including required fields like `articles_count`.
+- **Business Logic Accuracy**: Test constraints and validation rules must match the actual service layer implementation (e.g., loose vs strict deletion policies).
 </software_engineering_principles>
 
 ---
