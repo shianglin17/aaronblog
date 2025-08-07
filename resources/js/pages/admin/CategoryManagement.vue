@@ -50,12 +50,19 @@
         </n-form-item>
       </FormModal>
       
-      <!-- 刪除確認對話框 -->
-      <n-modal v-model:show="showDeleteConfirm" preset="dialog" title="確認刪除" positive-text="確認" negative-text="取消" @positive-click="handleDelete" @negative-click="cancelDelete">
-        <template #default>
-          確定要刪除這個分類嗎？
-        </template>
-      </n-modal>
+      <!-- 增強版刪除確認對話框 -->
+      <ConfirmDialog
+        v-model:show="showDeleteConfirm"
+        title="確認刪除分類"
+        message="此操作將永久刪除選中的分類，且無法復原。"
+        item-type="分類"
+        :item-info="deletingCategory"
+        confirm-text="確認刪除"
+        confirm-type="error"
+        delete-mode="strict"
+        @confirm="handleDelete"
+        @cancel="cancelDelete"
+      />
     </AdminLayout>
   </n-message-provider>
 </template>
@@ -67,6 +74,7 @@ import AdminLayout from '../../components/admin/AdminLayout.vue';
 import DataTable from '../../components/admin/DataTable.vue';
 import FilterBar from '../../components/admin/FilterBar.vue';
 import FormModal from '../../components/admin/FormModal.vue';
+import ConfirmDialog from '../../components/admin/ConfirmDialog.vue';
 import { CATEGORY_COLUMNS, CATEGORY_FORM_RULES } from '../../constants';
 import { useCategories, useCategoryForm, useCategoryDelete } from '../../composables/useCategory';
 
@@ -102,6 +110,7 @@ const {
 // 使用分類刪除邏輯
 const {
   showDeleteConfirm,
+  deletingCategory,
   openDeleteConfirm,
   cancelDelete,
   handleDelete

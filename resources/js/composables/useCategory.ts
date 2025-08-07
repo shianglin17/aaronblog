@@ -175,16 +175,19 @@ export function useCategoryForm(message: any, onSuccess: () => void) {
 export function useCategoryDelete(message: any, onSuccess: () => void) {
   const showDeleteConfirm = ref(false);
   const deletingId = ref<number | null>(null);
+  const deletingCategory = ref<Category | null>(null);
   
   // 打開刪除確認
   function openDeleteConfirm(row: Category) {
     deletingId.value = row.id || null;
+    deletingCategory.value = row;
     showDeleteConfirm.value = true;
   }
   
   // 取消刪除
   function cancelDelete() {
     deletingId.value = null;
+    deletingCategory.value = null;
     showDeleteConfirm.value = false;
   }
   
@@ -201,6 +204,7 @@ export function useCategoryDelete(message: any, onSuccess: () => void) {
       console.error(error);
     } finally {
       deletingId.value = null;
+      deletingCategory.value = null;
       showDeleteConfirm.value = false;
     }
   }
@@ -208,6 +212,7 @@ export function useCategoryDelete(message: any, onSuccess: () => void) {
   return {
     showDeleteConfirm,
     deletingId,
+    deletingCategory,
     openDeleteConfirm,
     cancelDelete,
     handleDelete

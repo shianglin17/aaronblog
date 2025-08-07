@@ -173,16 +173,19 @@ export function useTagForm(message: any, onSuccess: () => void) {
 export function useTagDelete(message: any, onSuccess: () => void) {
   const showDeleteConfirm = ref(false);
   const deletingId = ref<number | null>(null);
+  const deletingTag = ref<Tag | null>(null);
   
   // 打開刪除確認
   function openDeleteConfirm(row: Tag) {
     deletingId.value = row.id || null;
+    deletingTag.value = row;
     showDeleteConfirm.value = true;
   }
   
   // 取消刪除
   function cancelDelete() {
     deletingId.value = null;
+    deletingTag.value = null;
     showDeleteConfirm.value = false;
   }
   
@@ -199,6 +202,7 @@ export function useTagDelete(message: any, onSuccess: () => void) {
       console.error(error);
     } finally {
       deletingId.value = null;
+      deletingTag.value = null;
       showDeleteConfirm.value = false;
     }
   }
@@ -206,6 +210,7 @@ export function useTagDelete(message: any, onSuccess: () => void) {
   return {
     showDeleteConfirm,
     deletingId,
+    deletingTag,
     openDeleteConfirm,
     cancelDelete,
     handleDelete
