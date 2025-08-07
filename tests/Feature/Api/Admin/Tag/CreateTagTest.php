@@ -38,6 +38,7 @@ class CreateTagTest extends AdminTestCase
                          'id',
                          'name',
                          'slug',
+                         'articles_count',
                          'created_at'
                      ]
                  ]);

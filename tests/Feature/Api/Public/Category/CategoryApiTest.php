@@ -39,6 +39,7 @@ class CategoryApiTest extends TestCase
                              'name',
                              'slug',
                              'description',
+                             'articles_count',
                              'created_at'
                          ]
                      ]

@@ -38,6 +38,7 @@ class TagApiTest extends TestCase
                              'id',
                              'name',
                              'slug',
+                             'articles_count',
                              'created_at'
                          ]
                      ]

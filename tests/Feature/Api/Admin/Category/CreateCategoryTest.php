@@ -40,6 +40,7 @@ class CreateCategoryTest extends AdminTestCase
                          'name',
                          'slug',
                          'description',
+                         'articles_count',
                          'created_at'
                      ]
                  ]);
