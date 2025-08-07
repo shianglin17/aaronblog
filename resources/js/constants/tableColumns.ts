@@ -51,6 +51,7 @@ export const CATEGORY_COLUMNS = [
   { title: '名稱', key: 'name', sorter: true },
   { title: 'Slug', key: 'slug' },
   { title: '描述', key: 'description' },
+  { title: '文章數量', key: 'articles_count' },
   { 
     title: '建立時間', 
     key: 'created_at', 
@@ -65,6 +66,7 @@ export const CATEGORY_COLUMNS = [
 export const TAG_COLUMNS = [
   { title: '名稱', key: 'name', sorter: true },
   { title: 'Slug', key: 'slug' },
+  { title: '文章數量', key: 'articles_count' },
   { 
     title: '建立時間', 
     key: 'created_at', 

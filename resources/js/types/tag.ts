@@ -7,6 +7,8 @@ export interface Tag {
   id: number;
   name: string;
   slug: string;
+  articles_count: number;
+  created_at: string;
 }
 
 // 創建標籤請求參數介面

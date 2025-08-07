@@ -66,6 +66,7 @@
                 :class="{ 'is-selected': localSelectedTags.includes(tag.slug) }"
               >
                 {{ tag.name }}
+                <span class="count">({{ tag.articles_count || 0 }})</span>
               </button>
             </div>
           </div>

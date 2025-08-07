@@ -73,7 +73,7 @@
                   class="tag-button"
                   :class="{ 'is-selected': selectedTags.includes(tag.slug) }"
                 >
-                  {{ tag.name }}
+                  {{ tag.name }} ({{ tag.articles_count || 0 }})
                 </button>
               </div>
             </div>
@@ -127,7 +127,7 @@ import type { Category } from '../../types/category';
 import type { Tag } from '../../types/tag';
 
 // Props
-const props = defineProps<{
+defineProps<{
   categories: Category[];
   tags: Tag[];
 }>();
