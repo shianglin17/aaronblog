@@ -43,7 +43,7 @@ abstract class BaseRepository
      */
     public function create(array $data): Model
     {
-        return $this->model->create($data);
+        return $this->model->create($data)->loadCount('articles');
     }
 
     /**
@@ -51,11 +51,12 @@ abstract class BaseRepository
      *
      * @param Model $model
      * @param array $data
-     * @return bool
+     * @return Model
      */
-    public function update(Model $model, array $data): bool
+    public function update(Model $model, array $data): Model
     {
-        return $model->update($data);
+        $model->update($data);
+        return $model->loadCount('articles');
     }
 
     /**
