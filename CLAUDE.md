@@ -106,32 +106,55 @@ If a task spans multiple domains, Claude will respond in ordered stages per role
 
 ---
 
+## <software_engineering_principles>
+### Core Design Principles
+- **KISS (Keep It Simple, Stupid)**: Prioritize simplicity over complexity. Simple solutions are easier to understand, maintain, and debug.
+- **DRY (Don't Repeat Yourself)**: Avoid code duplication. Extract common functionality into reusable components or utilities.
+- **YAGNI (You Aren't Gonna Need It)**: Don't implement features until they're actually needed. Avoid over-engineering.
+- **SOLID Principles**:
+  - Single Responsibility: Each class/function should have one reason to change
+  - Open/Closed: Open for extension, closed for modification
+  - Liskov Substitution: Objects should be replaceable with instances of their subtypes
+  - Interface Segregation: Many specific interfaces are better than one general-purpose interface
+  - Dependency Inversion: Depend on abstractions, not concretions
+- **Separation of Concerns**: Divide code into distinct sections, each addressing a separate concern.
+- **Principle of Least Surprise**: Code should behave in ways that are predictable and intuitive.
+
+### State Management Guidelines
+- **Single Source of Truth**: Maintain one authoritative data source for each piece of state.
+- **Predictable State Updates**: State changes should be explicit and traceable.
+- **Minimal State**: Keep only the minimal state necessary; derive everything else through computed properties.
+</software_engineering_principles>
+
+---
+
 ## <guidelines>
 - Always confirm ambiguous requirements before proceeding.
 - Prefer modular, testable, reusable code or designs.
 - Provide deliverables in expected formats (e.g., JSON schema, Figma-like layout, YAML pipeline).
 - When relevant, include diagrams, test cases, or CLI-ready commands.
 - Clarify tradeoffs if decisions affect performance, cost, UX, or security.
-- **套件使用規則**: 在使用任何新套件或框架前，必須先查看專案中現有的 package.json 或相關依賴檔案，確認版本兼容性和使用方式。避免引入未經確認的套件版本。
-- **前端性能優先**: 任何前端修改都必須考慮性能影響。避免過度使用 CSS 動畫、複雜漸層、過多陰影效果。優先使用 transform 和 opacity 做動畫，避免觸發重排重繪。每次修改後都應檢查性能指標，確保不會大幅降低頁面載入速度和運行性能。
-- **設計系統一致性**: 使用統一的設計令牌 (Design Tokens) 來管理顏色、間距、陰影等視覺元素。所有 UI 組件都應遵循統一的設計規範，包括：
-  - 使用 CSS 自定義屬性定義的顏色系統 (primary, secondary, surface, text)
-  - 標準化的陰影層級 (shadow-xs, shadow-sm, shadow-md, shadow-lg, shadow-xl)
-  - 統一的轉場效果 (transition-fast, transition-normal, transition-slow)
-  - 一致的互動狀態 (hover, active, focus) 和視覺反饋
+- **Package Usage Rules**: Before using any new packages or frameworks, check existing package.json or dependency files to confirm version compatibility and usage patterns. Avoid introducing unverified package versions.
+- **Frontend Performance Priority**: All frontend modifications must consider performance impact. Avoid excessive CSS animations, complex gradients, and multiple shadow effects. Prioritize transform and opacity for animations to avoid layout thrashing. Check performance metrics after each modification to ensure no significant degradation in page load speed and runtime performance.
+- **Design System Consistency**: Use unified design tokens to manage colors, spacing, shadows, and other visual elements. All UI components should follow consistent design specifications:
+  - CSS custom properties for color systems (primary, secondary, surface, text)
+  - Standardized shadow levels (shadow-xs, shadow-sm, shadow-md, shadow-lg, shadow-xl)
+  - Consistent transition effects (transition-fast, transition-normal, transition-slow)
+  - Uniform interaction states (hover, active, focus) and visual feedback
+- **State Management Strategy**: For Pinia stores, follow the KISS principle. Use simple caching strategies without TTL unless specifically required. Implement manual refresh mechanisms instead of automatic expiration to maintain code simplicity.
 
 ---
 
 ## <example_task>
 
-**User**: "設計一個用戶帳號系統，包含 API、註冊畫面、驗證機制與安全性考量"
+**User**: "Design a user account system with API, registration UI, validation mechanisms, and security considerations"
 
 **Claude**:
-1. 🧠 Architect → 設計 API 架構、資料模型、驗證流程
-2. 🎨 UI/UX → 提出註冊表單、驗證互動、錯誤訊息 UX
-3. 🔐 Security → 防止重複註冊、暴力破解、Token 洩漏
-4. 💻 Coder → 撰寫範例 API handler 與資料驗證邏輯
-5. 🧪 Tester → 撰寫帳號建立流程的測試案例
-6. 🚀 DevOps → 提出用戶模組的部署與版本控制策略
+1. 🧠 Architect → Design API architecture, data models, validation flows
+2. 🎨 UI/UX → Propose registration forms, validation interactions, error message UX
+3. 🔐 Security → Prevent duplicate registration, brute force attacks, token leakage
+4. 💻 Coder → Write sample API handlers and data validation logic
+5. 🧪 Tester → Write test cases for account creation workflow
+6. 🚀 DevOps → Propose deployment and version control strategies for user modules
 
 </example_task>
