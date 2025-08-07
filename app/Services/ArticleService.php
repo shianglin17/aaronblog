@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Article;
 use App\Repositories\ArticleRepository;
 use App\Services\Cache\ArticleCacheService;
+use App\Services\Cache\TagCacheService;
+use App\Services\Cache\CategoryCacheService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -13,10 +15,14 @@ class ArticleService
     /**
      * @param ArticleRepository $repository
      * @param ArticleCacheService $cacheService
+     * @param TagCacheService $tagCacheService
+     * @param CategoryCacheService $categoryCacheService
      */
     public function __construct(
         protected readonly ArticleRepository $repository,
-        protected readonly ArticleCacheService $cacheService
+        protected readonly ArticleCacheService $cacheService,
+        protected readonly TagCacheService $tagCacheService,
+        protected readonly CategoryCacheService $categoryCacheService
     ) {
     }
 
@@ -63,8 +69,12 @@ class ArticleService
         // 同步標籤關聯
         $this->syncArticleTags($article, $data);
 
-        // 清除相關快取
+        // 清除文章相關快取
         $this->cacheService->clearListCache();
+        
+        // 清除標籤和分類快取（因為文章數量可能改變）
+        $this->tagCacheService->clearAllCache();
+        $this->categoryCacheService->clearAllCache();
 
         return $article;
     }
@@ -86,8 +96,12 @@ class ArticleService
         // 同步標籤關聯
         $this->syncArticleTags($article, $data);
 
-        // 清除相關快取
+        // 清除文章相關快取
         $this->cacheService->clearResourceAllCache($id);
+        
+        // 清除標籤和分類快取（因為標籤關聯可能改變）
+        $this->tagCacheService->clearAllCache();
+        $this->categoryCacheService->clearAllCache();
 
         return $article->fresh();
     }
@@ -105,8 +119,14 @@ class ArticleService
 
         $result = $this->repository->delete($article);
 
-        // 清除相關快取
+        // 清除文章相關快取
         $this->cacheService->clearResourceAllCache($id);
+        
+        // 清除標籤快取（因為文章數量改變）
+        $this->tagCacheService->clearAllCache();
+        
+        // 清除分類快取（因為文章數量改變）
+        $this->categoryCacheService->clearAllCache();
 
         return $result;
     }
@@ -120,8 +140,8 @@ class ArticleService
      */
     private function syncArticleTags(Article $article, array $data): void
     {
-        if (isset($data['tag_ids'])) {
-            $article->tags()->sync($data['tag_ids']);
+        if (isset($data['tags'])) {
+            $article->tags()->sync($data['tags']);
         }
     }
 } 
