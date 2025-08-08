@@ -28,7 +28,7 @@ class ArticleRepository extends BaseRepository
      * @return Article
      * @throws ModelNotFoundException
      */
-    public function getById(int $id): Article
+    public function getById(int $id, ?string $countRelation = null): Article
     {
         return Article::select(self::DEFAULT_CONLUMNS)
         ->with([

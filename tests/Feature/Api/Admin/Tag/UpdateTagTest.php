@@ -110,12 +110,12 @@ class UpdateTagTest extends AdminTestCase
             'slug' => 'original-tag'
         ]);
         
-        // 創建 2 篇文章並關聯到此標籤
-        $article1 = Article::factory()->create([
+        // 創建 2 篇已發布文章並關聯到此標籤
+        $article1 = Article::factory()->published()->create([
             'category_id' => $category->id,
             'user_id' => $user->id
         ]);
-        $article2 = Article::factory()->create([
+        $article2 = Article::factory()->published()->create([
             'category_id' => $category->id,
             'user_id' => $user->id
         ]);

@@ -31,10 +31,18 @@ class Tag extends Model
     ];
 
     /**
-     * Get the articles that belong to this tag.
+     * Get all articles that belong to this tag.
      */
     public function articles(): BelongsToMany
     {
         return $this->belongsToMany(Article::class);
+    }
+
+    /**
+     * Get only published articles that belong to this tag.
+     */
+    public function publishedArticles(): BelongsToMany
+    {
+        return $this->belongsToMany(Article::class)->where('status', 'published');
     }
 }

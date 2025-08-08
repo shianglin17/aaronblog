@@ -28,7 +28,7 @@ class TagService
     public function getAllTags(): Collection
     {
         return $this->cacheService->cacheList(
-            fn() => $this->repository->getAll()
+            fn() => $this->repository->getAll('published_articles')
         );
     }
 
@@ -43,7 +43,7 @@ class TagService
     {
         return $this->cacheService->cacheDetail(
             $id,
-            fn() => $this->repository->getById($id)
+            fn() => $this->repository->getById($id, 'published_articles')
         );
     }
 
@@ -55,7 +55,7 @@ class TagService
      */
     public function createTag(array $data): Tag
     {
-        $tag = $this->repository->create($data, 'articles');
+        $tag = $this->repository->create($data, 'published_articles');
 
         $this->cacheService->clearListCache();
 
@@ -74,7 +74,7 @@ class TagService
     {
         $tag = $this->getTagById($id);
 
-        $updatedTag = $this->repository->update($tag, $data, 'articles');
+        $updatedTag = $this->repository->update($tag, $data, 'published_articles');
 
         $this->cacheService->clearResourceAllCache($id);
 

@@ -93,8 +93,8 @@ class UpdateCategoryTest extends AdminTestCase
             'slug' => 'original-category'
         ]);
         
-        // 創建 3 篇文章並關聯到此分類
-        Article::factory()->count(3)->create([
+        // 創建 3 篇已發布文章並關聯到此分類
+        Article::factory()->published()->count(3)->create([
             'category_id' => $category->id,
             'user_id' => $user->id
         ]);

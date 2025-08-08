@@ -32,7 +32,7 @@ class ArticleCacheInvalidationTest extends AdminTestCase
         $tag2 = Tag::factory()->create();
         $user = User::factory()->create();
         
-        $article = Article::factory()->create([
+        $article = Article::factory()->published()->create([
             'category_id' => $category->id,
             'user_id' => $user->id
         ]);
@@ -70,7 +70,7 @@ class ArticleCacheInvalidationTest extends AdminTestCase
         $category = Category::factory()->create();
         $user = User::factory()->create();
         
-        $article = Article::factory()->create([
+        $article = Article::factory()->published()->create([
             'category_id' => $category->id,
             'user_id' => $user->id
         ]);
@@ -147,7 +147,7 @@ class ArticleCacheInvalidationTest extends AdminTestCase
         $tag2 = Tag::factory()->create();
         $user = User::factory()->create();
         
-        $article = Article::factory()->create([
+        $article = Article::factory()->published()->create([
             'category_id' => $category->id,
             'user_id' => $user->id
         ]);

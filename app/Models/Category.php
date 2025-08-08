@@ -32,10 +32,18 @@ class Category extends Model
     ];
 
     /**
-     * Get the articles that belong to this category.
+     * Get all articles that belong to this category.
      */
     public function articles(): HasMany
     {
         return $this->hasMany(Article::class);
+    }
+
+    /**
+     * Get only published articles that belong to this category.
+     */
+    public function publishedArticles(): HasMany
+    {
+        return $this->hasMany(Article::class)->where('status', 'published');
     }
 }
