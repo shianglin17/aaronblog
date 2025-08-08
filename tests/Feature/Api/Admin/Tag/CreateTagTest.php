@@ -44,6 +44,10 @@ class CreateTagTest extends AdminTestCase
                  ]);
 
         $this->assertDatabaseHas('tags', $tagData);
+        
+        // 驗證新創建的標籤 articles_count 為 0
+        $responseData = $response->json('data');
+        $this->assertEquals(0, $responseData['articles_count'], '新創建的標籤應該沒有關聯文章');
     }
 
     /**

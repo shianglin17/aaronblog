@@ -46,6 +46,10 @@ class CreateCategoryTest extends AdminTestCase
                  ]);
 
         $this->assertDatabaseHas('categories', $categoryData);
+        
+        // 驗證新創建的分類 articles_count 為 0
+        $responseData = $response->json('data');
+        $this->assertEquals(0, $responseData['articles_count'], '新創建的分類應該沒有關聯文章');
     }
 
     /**

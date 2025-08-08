@@ -3,6 +3,9 @@
 namespace Tests\Feature\Api\Admin\Tag;
 
 use App\Models\Tag;
+use App\Models\Article;
+use App\Models\Category;
+use App\Models\User;
 use Tests\Feature\Api\Admin\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 
@@ -92,5 +95,53 @@ class UpdateTagTest extends AdminTestCase
         ]);
 
         $response->assertStatus(422);
+    }
+
+    /**
+     * 測試更新標籤時正確計算 articles_count
+     */
+    public function test_update_tag_includes_correct_articles_count(): void
+    {
+        // 建立測試資料
+        $category = Category::factory()->create();
+        $user = User::factory()->create();
+        $tag = Tag::factory()->create([
+            'name' => '原始標籤',
+            'slug' => 'original-tag'
+        ]);
+        
+        // 創建 2 篇文章並關聯到此標籤
+        $article1 = Article::factory()->create([
+            'category_id' => $category->id,
+            'user_id' => $user->id
+        ]);
+        $article2 = Article::factory()->create([
+            'category_id' => $category->id,
+            'user_id' => $user->id
+        ]);
+        
+        $tag->articles()->attach([$article1->id, $article2->id]);
+
+        // 更新標籤
+        $updateData = [
+            'name' => '更新的標籤名稱'
+        ];
+
+        $response = $this->putJson("/api/admin/tags/{$tag->id}", $updateData);
+
+        $response->assertOk()
+                 ->assertJsonStructure([
+                     'data' => [
+                         'id',
+                         'name',
+                         'slug',
+                         'articles_count'
+                     ]
+                 ]);
+
+        // 驗證 articles_count 正確
+        $responseData = $response->json('data');
+        $this->assertEquals(2, $responseData['articles_count'], '標籤應該有2篇關聯文章');
+        $this->assertEquals('更新的標籤名稱', $responseData['name'], '標籤名稱應該已更新');
     }
 } 
