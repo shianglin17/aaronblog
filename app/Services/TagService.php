@@ -55,7 +55,7 @@ class TagService
      */
     public function createTag(array $data): Tag
     {
-        $tag = $this->repository->create($data);
+        $tag = $this->repository->create($data, 'articles');
 
         $this->cacheService->clearListCache();
 
@@ -74,7 +74,7 @@ class TagService
     {
         $tag = $this->getTagById($id);
 
-        $this->repository->update($tag, $data);
+        $this->repository->update($tag, $data, 'articles');
 
         $this->cacheService->clearResourceAllCache($id);
 

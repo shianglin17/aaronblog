@@ -56,7 +56,7 @@ class CategoryService
      */
     public function createCategory(array $data): Category
     {
-        $category = $this->repository->create($data);
+        $category = $this->repository->create($data, 'articles');
 
         $this->cacheService->clearListCache();
 
@@ -75,7 +75,7 @@ class CategoryService
     {
         $category = $this->getCategoryById($id);
 
-        $this->repository->update($category, $data);
+        $this->repository->update($category, $data, 'articles');
 
         $this->cacheService->clearResourceAllCache($id);
 

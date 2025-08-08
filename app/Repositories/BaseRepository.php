@@ -39,11 +39,18 @@ abstract class BaseRepository
      * 創建資源
      *
      * @param array $data
+     * @param string|null $countRelation 要計數的關聯名稱
      * @return T
      */
-    public function create(array $data): Model
+    public function create(array $data, ?string $countRelation = null): Model
     {
-        return $this->model->create($data)->loadCount('articles');
+        $model = $this->model->create($data);
+        
+        if ($countRelation && method_exists($model, $countRelation)) {
+            $model->loadCount($countRelation);
+        }
+        
+        return $model;
     }
 
     /**
@@ -51,12 +58,18 @@ abstract class BaseRepository
      *
      * @param Model $model
      * @param array $data
+     * @param string|null $countRelation 要計數的關聯名稱
      * @return Model
      */
-    public function update(Model $model, array $data): Model
+    public function update(Model $model, array $data, ?string $countRelation = null): Model
     {
         $model->update($data);
-        return $model->loadCount('articles');
+        
+        if ($countRelation && method_exists($model, $countRelation)) {
+            $model->loadCount($countRelation);
+        }
+        
+        return $model;
     }
 
     /**
