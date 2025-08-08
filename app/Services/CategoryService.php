@@ -75,11 +75,11 @@ class CategoryService
     {
         $category = $this->getCategoryById($id);
 
-        $this->repository->update($category, $data, 'articles');
+        $updatedCategory = $this->repository->update($category, $data, 'articles');
 
         $this->cacheService->clearResourceAllCache($id);
 
-        return $category->fresh();
+        return $updatedCategory;
     }
 
     /**

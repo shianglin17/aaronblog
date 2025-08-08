@@ -74,11 +74,11 @@ class TagService
     {
         $tag = $this->getTagById($id);
 
-        $this->repository->update($tag, $data, 'articles');
+        $updatedTag = $this->repository->update($tag, $data, 'articles');
 
         $this->cacheService->clearResourceAllCache($id);
 
-        return $tag->fresh();
+        return $updatedTag;
     }
 
     /**
