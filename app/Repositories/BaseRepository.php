@@ -104,7 +104,7 @@ abstract class BaseRepository
      * @param string $countRelation
      * @return void
      */
-    private function addRelationCount($query, string $countRelation): void
+    protected function addRelationCount($query, string $countRelation): void
     {
         $relationMethod = $this->mapRelationName($countRelation);
         
@@ -121,7 +121,7 @@ abstract class BaseRepository
      * @param string $countRelation
      * @return void
      */
-    private function loadRelationCount(Model $model, string $countRelation): void
+    protected function loadRelationCount(Model $model, string $countRelation): void
     {
         $relationMethod = $this->mapRelationName($countRelation);
         
@@ -136,7 +136,7 @@ abstract class BaseRepository
      * @param string $countRelation
      * @return string
      */
-    private function mapRelationName(string $countRelation): string
+    protected function mapRelationName(string $countRelation): string
     {
         return match ($countRelation) {
             'published_articles' => 'publishedArticles',

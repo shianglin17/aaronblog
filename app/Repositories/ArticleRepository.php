@@ -12,7 +12,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class ArticleRepository extends BaseRepository
 {
-    const DEFAULT_CONLUMNS = [
+    const DEFAULT_COLUMNS = [
         'id', 'title', 'slug', 'description', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
     ];
 
@@ -30,13 +30,19 @@ class ArticleRepository extends BaseRepository
      */
     public function getById(int $id, ?string $countRelation = null): Article
     {
-        return Article::select(self::DEFAULT_CONLUMNS)
-        ->with([
-            'author:id,name',
-            'category:id,name,slug',
-            'tags:id,name,slug'
-        ])
-        ->findOrFail($id);
+        $query = Article::select(self::DEFAULT_COLUMNS)
+            ->with([
+                'author:id,name',
+                'category:id,name,slug',
+                'tags:id,name,slug'
+            ]);
+
+        // 遵循父類契約：處理關聯計數參數
+        if ($countRelation) {
+            $this->addRelationCount($query, $countRelation);
+        }
+
+        return $query->findOrFail($id);
     }
 
     /**
@@ -47,7 +53,7 @@ class ArticleRepository extends BaseRepository
      */
     public function getArticles(array $params): LengthAwarePaginator
     {
-        return Article::select(self::DEFAULT_CONLUMNS)
+        return Article::select(self::DEFAULT_COLUMNS)
         ->with([
             'author:id,name',
             'category:id,name,slug',
