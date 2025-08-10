@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use App\Services\Cache\CategoryCacheService;
-use App\Exceptions\ResourceInUseException;
+use App\Exceptions\ResourceConflictException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -88,7 +88,7 @@ class CategoryService
      * @param int $id
      * @return bool
      * @throws ModelNotFoundException
-     * @throws ResourceInUseException
+     * @throws ResourceConflictException
      */
     public function deleteCategory(int $id): bool
     {
@@ -97,7 +97,7 @@ class CategoryService
         // 檢查是否有文章正在使用此分類
         if ($category->articles()->exists()) {
             $usageCount = $category->articles()->count();
-            throw new ResourceInUseException('分類', $id, '文章', $usageCount);
+            throw new ResourceConflictException('分類', $id, $usageCount);
         }
 
         $result = $this->repository->delete($category);

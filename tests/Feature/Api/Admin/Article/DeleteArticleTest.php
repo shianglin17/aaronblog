@@ -36,7 +36,7 @@ class DeleteArticleTest extends AdminTestCase
         $response->assertOk()
                  ->assertJson([
                      'status' => 'success',
-                     'message' => '文章刪除成功'
+                     'message' => '成功'
                  ]);
 
         // 驗證文章已從資料庫中刪除

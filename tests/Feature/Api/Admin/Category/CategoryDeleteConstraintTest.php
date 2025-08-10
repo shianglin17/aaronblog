@@ -27,7 +27,7 @@ class CategoryDeleteConstraintTest extends AdminTestCase
         $response->assertOk();
         $response->assertJson([
             'status' => 'success',
-            'message' => '分類刪除成功'
+            'message' => '成功'
         ]);
 
         // 確認分類已被刪除

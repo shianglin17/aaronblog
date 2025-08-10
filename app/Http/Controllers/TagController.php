@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Response\ResponseMaker;
+use App\Http\ApiResponse;
 use App\Http\Requests\Tag\CreateTagRequest;
 use App\Http\Requests\Tag\UpdateTagRequest;
 use App\Services\TagService;
@@ -31,9 +31,8 @@ class TagController extends Controller
     {
         $tags = $this->tagService->getAllTags();
         
-        return ResponseMaker::success(
-            data: $this->transformer->transformCollection($tags),
-            message: '所有標籤'
+        return ApiResponse::ok(
+            $this->transformer->transformCollection($tags)
         );
     }
 
@@ -48,9 +47,8 @@ class TagController extends Controller
     {
         $tag = $this->tagService->getTagById($id);
         
-        return ResponseMaker::success(
-            data: $this->transformer->transform($tag),
-            message: '標籤詳情'
+        return ApiResponse::ok(
+            $this->transformer->transform($tag)
         );
     }
 
@@ -65,10 +63,8 @@ class TagController extends Controller
         $data = $request->validated();
         $tag = $this->tagService->createTag($data);
         
-        return ResponseMaker::success(
-            data: $this->transformer->transform($tag),
-            message: '標籤創建成功',
-            code: 201
+        return ApiResponse::created(
+            $this->transformer->transform($tag)
         );
     }
 
@@ -85,9 +81,8 @@ class TagController extends Controller
         $data = $request->validated();
         $tag = $this->tagService->updateTag($id, $data);
         
-        return ResponseMaker::success(
-            data: $this->transformer->transform($tag),
-            message: '標籤更新成功'
+        return ApiResponse::ok(
+            $this->transformer->transform($tag)
         );
     }
 
@@ -97,12 +92,11 @@ class TagController extends Controller
      * @param int $id 標籤ID
      * @return JsonResponse
      * @throws ModelNotFoundException
-     * @throws ResourceInUseException
      */
     public function destroy(int $id): JsonResponse
     {
         $this->tagService->deleteTag($id);
         
-        return ResponseMaker::success(message: '標籤刪除成功');
+        return ApiResponse::ok();
     }
 } 

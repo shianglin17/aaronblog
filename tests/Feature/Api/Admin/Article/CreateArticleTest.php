@@ -43,7 +43,7 @@ class CreateArticleTest extends AdminTestCase
         $response->assertStatus(201)
                  ->assertJson([
                      'status' => 'success',
-                     'message' => '文章創建成功'
+                     'message' => '創建成功'
                  ])
                  ->assertJsonStructure([
                      'data' => [
