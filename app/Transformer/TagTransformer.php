@@ -3,9 +3,8 @@
 namespace App\Transformer;
 
 use App\Models\Tag;
-use Illuminate\Database\Eloquent\Collection;
 
-class TagTransformer
+class TagTransformer extends BaseTransformer
 {
     /**
      * 轉換單個標籤對象
@@ -13,7 +12,7 @@ class TagTransformer
      * @param Tag $tag
      * @return array
      */
-    public function transform(Tag $tag): array
+    public function transform($tag): array
     {
         return [
             'id' => $tag->id,
@@ -24,16 +23,4 @@ class TagTransformer
         ];
     }
 
-    /**
-     * 轉換標籤集合
-     *
-     * @param Collection $tags
-     * @return array
-     */
-    public function transformCollection(Collection $tags): array
-    {
-        return $tags->map(function ($tag) {
-            return $this->transform($tag);
-        })->toArray();
-    }
 } 

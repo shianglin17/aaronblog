@@ -44,6 +44,6 @@ class Category extends Model
      */
     public function publishedArticles(): HasMany
     {
-        return $this->hasMany(Article::class)->where('status', 'published');
+        return $this->hasMany(Article::class)->where('status', Article::STATUS_PUBLISHED);
     }
 }
