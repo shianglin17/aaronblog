@@ -3,9 +3,8 @@
 namespace App\Transformer;
 
 use App\Models\Category;
-use Illuminate\Database\Eloquent\Collection;
 
-class CategoryTransformer
+class CategoryTransformer extends BaseTransformer
 {
     /**
      * 轉換單個分類對象
@@ -13,7 +12,7 @@ class CategoryTransformer
      * @param Category $category
      * @return array
      */
-    public function transform(Category $category): array
+    public function transform($category): array
     {
         return [
             'id' => $category->id,
@@ -25,16 +24,4 @@ class CategoryTransformer
         ];
     }
 
-    /**
-     * 轉換分類集合
-     *
-     * @param Collection $categories
-     * @return array
-     */
-    public function transformCollection(Collection $categories): array
-    {
-        return $categories->map(function ($category) {
-            return $this->transform($category);
-        })->toArray();
-    }
 } 

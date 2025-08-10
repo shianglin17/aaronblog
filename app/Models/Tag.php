@@ -43,6 +43,6 @@ class Tag extends Model
      */
     public function publishedArticles(): BelongsToMany
     {
-        return $this->belongsToMany(Article::class)->where('status', 'published');
+        return $this->belongsToMany(Article::class)->where('status', Article::STATUS_PUBLISHED);
     }
 }

@@ -5,7 +5,7 @@ namespace App\Transformer;
 use App\Models\Article;
 use Illuminate\Support\Collection;
 
-class ArticleTransformer
+class ArticleTransformer extends BaseTransformer
 {
     /**
      * 轉換單篇文章資料
@@ -13,7 +13,7 @@ class ArticleTransformer
      * @param Article $article
      * @return array
      */
-    public function transform(Article $article): array
+    public function transform($article): array
     {
         return [
             'id' => $article->id,
@@ -58,16 +58,4 @@ class ArticleTransformer
         })->toArray();
     }
 
-    /**
-     * 轉換多篇文章資料
-     *
-     * @param Collection $articles
-     * @return array
-     */
-    public function transformCollection(Collection $articles): array
-    {
-        return $articles->map(function ($article) {
-            return $this->transform($article);
-        })->toArray();
-    }
 } 
