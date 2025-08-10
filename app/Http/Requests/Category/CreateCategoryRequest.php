@@ -28,23 +28,4 @@ class CreateCategoryRequest extends FormRequest
         ];
     }
 
-    /**
-     * 獲取屬性的自定義錯誤訊息
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'name.required' => '分類名稱不能為空',
-            'name.max' => '分類名稱不能超過50個字符',
-            'name.unique' => '分類名稱已存在',
-            'slug.required' => '分類別名不能為空',
-            'slug.max' => '分類別名不能超過255個字符',
-            'slug.unique' => '分類別名已存在',
-            'slug.alpha_dash' => '分類別名只能包含字母、數字、連字符和底線',
-            'description.required' => '分類描述不能為空',
-            'description.max' => '分類描述不能超過500個字符'
-        ];
-    }
 } 
