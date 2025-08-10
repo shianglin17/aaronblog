@@ -36,7 +36,7 @@ class UpdateCategoryTest extends AdminTestCase
         $response->assertOk()
                  ->assertJson([
                      'status' => 'success',
-                     'message' => '分類更新成功'
+                     'message' => '成功'
                  ]);
 
         $this->assertDatabaseHas('categories', [

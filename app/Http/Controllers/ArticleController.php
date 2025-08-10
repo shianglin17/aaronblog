@@ -8,7 +8,7 @@ use App\Http\Requests\Article\ListArticlesRequest;
 use App\Http\Requests\Article\GetArticleRequest;
 use App\Http\Requests\Article\CreateArticleRequest;
 use App\Http\Requests\Article\UpdateArticleRequest;
-use App\Http\Response\ResponseMaker;
+use App\Http\ApiResponse;
 use App\Transformer\ArticleTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +35,7 @@ class ArticleController extends Controller
     {
         $articles = $this->articleService->getArticles($request->validated());
 
-        return ResponseMaker::paginatorWithTransformer($articles, $this->articleTransformer);
+        return ApiResponse::paginated($articles, $this->articleTransformer);
     }
 
     /**
@@ -49,9 +49,8 @@ class ArticleController extends Controller
     {
         $article = $this->articleService->getArticleById($id);
 
-        return ResponseMaker::success(
-            data: $this->articleTransformer->transform($article),
-            message: '文章詳情'
+        return ApiResponse::ok(
+            $this->articleTransformer->transform($article)
         );
     }
 
@@ -68,10 +67,8 @@ class ArticleController extends Controller
         
         $article = $this->articleService->createArticle($data);
 
-        return ResponseMaker::success(
-            $this->articleTransformer->transform($article),
-            message: '文章創建成功',
-            code: 201
+        return ApiResponse::created(
+            $this->articleTransformer->transform($article)
         );
     }
 
@@ -87,9 +84,8 @@ class ArticleController extends Controller
     {
         $article = $this->articleService->updateArticle($id, $request->validated());
 
-        return ResponseMaker::success(
-            data: $this->articleTransformer->transform($article),
-            message: '文章更新成功'
+        return ApiResponse::ok(
+            $this->articleTransformer->transform($article)
         );
     }
 
@@ -104,6 +100,6 @@ class ArticleController extends Controller
     {
         $this->articleService->deleteArticle($id);
 
-        return ResponseMaker::success(message: '文章刪除成功');
+        return ApiResponse::ok();
     }
 }

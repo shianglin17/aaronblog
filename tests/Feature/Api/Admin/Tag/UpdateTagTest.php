@@ -36,7 +36,7 @@ class UpdateTagTest extends AdminTestCase
         $response->assertOk()
                  ->assertJson([
                      'status' => 'success',
-                     'message' => '標籤更新成功'
+                     'message' => '成功'
                  ]);
 
         $this->assertDatabaseHas('tags', [

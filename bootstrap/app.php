@@ -1,6 +1,8 @@
 <?php
 
-use App\Exceptions\BaseException;
+use App\Exceptions\ApiException;
+use App\Http\ApiResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,13 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Session Cookie 認證中間件配置
-        $middleware->web(append: [
-            // 網頁請求的中間件
-        ]);
-    
+        $middleware->web(append: []);
         $middleware->api(append: [
-            // SPA Session Cookie 認證中間件
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             EnsureFrontendRequestsAreStateful::class,
@@ -30,29 +27,17 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // 使用自定義異常處理程序
-        $exceptions->dontReport([
-            // 這裡可以添加不需要報告的異常類型
-        ]);
-
-        // 處理驗證異常
-        $exceptions->render(function (ValidationException $e, Request $request) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'status' => 'error',
-                    'code' => 422,
-                    'message' => '驗證錯誤',
-                    'meta' => [
-                        'errors' => $e->errors()
-                    ]
-                ], 422);
+        // 統一 API 錯誤處理
+        $exceptions->render(function (\Throwable $e, Request $request) {
+            if (!$request->expectsJson()) {
+                return null; // 讓 Laravel 處理 web 請求
             }
-        });
 
-        // 處理自定義業務異常
-        $exceptions->render(function (BaseException $e, Request $request) {
-            if ($request->expectsJson()) {
-                return $e->toJSONResponse();
-            }
+            return match (true) {
+                $e instanceof ValidationException => ApiResponse::validationError($e->errors()),
+                $e instanceof ModelNotFoundException => ApiResponse::notFound(),
+                $e instanceof ApiException => $e->toResponse(),
+                default => null // 讓 Laravel 處理其他異常
+            };
         });
     })->create();

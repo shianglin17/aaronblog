@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Response\ResponseMaker;
+use App\Http\ApiResponse;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Services\CategoryService;
@@ -31,9 +31,8 @@ class CategoryController extends Controller
     {
         $categories = $this->categoryService->getAllCategories();
         
-        return ResponseMaker::success(
-            data: $this->transformer->transformCollection($categories),
-            message: '所有分類'
+        return ApiResponse::ok(
+            $this->transformer->transformCollection($categories)
         );
     }
 
@@ -48,9 +47,8 @@ class CategoryController extends Controller
     {
         $category = $this->categoryService->getCategoryById($id);
         
-        return ResponseMaker::success(
-            data: $this->transformer->transform($category),
-            message: '分類詳情'
+        return ApiResponse::ok(
+            $this->transformer->transform($category)
         );
     }
 
@@ -65,10 +63,8 @@ class CategoryController extends Controller
         $data = $request->validated();
         $category = $this->categoryService->createCategory($data);
         
-        return ResponseMaker::success(
-            data: $this->transformer->transform($category),
-            message: '分類創建成功',
-            code: 201
+        return ApiResponse::created(
+            $this->transformer->transform($category)
         );
     }
 
@@ -85,9 +81,8 @@ class CategoryController extends Controller
         $data = $request->validated();
         $category = $this->categoryService->updateCategory($id, $data);
         
-        return ResponseMaker::success(
-            data: $this->transformer->transform($category),
-            message: '分類更新成功'
+        return ApiResponse::ok(
+            $this->transformer->transform($category)
         );
     }
 
@@ -103,8 +98,6 @@ class CategoryController extends Controller
     {
         $this->categoryService->deleteCategory($id);
         
-        return ResponseMaker::success(
-            message: '分類刪除成功'
-        );
+        return ApiResponse::ok();
     }
 } 

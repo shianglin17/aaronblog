@@ -36,7 +36,7 @@ class TagDeleteConstraintTest extends AdminTestCase
         $response->assertOk();
         $response->assertJson([
             'status' => 'success',
-            'message' => '標籤刪除成功'
+            'message' => '成功'
         ]);
 
         // 確認標籤已被刪除
@@ -73,7 +73,7 @@ class TagDeleteConstraintTest extends AdminTestCase
         $response->assertOk();
         $response->assertJson([
             'status' => 'success',
-            'message' => '標籤刪除成功'
+            'message' => '成功'
         ]);
 
         // 確認標籤已被刪除

@@ -51,7 +51,7 @@ class UpdateArticleTest extends AdminTestCase
         $response->assertOk()
                  ->assertJson([
                      'status' => 'success',
-                     'message' => '文章更新成功'
+                     'message' => '成功'
                  ])
                  ->assertJsonStructure([
                      'data' => [

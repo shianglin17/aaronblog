@@ -31,7 +31,7 @@ class CreateTagTest extends AdminTestCase
         $response->assertStatus(201)
                  ->assertJson([
                      'status' => 'success',
-                     'message' => '標籤創建成功'
+                     'message' => '創建成功'
                  ])
                  ->assertJsonStructure([
                      'data' => [
