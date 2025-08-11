@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Response\ResponseMaker;
+use App\Http\ApiResponse;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,9 +46,9 @@ class AuthController extends Controller
          $user = Auth::guard('web')->user();
 
          // 回傳成功訊息和用戶資料（不回傳 token）
-         return ResponseMaker::success([
+         return ApiResponse::ok([
             'user' => $user
-         ], message: '登入成功');
+         ]);
     }
 
     /**
@@ -68,7 +68,7 @@ class AuthController extends Controller
         // 重新產生 CSRF token
         $request->session()->regenerateToken();
 
-        return ResponseMaker::success(message: '登出成功');
+        return ApiResponse::ok();
     }
 
     /**
@@ -84,7 +84,7 @@ class AuthController extends Controller
         $user = $request->user();
 
         // 回傳用戶資料
-        return ResponseMaker::success($user, message: '取得用戶資料成功');
+        return ApiResponse::ok($user);
     }
 
     /**
