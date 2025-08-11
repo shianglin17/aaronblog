@@ -32,6 +32,7 @@ Route::prefix('tags')->middleware('throttle:30,1')->group(function () {
 // 認證相關路由
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:web');
     Route::get('/user', [AuthController::class, 'user'])->middleware('auth:web');
 });

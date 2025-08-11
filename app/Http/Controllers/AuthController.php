@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Validation\UserRegisterValidation;
 use App\Http\ApiResponse;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -88,45 +91,50 @@ class AuthController extends Controller
     }
 
     /**
-     * 註冊新用戶
+     * HTTP API 註冊新用戶
      *
+     * @param RegisterRequest $request
+     * @return JsonResponse
+     */
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ]);
+
+        return ApiResponse::ok(['user' => $user]);
+    }
+
+    /**
+     * CLI 註冊新用戶
+     *
+     * @param string $name
      * @param string $email
      * @param string $password
      * @return array
      * @throws ValidationException
      */
-    public function register(string $name, string $email, string $password): array
+    public function registerFromCli(string $name, string $email, string $password): array
     {
-        // 驗證 email 格式
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw ValidationException::withMessages([
-                'email' => ['Email 格式不正確。'],
-            ]);
+        $validator = Validator::make(
+            compact('name', 'email', 'password'),
+            UserRegisterValidation::getCliRules()
+        );
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
         }
 
-        // 檢查 email 是否已存在
-        if (User::where('email', $email)->exists()) {
-            throw ValidationException::withMessages([
-                'email' => ['Email 已被註冊。'],
-            ]);
-        }
-
-        // 驗證密碼長度
-        if (strlen($password) < 6) {
-            throw ValidationException::withMessages([
-                'password' => ['密碼長度至少 6 碼。'],
-            ]);
-        }
-
-        // 建立新用戶
         $user = User::create([
             'name' => $name,
             'email' => $email,
             'password' => $password,
         ]);
 
-        return [
-            'user' => $user,
-        ];
+        return ['user' => $user];
     }
 }

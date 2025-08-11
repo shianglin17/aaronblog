@@ -150,6 +150,7 @@ If a task spans multiple domains, Claude will respond in ordered stages per role
   - Consistent transition effects (transition-fast, transition-normal, transition-slow)
   - Uniform interaction states (hover, active, focus) and visual feedback
 - **State Management Strategy**: For Pinia stores, follow the KISS principle. Use simple caching strategies without TTL unless specifically required. Implement manual refresh mechanisms instead of automatic expiration to maintain code simplicity.
+- **Git Commit Standards**: Do not include Claude-generated signatures or co-authored messages in commits. Keep commit messages clean and focused on the actual changes being made.
 
 ---
 
