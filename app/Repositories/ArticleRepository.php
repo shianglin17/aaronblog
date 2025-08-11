@@ -53,37 +53,77 @@ class ArticleRepository extends BaseRepository
      */
     public function getArticles(array $params): LengthAwarePaginator
     {
+        return $this->buildBaseQuery()
+            ->tap(fn($query) => $this->applySearch($query, $params['search'] ?? null))
+            ->tap(fn($query) => $this->applyStatusFilter($query, $params['status']))
+            ->tap(fn($query) => $this->applyCategoryFilter($query, $params['category'] ?? null))
+            ->tap(fn($query) => $this->applyTagsFilter($query, $params['tags'] ?? null))
+            ->tap(fn($query) => $this->applySorting($query, $params['sort_by'], $params['sort_direction']))
+            ->paginate(perPage: $params['per_page'], page: $params['page']);
+    }
+
+    /**
+     * 建立基礎查詢
+     */
+    private function buildBaseQuery(): Builder
+    {
         return Article::select(self::DEFAULT_COLUMNS)
-        ->with([
-            'author:id,name',
-            'category:id,name,slug',
-            'tags:id,name,slug'
-        ])
-        ->when(!empty($params['search']), fn(Builder $query): Builder => 
-            $query->where(function(Builder $q) use ($params): Builder {
-                return $q->where('title', 'like', "%{$params['search']}%")
-                         ->orWhere('content', 'like', "%{$params['search']}%")
-                         ->orWhere('description', 'like', "%{$params['search']}%");
+            ->with(['author:id,name', 'category:id,name,slug', 'tags:id,name,slug']);
+    }
+
+    /**
+     * 套用搜尋過濾
+     */
+    private function applySearch(Builder $query, ?string $search): void
+    {
+        $query->when(!empty($search), fn(Builder $q) => 
+            $q->where(function(Builder $subQuery) use ($search) {
+                return $subQuery->where('title', 'like', "%{$search}%")
+                               ->orWhere('content', 'like', "%{$search}%")
+                               ->orWhere('description', 'like', "%{$search}%");
             })
-        )
-        ->when($params['status'] !== 'all', fn(Builder $query): Builder => 
-            $query->where('status', $params['status'])
-        )
-        // @todo 確認使用 slug 效能如何？以及是否是最佳實踐
-        ->when(!empty($params['category']), fn(Builder $query): Builder => 
-            $query->whereHas('category', fn(Builder $q): Builder => 
-                $q->where('slug', $params['category'])
-            )
-        )
-        ->when(!empty($params['tags']), fn(Builder $query): Builder => 
-            $query->whereHas('tags', fn(Builder $q): Builder => 
-                $q->whereIn('slug', $params['tags'])
-            )
-        )
-        ->orderBy($params['sort_by'], $params['sort_direction'])
-        ->paginate(
-            perPage: $params['per_page'],
-            page: $params['page']
         );
+    }
+
+    /**
+     * 套用狀態過濾
+     */
+    private function applyStatusFilter(Builder $query, string $status): void
+    {
+        $query->when($status !== 'all', fn(Builder $q) => 
+            $q->where('status', $status)
+        );
+    }
+
+    /**
+     * 套用分類過濾
+     */
+    private function applyCategoryFilter(Builder $query, ?string $categorySlug): void
+    {
+        $query->when(!empty($categorySlug), fn(Builder $q) => 
+            $q->whereHas('category', fn(Builder $subQuery) => 
+                $subQuery->where('slug', $categorySlug)
+            )
+        );
+    }
+
+    /**
+     * 套用標籤過濾
+     */
+    private function applyTagsFilter(Builder $query, ?array $tagSlugs): void
+    {
+        $query->when(!empty($tagSlugs), fn(Builder $q) => 
+            $q->whereHas('tags', fn(Builder $subQuery) => 
+                $subQuery->whereIn('slug', $tagSlugs)
+            )
+        );
+    }
+
+    /**
+     * 套用排序
+     */
+    private function applySorting(Builder $query, string $sortBy, string $direction): void
+    {
+        $query->orderBy($sortBy, $direction);
     }
 }
