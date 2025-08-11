@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authApi } from '../api/index'
-import type { User, AuthResponse } from '../types/auth'
+import type { User, AuthResponse, RegisterParams } from '../types/auth'
 import type { ApiResponse } from '../types/common'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -65,6 +65,28 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
   
+  // 註冊
+  const register = async (params: RegisterParams) => {
+    try {
+      isLoading.value = true
+      const response: ApiResponse<AuthResponse> = await authApi.register(params)
+      
+      if (response.status === 'success') {
+        user.value = response.data.user
+        return { success: true }
+      } else {
+        return { success: false, message: response.message }
+      }
+    } catch (error: any) {
+      return { 
+        success: false, 
+        message: error.response?.data?.message || '註冊失敗' 
+      }
+    } finally {
+      isLoading.value = false
+    }
+  }
+  
   // 登出
   const logout = async () => {
     try {
@@ -91,6 +113,7 @@ export const useAuthStore = defineStore('auth', () => {
     // 方法
     checkAuth,
     login,
+    register,
     logout,
     clearAuth
   }

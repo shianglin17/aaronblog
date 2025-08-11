@@ -15,6 +15,7 @@ export interface RegisterParams {
   email: string;
   password: string;
   password_confirmation: string;
+  invite_code: string;
 }
 
 // 使用者資料

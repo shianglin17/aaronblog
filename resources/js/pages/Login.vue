@@ -66,6 +66,12 @@
         >
           {{ authStore.isLoading ? '登入中...' : '登入' }}
         </n-button>
+        
+        <div class="login-footer">
+          <p>還沒有帳號？
+            <router-link to="/register" class="register-link">立即註冊</router-link>
+          </p>
+        </div>
       </n-form>
     </div>
   </div>
@@ -187,6 +193,27 @@ async function handleLogin() {
   margin-top: 0.5rem;
   font-weight: 500;
   height: 44px;
+}
+
+.login-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.login-footer p {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  margin: 0;
+}
+
+.register-link {
+  color: var(--primary-color, #18a058);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-link:hover {
+  text-decoration: underline;
 }
 
 /* 響應式設計 */

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-rou
 import Home from '../pages/Home.vue'
 import ArticleDetail from '../pages/ArticleDetail.vue'
 import Login from '../pages/Login.vue'
+import Register from '../pages/Register.vue'
 import { useAuthStore } from '../stores/auth'
 
 const routes = [
@@ -23,6 +24,14 @@ const routes = [
         path: '/login',
         name: 'login',
         component: Login,
+        meta: {
+            requiresGuest: true
+        }
+    },
+    {
+        path: '/register',
+        name: 'register',
+        component: Register,
         meta: {
             requiresGuest: true
         }
@@ -63,7 +72,7 @@ const router = createRouter({
 })
 
 // 全局路由守衛
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
     const authStore = useAuthStore();
 
     if (to.meta.requiresAuth) {

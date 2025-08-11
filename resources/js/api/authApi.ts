@@ -1,6 +1,6 @@
 import http from './http';
 import { API_ROUTES } from './routes';
-import { LoginParams, AuthResponse, User } from '../types/auth';
+import { LoginParams, RegisterParams, AuthResponse, User } from '../types/auth';
 import { ApiResponse, ApiFunction } from '../types/common';
 
 export const authApi = {
@@ -12,6 +12,11 @@ export const authApi = {
         return r.data;
       });
   }) as ApiFunction<AuthResponse, LoginParams>,
+  
+  register: ((params: RegisterParams) => {
+    return http.post(API_ROUTES.AUTH.REGISTER, params)
+      .then(r => r.data);
+  }) as ApiFunction<AuthResponse, RegisterParams>,
   
   logout: (() => {
     return http.post(API_ROUTES.AUTH.LOGOUT)
