@@ -20,6 +20,19 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class ArticleApiTest extends TestCase
 {
     use RefreshDatabase;
+    
+    protected Category $defaultCategory;
+    
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // 只創建基礎的預設分類，避免資料庫唯一約束衝突
+        $this->defaultCategory = Category::factory()->create([
+            'name' => 'Default Category',
+            'slug' => 'default-category'
+        ]);
+    }
 
     /**
      * 測試取得文章列表 - 基本格式
@@ -27,7 +40,9 @@ class ArticleApiTest extends TestCase
     public function test_get_articles_list_returns_correct_format(): void
     {
         // Arrange: 建立測試資料
-        Article::factory()->published()->count(3)->create();
+        Article::factory()->published()->count(3)->create([
+            'category_id' => $this->defaultCategory->id
+        ]);
 
         // Act: 呼叫 API
         $response = $this->getJson('/api/articles');
@@ -92,7 +107,9 @@ class ArticleApiTest extends TestCase
         int $expectedTotalPages
     ): void {
         // Arrange: 建立指定數量的文章
-        Article::factory()->published()->count($totalArticles)->create();
+        Article::factory()->published()->count($totalArticles)->create([
+            'category_id' => $this->defaultCategory->id
+        ]);
 
         // Act: 呼叫 API
         $response = $this->getJson("/api/articles?per_page={$perPage}&page={$page}");
@@ -135,7 +152,10 @@ class ArticleApiTest extends TestCase
     ): void {
         // Arrange: 建立指定標題的文章
         foreach ($articleTitles as $title) {
-            Article::factory()->published()->create(['title' => $title]);
+            Article::factory()->published()->create([
+                'title' => $title,
+                'category_id' => $this->defaultCategory->id
+            ]);
         }
 
         // Act: 搜尋
@@ -201,7 +221,9 @@ class ArticleApiTest extends TestCase
     ): void {
         // Arrange: 建立指定的文章
         foreach ($articleData as $data) {
-            Article::factory()->published()->create($data);
+            Article::factory()->published()->create(array_merge($data, [
+                'category_id' => $this->defaultCategory->id
+            ]));
         }
 
         // Act: 排序查詢
@@ -317,13 +339,22 @@ class ArticleApiTest extends TestCase
             'slug' => 'javascript'
         ]);
 
-        $phpArticle = Article::factory()->published()->create(['title' => 'PHP Article']);
+        $phpArticle = Article::factory()->published()->create([
+            'title' => 'PHP Article',
+            'category_id' => $this->defaultCategory->id
+        ]);
         $phpArticle->tags()->attach([$phpTag->id]);
 
-        $fullStackArticle = Article::factory()->published()->create(['title' => 'Full Stack Article']);
+        $fullStackArticle = Article::factory()->published()->create([
+            'title' => 'Full Stack Article',
+            'category_id' => $this->defaultCategory->id
+        ]);
         $fullStackArticle->tags()->attach([$phpTag->id, $laravelTag->id]);
 
-        $jsArticle = Article::factory()->published()->create(['title' => 'JS Article']);
+        $jsArticle = Article::factory()->published()->create([
+            'title' => 'JS Article',
+            'category_id' => $this->defaultCategory->id
+        ]);
         $jsArticle->tags()->attach([$jsTag->id]);
 
         // Act & Assert: 按單一標籤過濾
@@ -343,8 +374,12 @@ class ArticleApiTest extends TestCase
     public function test_public_route_only_shows_published_articles(): void
     {
         // Arrange: 建立不同狀態的文章
-        Article::factory()->published()->count(2)->create();
-        Article::factory()->draft()->count(3)->create();
+        Article::factory()->published()->count(2)->create([
+            'category_id' => $this->defaultCategory->id
+        ]);
+        Article::factory()->draft()->count(3)->create([
+            'category_id' => $this->defaultCategory->id
+        ]);
 
         // Act: 呼叫公開 API
         $response = $this->getJson('/api/articles');
@@ -367,7 +402,8 @@ class ArticleApiTest extends TestCase
     {
         // Arrange: 建立測試文章
         $article = Article::factory()->published()->create([
-            'title' => 'Test Article'
+            'title' => 'Test Article',
+            'category_id' => $this->defaultCategory->id
         ]);
 
         // Act: 呼叫 API
@@ -430,10 +466,22 @@ class ArticleApiTest extends TestCase
     public function test_search_does_not_include_draft_articles(): void
     {
         // Arrange: 建立包含相同關鍵字的已發布和草稿文章
-        Article::factory()->published()->create(['title' => 'Laravel 最佳實踐']);
-        Article::factory()->draft()->create(['title' => 'Laravel 進階技巧']);
-        Article::factory()->published()->create(['title' => 'Vue.js 入門']);
-        Article::factory()->draft()->create(['title' => 'Laravel 開發指南']);
+        Article::factory()->published()->create([
+            'title' => 'Laravel 最佳實踐',
+            'category_id' => $this->defaultCategory->id
+        ]);
+        Article::factory()->draft()->create([
+            'title' => 'Laravel 進階技巧',
+            'category_id' => $this->defaultCategory->id
+        ]);
+        Article::factory()->published()->create([
+            'title' => 'Vue.js 入門',
+            'category_id' => $this->defaultCategory->id
+        ]);
+        Article::factory()->draft()->create([
+            'title' => 'Laravel 開發指南',
+            'category_id' => $this->defaultCategory->id
+        ]);
 
         // Act: 搜尋包含 "Laravel" 的文章
         $response = $this->getJson('/api/articles?search=Laravel');
