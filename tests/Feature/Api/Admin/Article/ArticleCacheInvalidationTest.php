@@ -5,7 +5,6 @@ namespace Tests\Feature\Api\Admin\Article;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
-use App\Models\User;
 use Tests\Feature\Api\Admin\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 
@@ -30,11 +29,10 @@ class ArticleCacheInvalidationTest extends AdminTestCase
         $category = Category::factory()->create();
         $tag1 = Tag::factory()->create();
         $tag2 = Tag::factory()->create();
-        $user = User::factory()->create();
         
         $article = Article::factory()->published()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id
+            'user_id' => $this->authenticatedUser->id
         ]);
         
         // 關聯標籤
@@ -68,11 +66,10 @@ class ArticleCacheInvalidationTest extends AdminTestCase
     {
         // 建立測試資料
         $category = Category::factory()->create();
-        $user = User::factory()->create();
         
         $article = Article::factory()->published()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id
+            'user_id' => $this->authenticatedUser->id
         ]);
 
         // 第一次請求分類列表（建立快取）
@@ -145,11 +142,10 @@ class ArticleCacheInvalidationTest extends AdminTestCase
         $category = Category::factory()->create();
         $tag1 = Tag::factory()->create();
         $tag2 = Tag::factory()->create();
-        $user = User::factory()->create();
         
         $article = Article::factory()->published()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id
+            'user_id' => $this->authenticatedUser->id
         ]);
         
         // 初始關聯 tag1

@@ -56,7 +56,6 @@ class ArticleRepository extends BaseRepository
     {
         return $this->buildBaseQuery()
             ->tap(fn($query) => $this->applySearch($query, $params['search'] ?? null))
-            ->tap(fn($query) => $this->applyStatusFilter($query, $params['status']))
             ->tap(fn($query) => $this->applyCategoryFilter($query, $params['category'] ?? null))
             ->tap(fn($query) => $this->applyTagsFilter($query, $params['tags'] ?? null))
             ->tap(fn($query) => $this->applySorting($query, $params['sort_by'], $params['sort_direction']))

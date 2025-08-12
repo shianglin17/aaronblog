@@ -5,7 +5,6 @@ namespace Tests\Feature\Api\Admin\Article;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
-use App\Models\User;
 use Tests\Feature\Api\Admin\AdminTestCase;
 
 /**
@@ -24,11 +23,10 @@ class DeleteArticleTest extends AdminTestCase
     public function test_can_delete_article(): void
     {
         $category = Category::factory()->create();
-        $user = User::factory()->create();
         
         $article = Article::factory()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id
+            'user_id' => $this->authenticatedUser->id
         ]);
 
         $response = $this->deleteJson("/api/admin/articles/{$article->id}");
@@ -61,13 +59,12 @@ class DeleteArticleTest extends AdminTestCase
     public function test_can_delete_article_with_tags(): void
     {
         $category = Category::factory()->create();
-        $user = User::factory()->create();
         $tag1 = Tag::factory()->create();
         $tag2 = Tag::factory()->create();
         
         $article = Article::factory()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id
+            'user_id' => $this->authenticatedUser->id
         ]);
         
         // 關聯標籤
@@ -93,17 +90,16 @@ class DeleteArticleTest extends AdminTestCase
     public function test_delete_article_preserves_category_and_tags(): void
     {
         $category = Category::factory()->create();
-        $user = User::factory()->create();
         $tag = Tag::factory()->create();
         
         // 創建兩篇文章，使用相同的分類和標籤
         $article1 = Article::factory()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id
+            'user_id' => $this->authenticatedUser->id
         ]);
         $article2 = Article::factory()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id
+            'user_id' => $this->authenticatedUser->id
         ]);
         
         $article1->tags()->attach([$tag->id]);

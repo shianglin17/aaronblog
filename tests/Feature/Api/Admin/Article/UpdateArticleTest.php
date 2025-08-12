@@ -5,7 +5,6 @@ namespace Tests\Feature\Api\Admin\Article;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
-use App\Models\User;
 use Tests\Feature\Api\Admin\AdminTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 
@@ -14,6 +13,9 @@ use Illuminate\Foundation\Testing\WithFaker;
  * 
  * 測試範圍：
  * - PUT /api/admin/articles/{id}
+ * - 文章所有權驗證
+ * - AuthorizationException 處理
+ * - 標籤關聯更新
  * 
  * 確保 BaseRepository 的修改不影響 Article 模型的更新操作
  */
@@ -22,19 +24,19 @@ class UpdateArticleTest extends AdminTestCase
     use WithFaker;
 
     /**
-     * 測試更新文章
+     * 測試用戶可以更新自己的文章
      */
-    public function test_can_update_article(): void
+    public function test_user_can_update_own_article(): void
     {
         $category = Category::factory()->create();
         $newCategory = Category::factory()->create();
         $tag1 = Tag::factory()->create();
         $tag2 = Tag::factory()->create();
-        $user = User::factory()->create();
         
+        // 建立屬於當前認證用戶的文章
         $article = Article::factory()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id,
+            'user_id' => $this->authenticatedUser->id,
             'title' => '原始標題'
         ]);
         
@@ -93,11 +95,10 @@ class UpdateArticleTest extends AdminTestCase
     public function test_can_partially_update_article(): void
     {
         $category = Category::factory()->create();
-        $user = User::factory()->create();
         
         $article = Article::factory()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id,
+            'user_id' => $this->authenticatedUser->id,
             'title' => '原始標題',
             'content' => '原始內容'
         ]);
@@ -122,14 +123,13 @@ class UpdateArticleTest extends AdminTestCase
     public function test_can_update_article_tags(): void
     {
         $category = Category::factory()->create();
-        $user = User::factory()->create();
         $tag1 = Tag::factory()->create();
         $tag2 = Tag::factory()->create();
         $tag3 = Tag::factory()->create();
         
         $article = Article::factory()->create([
             'category_id' => $category->id,
-            'user_id' => $user->id
+            'user_id' => $this->authenticatedUser->id
         ]);
         
         // 初始關聯兩個標籤

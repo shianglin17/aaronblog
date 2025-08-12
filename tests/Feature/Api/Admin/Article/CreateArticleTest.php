@@ -13,6 +13,8 @@ use Illuminate\Foundation\Testing\WithFaker;
  * 
  * 測試範圍：
  * - POST /api/admin/articles
+ * - 自動設定 user_id
+ * - AuthenticatedUser Trait 功能
  * 
  * 確保 BaseRepository 的修改不影響 Article 模型的創建操作
  */
@@ -60,11 +62,12 @@ class CreateArticleTest extends AdminTestCase
                      ]
                  ]);
 
-        // 驗證文章存在於資料庫
+        // 驗證文章存在於資料庫，且自動設定為當前用戶
         $this->assertDatabaseHas('articles', [
             'title' => '測試文章',
             'slug' => 'test-article',
-            'category_id' => $category->id
+            'category_id' => $category->id,
+            'user_id' => $this->authenticatedUser->id  // 驗證自動設定user_id
         ]);
         
         // 驗證標籤關聯
@@ -91,6 +94,34 @@ class CreateArticleTest extends AdminTestCase
     }
 
     /**
+     * 測試文章自動關聯到當前認證用戶
+     */
+    public function test_article_automatically_assigned_to_current_user(): void
+    {
+        $category = Category::factory()->create();
+        
+        $articleData = [
+            'title' => '用戶文章',
+            'slug' => 'user-article',
+            'description' => '測試描述',
+            'content' => '測試內容',
+            'status' => 'published',
+            'category_id' => $category->id,
+        ];
+
+        $response = $this->postJson('/api/admin/articles', $articleData);
+
+        $response->assertStatus(201)
+                 ->assertJsonPath('data.author.id', $this->authenticatedUser->id);
+                 
+        // 驗證資料庫中的文章歸屬
+        $this->assertDatabaseHas('articles', [
+            'slug' => 'user-article',
+            'user_id' => $this->authenticatedUser->id
+        ]);
+    }
+
+    /**
      * 測試創建文章並關聯多個標籤
      */
     public function test_can_create_article_with_multiple_tags(): void
@@ -114,8 +145,9 @@ class CreateArticleTest extends AdminTestCase
 
         $response->assertStatus(201);
         
-        // 驗證所有標籤都已關聯
+        // 驗證所有標籤都已關聯且屬於當前用戶
         $article = Article::where('slug', 'multi-tag-article')->first();
+        $this->assertEquals($this->authenticatedUser->id, $article->user_id);
         $this->assertCount(3, $article->tags, '文章應該關聯到3個標籤');
         $this->assertTrue($article->tags->contains($tag1->id));
         $this->assertTrue($article->tags->contains($tag2->id));
