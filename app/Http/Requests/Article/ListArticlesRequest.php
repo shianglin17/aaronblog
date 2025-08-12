@@ -61,32 +61,10 @@ class ListArticlesRequest extends FormRequest
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],  // 前台限制更低
             'sort_by' => ['sometimes', 'string', 'in:' . implode(',', $this->allowedSortFields)],
             'sort_direction' => ['sometimes', 'string', 'in:' . implode(',', $this->allowedSortDirections)],
-            'search' => ['sometimes', 'string', 'max:100'],  // 前台搜尋限制更短
-            'category' => ['sometimes', 'string', 'max:255'],
+            'search' => ['sometimes', 'nullable', 'string', 'max:100'],  // 前台搜尋限制更短
+            'category' => ['sometimes', 'nullable', 'string', 'max:255'],
             'tags' => ['sometimes', 'array', 'max:5'],  // 前台標籤限制數量
             'tags.*' => ['string', 'max:255']
-        ];
-    }
-
-    /**
-     * 取得驗證訊息
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'page.integer' => '頁碼必須是整數',
-            'page.min' => '頁碼必須大於等於 1',
-            'per_page.integer' => '每頁筆數必須是整數',
-            'per_page.min' => '每頁筆數必須大於等於 1',
-            'per_page.max' => '每頁筆數不能超過 50',
-            'sort_by.in' => '排序欄位必須是 ' . implode(', ', $this->allowedSortFields) . ' 其中之一',
-            'sort_direction.in' => '排序方向必須是 ' . implode(', ', $this->allowedSortDirections) . ' 其中之一',
-            'search.max' => '搜尋關鍵字不能超過 100 個字元',
-            'category.max' => '分類不能超過 255 個字元',
-            'tags.max' => '最多只能選擇 5 個標籤',
-            'tags.*.max' => '標籤長度不能超過 255 個字元'
         ];
     }
 
@@ -102,8 +80,8 @@ class ListArticlesRequest extends FormRequest
             'per_page' => $this->input('per_page') ?: $this->defaults['per_page'],
             'sort_by' => $this->input('sort_by') ?: $this->defaults['sort_by'],
             'sort_direction' => $this->input('sort_direction') ?: $this->defaults['sort_direction'],
-            'search' => $this->has('search') ? trim($this->input('search')) : null,
-            'category' => $this->has('category') ? trim($this->input('category')) : null,
+            'search' => $this->input('search') ? trim($this->input('search')) : $this->defaults['search'],
+            'category' => $this->input('category') ? trim($this->input('category')) : $this->defaults['category'],
             'tags' => $this->input('tags', $this->defaults['tags']),
             'status' => 'published',  // 前台強制只顯示已發布文章
         ];
