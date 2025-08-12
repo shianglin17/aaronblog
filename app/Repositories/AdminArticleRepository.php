@@ -10,7 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 /**
  * @extends BaseRepository<Article>
  */
-class ArticleRepository extends BaseRepository
+class AdminArticleRepository extends BaseRepository
 {
     const DEFAULT_COLUMNS = [
         'id', 'title', 'slug', 'description', 'content', 'status', 'user_id', 'category_id', 'created_at', 'updated_at'
@@ -22,7 +22,7 @@ class ArticleRepository extends BaseRepository
     }
 
     /**
-     * Override 父類別方法，提供優化的查詢邏輯（前台僅顯示已發布的文章）
+     * Override 父類別方法，提供優化的查詢邏輯
      *
      * @param int $id 文章ID
      * @return Article
@@ -31,7 +31,6 @@ class ArticleRepository extends BaseRepository
     public function getById(int $id, ?string $countRelation = null): Article
     {
         $query = Article::select(self::DEFAULT_COLUMNS)
-            ->where('status', Article::STATUS_PUBLISHED)
             ->with([
                 'author:id,name',
                 'category:id,name,slug',
@@ -47,29 +46,29 @@ class ArticleRepository extends BaseRepository
     }
 
     /**
-     * 獲取所有文章
+     * 獲取指定用戶的文章
      *
-     * @param array $params 查詢參數
+     * @param array $params 查詢參數（包含 user_id）
      * @return LengthAwarePaginator
      */
-    public function getArticles(array $params): LengthAwarePaginator
+    public function getUserArticles(array $params): LengthAwarePaginator
     {
-        return $this->buildBaseQuery()
+        return $this->buildUserQuery($params['user_id'])
             ->tap(fn($query) => $this->applySearch($query, $params['search'] ?? null))
-            ->tap(fn($query) => $this->applyStatusFilter($query, $params['status']))
+            ->tap(fn($query) => $this->applyStatusFilter($query, $params['status'] ?? 'all'))
             ->tap(fn($query) => $this->applyCategoryFilter($query, $params['category'] ?? null))
             ->tap(fn($query) => $this->applyTagsFilter($query, $params['tags'] ?? null))
-            ->tap(fn($query) => $this->applySorting($query, $params['sort_by'], $params['sort_direction']))
-            ->paginate(perPage: $params['per_page'], page: $params['page']);
+            ->tap(fn($query) => $this->applySorting($query, $params['sort_by'] ?? 'created_at', $params['sort_direction'] ?? 'desc'))
+            ->paginate(perPage: $params['per_page'] ?? 15, page: $params['page'] ?? 1);
     }
 
     /**
-     * 建立基礎查詢（前台僅顯示已發布的文章）
+     * 建立用戶特定查詢
      */
-    private function buildBaseQuery(): Builder
+    private function buildUserQuery(int $userId): Builder
     {
         return Article::select(self::DEFAULT_COLUMNS)
-            ->where('status', Article::STATUS_PUBLISHED)
+            ->where('user_id', $userId)
             ->with(['author:id,name', 'category:id,name,slug', 'tags:id,name,slug']);
     }
 

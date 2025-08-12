@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Admin\AdminArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
@@ -39,12 +40,12 @@ Route::prefix('auth')->group(function () {
 
 // 管理後台 API - 需要認證
 Route::prefix('admin')->middleware(['auth:web', 'throttle:30,1'])->group(function () {
-    // 文章管理
+    // 文章管理（用戶只能管理自己的文章）
     Route::prefix('articles')->group(function () {
-        Route::get('/', [ArticleController::class, 'index']);
-        Route::post('/', [ArticleController::class, 'store']);
-        Route::put('/{id}', [ArticleController::class, 'update'])->where('id', '[0-9]+');
-        Route::delete('/{id}', [ArticleController::class, 'destroy'])->where('id', '[0-9]+');
+        Route::get('/', [AdminArticleController::class, 'index']);
+        Route::post('/', [AdminArticleController::class, 'store']);
+        Route::put('/{id}', [AdminArticleController::class, 'update'])->where('id', '[0-9]+');
+        Route::delete('/{id}', [AdminArticleController::class, 'destroy'])->where('id', '[0-9]+');
     });
     
     // 標籤管理

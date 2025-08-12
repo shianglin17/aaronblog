@@ -2,6 +2,7 @@
 
 use App\Exceptions\ApiException;
 use App\Http\ApiResponse;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -36,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             return match (true) {
                 $e instanceof ValidationException => ApiResponse::validationError($e->errors()),
                 $e instanceof ModelNotFoundException => ApiResponse::notFound(),
+                $e instanceof AuthorizationException => ApiResponse::forbidden($e->getMessage()),
                 $e instanceof ApiException => $e->toResponse(),
                 default => null // 讓 Laravel 處理其他異常
             };

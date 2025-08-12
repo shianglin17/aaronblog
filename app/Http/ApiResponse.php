@@ -87,6 +87,18 @@ class ApiResponse
     }
 
     /**
+     * 權限不足 (403)
+     */
+    public static function forbidden(string $message = '權限不足'): JsonResponse
+    {
+        return response()->json([
+            'status' => 'error',
+            'code' => 403,
+            'message' => $message
+        ], 403);
+    }
+
+    /**
      * 資源使用中 (409)
      */
     public static function conflict(string $message): JsonResponse
