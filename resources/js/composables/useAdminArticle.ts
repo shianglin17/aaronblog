@@ -10,17 +10,14 @@ type FilterOption = {
   value: string | number;
 };
 
-
 /**
- * 公開文章列表管理邏輯
+ * 管理後台文章列表管理邏輯
  * 
- * 提供公開文章列表的篩選、分頁、搜尋等功能
+ * 提供管理後台文章列表的篩選、分頁、搜尋等功能
  * 使用統一的 staticDataStore 管理分類與標籤資料
- * 專用於前台，使用公開 API
- * 
- * @deprecated 建議使用專門的 usePublicArticles（當前台需要時）
+ * 專用於管理後台，使用 admin API
  */
-export function useArticles(message: any) {
+export function useAdminArticles(message: any) {
   const staticDataStore = useStaticDataStore();
   
   // 核心狀態
@@ -77,11 +74,11 @@ export function useArticles(message: any) {
       const errorMsg = '獲取篩選選項失敗';
       error.value = errorMsg;
       message.error(errorMsg);
-      console.error('[useArticles] Failed to load filter options:', err);
+      console.error('[useAdminArticles] Failed to load filter options:', err);
     }
   }
   
-  // 獲取文章列表
+  // 獲取文章列表 - 使用管理後台 API
   async function fetchArticles() {
     loading.value = true;
     
@@ -104,8 +101,8 @@ export function useArticles(message: any) {
         apiParams.tags = tagFilters.value;
       }
       
-      // 使用公開 API（前台專用）
-      const response = await articleApi.getList(apiParams);
+      // 使用管理後台專用 API
+      const response = await articleApi.admin.getList(apiParams);
       articles.value = response.data;
       
       if (response.meta?.pagination) {
@@ -242,11 +239,10 @@ const INITIAL_ARTICLE_FORM_STATE = {
 };
 
 /**
- * 文章表單管理邏輯
- * 
- * @deprecated 請使用 useAdminArticleForm 用於管理後台，或建立 usePublicArticleForm 用於前台
+ * 管理後台文章表單管理邏輯
+ * 專用於管理後台，使用 admin API
  */
-export function useArticleForm(message: any, onSuccess: () => void) {
+export function useAdminArticleForm(message: any, onSuccess: () => void) {
   // 使用初始狀態常量來初始化 formModel，確保是深拷貝
   const formModel = reactive<CreateArticleParams>({ 
     ...INITIAL_ARTICLE_FORM_STATE,
@@ -301,7 +297,7 @@ export function useArticleForm(message: any, onSuccess: () => void) {
     showForm.value = true;
   }
 
-  // 表單提交
+  // 表單提交 - 使用管理後台 API
   async function handleFormSubmit(data: CreateArticleParams) {
     try {
       if (isEdit.value && editingId.value) {
@@ -350,11 +346,10 @@ export function useArticleForm(message: any, onSuccess: () => void) {
 }
 
 /**
- * 文章刪除邏輯
- * 
- * @deprecated 請使用 useAdminArticleDelete 用於管理後台，或建立 usePublicArticleDelete 用於前台
+ * 管理後台文章刪除邏輯
+ * 專用於管理後台，使用 admin API
  */
-export function useArticleDelete(message: any, onSuccess: () => void) {
+export function useAdminArticleDelete(message: any, onSuccess: () => void) {
   const showDeleteConfirm = ref(false);
   const deletingId = ref<number | null>(null);
   
@@ -370,7 +365,7 @@ export function useArticleDelete(message: any, onSuccess: () => void) {
     showDeleteConfirm.value = false;
   }
   
-  // 刪除文章
+  // 刪除文章 - 使用管理後台 API
   async function handleDelete() {
     if (!deletingId.value) return;
     
@@ -397,14 +392,12 @@ export function useArticleDelete(message: any, onSuccess: () => void) {
 }
 
 /**
- * 表單選項數據管理
+ * 管理後台表單選項數據管理
  * 
  * 提供文章編輯表單使用的分類與標籤選項
  * 使用 ID 作為 value 以便於表單提交
- * 
- * @deprecated 請使用 useAdminOptions 用於管理後台，或建立 usePublicOptions 用於前台
  */
-export function useOptions(message: any) {
+export function useAdminOptions(message: any) {
   const staticDataStore = useStaticDataStore();
   const error = ref<string | null>(null);
   
@@ -438,7 +431,7 @@ export function useOptions(message: any) {
       const errorMsg = '獲取選項失敗';
       error.value = errorMsg;
       message.error(errorMsg);
-      console.error('[useOptions] Failed to load options:', err);
+      console.error('[useAdminOptions] Failed to load options:', err);
     }
   }
   
@@ -454,4 +447,4 @@ export function useOptions(message: any) {
     // Actions
     loadOptions
   };
-} 
+}

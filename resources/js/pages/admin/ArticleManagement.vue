@@ -110,15 +110,12 @@ import DataTable from '../../components/admin/DataTable.vue';
 import ArticleFilterBar from '../../components/admin/ArticleFilterBar.vue';
 import FormModal from '../../components/admin/FormModal.vue';
 import { ARTICLE_COLUMNS, ARTICLE_FORM_RULES } from '../../constants';
-import { useArticles, useArticleForm, useArticleDelete, useOptions } from '../../composables/useArticle';
+import { useAdminArticles, useAdminArticleForm, useAdminArticleDelete, useAdminOptions } from '../../composables/useAdminArticle';
 
 // 消息提示
 const message = useMessage();
 
-// 搜索值（保持與 FilterBar 組件的同步）
-const searchQuery = ref('');
-
-// 使用文章列表管理邏輯
+// 使用管理後台文章列表管理邏輯
 const {
   articles,
   loading,
@@ -126,6 +123,7 @@ const {
   pagination,
   categoryOptions,
   tagOptions,
+  searchQuery,
   categoryFilter,
   tagFilters,
   fetchArticles,
@@ -138,9 +136,9 @@ const {
   handlePageSizeChange,
   handleSorterChange,
   resetFilters
-} = useArticles(message);
+} = useAdminArticles(message);
 
-// 使用文章表單邏輯
+// 使用管理後台文章表單邏輯
 const {
   formModel,
   showForm,
@@ -149,22 +147,22 @@ const {
   openCreateForm,
   openEditForm,
   handleFormSubmit
-} = useArticleForm(message, fetchArticles);
+} = useAdminArticleForm(message, fetchArticles);
 
-// 使用文章刪除邏輯
+// 使用管理後台文章刪除邏輯
 const {
   showDeleteConfirm,
   openDeleteConfirm,
   cancelDelete,
   handleDelete
-} = useArticleDelete(message, fetchArticles);
+} = useAdminArticleDelete(message, fetchArticles);
 
-// 使用選項數據
+// 使用管理後台選項數據
 const {
   categoryOptions: formCategoryOptions,
   tagOptions: formTagOptions,
   loadOptions
-} = useOptions(message);
+} = useAdminOptions(message);
 
 // 初始化
 onMounted(() => {
