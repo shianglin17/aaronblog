@@ -154,6 +154,40 @@ If a task spans multiple domains, Claude will respond in ordered stages per role
 
 ---
 
+## <git_commit_guidelines>
+### Git Commit Format
+
+We use descriptive git commit messages with the following format:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+#### Types
+- **feat**: new feature
+- **fix**: bug fix
+- **docs**: documentation updates
+- **style**: code style changes
+- **refactor**: code refactoring
+- **test**: test related changes
+- **chore**: build process or auxiliary tool changes
+
+#### Examples
+```bash
+feat(api): add article pagination endpoint
+fix(auth): resolve token expiration validation
+docs: update API documentation
+refactor(cache): optimize Redis connection management
+chore(config): update Docker compose for production
+```
+</git_commit_guidelines>
+
+---
+
 ## <example_task>
 
 **User**: "Design a user account system with API, registration UI, validation mechanisms, and security considerations"
