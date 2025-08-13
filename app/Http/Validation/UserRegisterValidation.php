@@ -12,9 +12,9 @@ class UserRegisterValidation
     public static function getBaseRules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6'],
+            'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_\-\u4e00-\u9fff]+$/u'],
+            'email' => ['required', 'email:rfc,dns', 'unique:users,email', 'max:255'],
+            'password' => ['required', 'string', 'min:8', 'max:255', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
         ];
     }
 
@@ -26,7 +26,7 @@ class UserRegisterValidation
     public static function getHttpRules(): array
     {
         return array_merge(self::getBaseRules(), [
-            'invite_code' => ['required', 'string'],
+            'invite_code' => ['required', 'string', 'max:100'],
         ]);
     }
 
@@ -48,6 +48,9 @@ class UserRegisterValidation
      */
     public static function isValidInviteCode(string $inviteCode): bool
     {
-        return $inviteCode === env('INVITE_CODE');
+        $validCode = env('INVITE_CODE');
+        
+        // 防止時序攻擊，使用 hash_equals
+        return $validCode && hash_equals($validCode, $inviteCode);
     }
 }

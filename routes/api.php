@@ -32,10 +32,15 @@ Route::prefix('tags')->middleware('throttle:30,1')->group(function () {
 
 // 認證相關路由
 Route::prefix('auth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:web');
-    Route::get('/user', [AuthController::class, 'user'])->middleware('auth:web');
+    // 登入與註冊需要嚴格的 rate limiting
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:3,1');
+    
+    // 已認證用戶的路由
+    Route::middleware('auth:web')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/user', [AuthController::class, 'user']);
+    });
 });
 
 // 管理後台 API - 需要認證
