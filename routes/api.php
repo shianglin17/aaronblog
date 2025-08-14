@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Admin\AdminArticleController;
+use App\Http\Controllers\Admin\AdminTagController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
@@ -53,11 +54,11 @@ Route::prefix('admin')->middleware(['auth:web', 'throttle:30,1'])->group(functio
         Route::delete('/{id}', [AdminArticleController::class, 'destroy'])->where('id', '[0-9]+');
     });
     
-    // 標籤管理
+    // 標籤管理（CUD操作）
     Route::prefix('tags')->group(function () {
-        Route::post('/', [TagController::class, 'store']);
-        Route::put('/{id}', [TagController::class, 'update'])->where('id', '[0-9]+');
-        Route::delete('/{id}', [TagController::class, 'destroy'])->where('id', '[0-9]+');
+        Route::post('/', [AdminTagController::class, 'store']);
+        Route::put('/{id}', [AdminTagController::class, 'update'])->where('id', '[0-9]+');
+        Route::delete('/{id}', [AdminTagController::class, 'destroy'])->where('id', '[0-9]+');
     });
     
     // 分類管理
