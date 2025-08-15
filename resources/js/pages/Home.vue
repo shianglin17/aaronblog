@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import CompactNavigation from '../components/layout/CompactNavigation.vue';
 import ProfileSidebar from '../components/profile/ProfileSidebar.vue';
 import ArticlesSection from '../components/articles/ArticlesSection.vue';
@@ -66,10 +66,10 @@ const currentParams = ref<ArticleListParams>({
   status: 'published'
 });
 
-// 計算屬性
-const totalArticles = computed(() => pagination.value?.total_items || 0);
-const totalCategories = computed(() => staticDataStore.categories.length);
-const totalTags = computed(() => staticDataStore.tags.length);
+// 統計數據
+const totalArticles = ref(0);
+const totalCategories = ref(0);
+const totalTags = ref(0);
 
 // 獲取文章列表
 async function fetchArticles() {
@@ -154,11 +154,30 @@ const clearAllFilters = () => {
   fetchArticles();
 };
 
+// 載入統計數據（不受搜尋影響的總數）
+async function loadStats() {
+  try {
+    // 載入總文章數
+    const articlesResponse = await articleApi.getList({ 
+      status: 'published',
+      per_page: 1 // 只要總數
+    });
+    totalArticles.value = articlesResponse.meta?.pagination?.total_items || 0;
+    
+    // 載入分類和標籤總數
+    await staticDataStore.ensureLoaded();
+    totalCategories.value = staticDataStore.categories.length;
+    totalTags.value = staticDataStore.tags.length;
+  } catch (error) {
+    console.error('載入統計數據失敗:', error);
+  }
+}
+
 // 初始化資料載入
 onMounted(async () => {
   try {
-    // 載入靜態資料（分類、標籤） - 只載入一次
-    await staticDataStore.ensureLoaded();
+    // 載入統計數據
+    await loadStats();
     
     // 載入文章列表
     await fetchArticles();
