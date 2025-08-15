@@ -101,7 +101,7 @@ withDefaults(defineProps<{
     name: 'Aaron Lei',
     title: '全端工程師',
     bio: '專注於軟體開發和技術分享，熱愛探索新技術並將經驗記錄下來。歡迎與我交流討論！',
-    avatar: 'https://picsum.photos/120/120?random=aaron',
+    avatar: '/images/aaron-avatar.jpg',
     skills: ['Laravel', 'MySQL', 'Vue.js', 'TypeScript', 'Docker']
   })
 });
@@ -198,6 +198,7 @@ const toggleExpanded = () => {
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center 20%;
   border: 4px solid white;
   box-shadow: var(--shadow-lg);
   transition: var(--transition-normal);
