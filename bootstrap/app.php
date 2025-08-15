@@ -26,6 +26,11 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsureFrontendRequestsAreStateful::class,
             'throttle:30,1',
         ]);
+        
+        // 註冊自定義 middleware 別名
+        $middleware->alias([
+            'admin.only' => \App\Http\Middleware\AdminOnly::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // 統一 API 錯誤處理

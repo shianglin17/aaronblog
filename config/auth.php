@@ -117,4 +117,17 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Super Administrators
+    |--------------------------------------------------------------------------
+    |
+    | Define the user IDs that have super administrator privileges.
+    | These users can manage global resources like tags and categories.
+    | Can be a comma-separated string or an array of integers.
+    |
+    */
+
+    'super_admins' => env('SUPER_ADMIN_IDS', '1'),
+
 ];

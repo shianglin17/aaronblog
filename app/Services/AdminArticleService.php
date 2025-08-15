@@ -7,6 +7,7 @@ use App\Repositories\AdminArticleRepository;
 use App\Services\Cache\AdminArticleCacheService;
 use App\Services\Cache\TagCacheService;
 use App\Services\Cache\CategoryCacheService;
+use App\Services\AuthorizationService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -18,12 +19,14 @@ class AdminArticleService
      * @param AdminArticleCacheService $cacheService
      * @param TagCacheService $tagCacheService
      * @param CategoryCacheService $categoryCacheService
+     * @param AuthorizationService $authorizationService
      */
     public function __construct(
         protected readonly AdminArticleRepository $repository,
         protected readonly AdminArticleCacheService $cacheService,
         protected readonly TagCacheService $tagCacheService,
-        protected readonly CategoryCacheService $categoryCacheService
+        protected readonly CategoryCacheService $categoryCacheService,
+        protected readonly AuthorizationService $authorizationService
     ) {
     }
 
@@ -52,7 +55,7 @@ class AdminArticleService
         $article = $this->repository->create($data);
 
         // 同步標籤關聯
-        $this->syncArticleTags($article, $data);
+        $article->syncTagsFromData($data);
 
         // 清除相關快取
         $this->clearRelatedCache($article->id, $data['user_id'] ?? null);
@@ -74,14 +77,14 @@ class AdminArticleService
         $article = $this->repository->getById($id);
         
         // 檢查文章所有權
-        if ($article->user_id !== $userId) {
+        if (!$this->authorizationService->canModifyArticle($article, $userId)) {
             throw new AuthorizationException('您沒有權限修改此文章');
         }
 
         $this->repository->update($article, $data);
 
         // 同步標籤關聯
-        $this->syncArticleTags($article, $data);
+        $article->syncTagsFromData($data);
 
         // 清除相關快取
         $this->clearRelatedCache($id, $userId);
@@ -102,7 +105,7 @@ class AdminArticleService
         $article = $this->repository->getById($id);
         
         // 檢查文章所有權
-        if ($article->user_id !== $userId) {
+        if (!$this->authorizationService->canDeleteArticle($article, $userId)) {
             throw new AuthorizationException('您沒有權限刪除此文章');
         }
 
@@ -114,19 +117,6 @@ class AdminArticleService
         return $result;
     }
 
-    /**
-     * 同步文章標籤關聯
-     *
-     * @param Article $article
-     * @param array $data
-     * @return void
-     */
-    private function syncArticleTags(Article $article, array $data): void
-    {
-        if (isset($data['tags'])) {
-            $article->tags()->sync($data['tags']);
-        }
-    }
 
     /**
      * 清除相關快取

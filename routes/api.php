@@ -54,15 +54,15 @@ Route::prefix('admin')->middleware(['auth:web', 'throttle:30,1'])->group(functio
         Route::delete('/{id}', [AdminArticleController::class, 'destroy'])->where('id', '[0-9]+');
     });
     
-    // 標籤管理（CUD操作）
-    Route::prefix('tags')->group(function () {
+    // 標籤管理（CUD操作，僅限主帳號）
+    Route::prefix('tags')->middleware('admin.only')->group(function () {
         Route::post('/', [AdminTagController::class, 'store']);
         Route::put('/{id}', [AdminTagController::class, 'update'])->where('id', '[0-9]+');
         Route::delete('/{id}', [AdminTagController::class, 'destroy'])->where('id', '[0-9]+');
     });
     
-    // 分類管理
-    Route::prefix('categories')->group(function () {
+    // 分類管理（CUD操作，僅限主帳號）
+    Route::prefix('categories')->middleware('admin.only')->group(function () {
         Route::post('/', [CategoryController::class, 'store']);
         Route::put('/{id}', [CategoryController::class, 'update'])->where('id', '[0-9]+');
         Route::delete('/{id}', [CategoryController::class, 'destroy'])->where('id', '[0-9]+');
