@@ -25,7 +25,7 @@ services:
       - "8080:80"  # 開發環境使用 8080 端口
     volumes:
       - ./public:/var/www/public  # nginx 需要直接存取靜態檔案
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/default.dev.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
     networks:
