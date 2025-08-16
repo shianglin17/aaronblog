@@ -153,10 +153,10 @@ class AuthController extends Controller
         // 清除 session 資料
         $request->session()->invalidate();
 
-                // 重新產生 CSRF token，為下一次請求（如登入）做好準備
-        $request->session()->regenerateToken();
- 
-         return ApiResponse::ok();
+        // 注意：不重新產生 CSRF token，避免前端 SPA 中的 token 不同步問題
+        // 用戶已登出且 session 已失效，重新產生 CSRF token 的安全價值很低
+
+        return ApiResponse::ok();
     }
 
     /**

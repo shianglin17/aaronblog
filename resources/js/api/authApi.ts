@@ -6,11 +6,10 @@ import { ApiResponse, ApiFunction } from '../types/common';
 
 export const authApi = {
   login: (async (params: LoginParams) => {
-    // 登入前先強制刷新 CSRF token
+    // 登入前先刷新 CSRF token 確保有效性
     await refreshCsrfToken();
     const response = await http.post(API_ROUTES.AUTH.LOGIN, params);
-    // 登入成功後，Laravel 會再次重新產生 CSRF token，為下一次請求做準備
-    await refreshCsrfToken();
+    // 登入成功後不需要額外刷新 token，Laravel 的 session()->regenerate() 會處理
     return response.data;
   }) as ApiFunction<AuthResponse, LoginParams>,
 
