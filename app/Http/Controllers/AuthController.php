@@ -119,7 +119,7 @@ class AuthController extends Controller
      *     operationId="logout",
      *     tags={"Authentication"},
      *     summary="用戶登出",
-     *     description="登出當前用戶，清除 Session 和 CSRF token",
+     *     description="登出當前用戶，清除 Session（保持 CSRF token 不變以避免 SPA 中的同步問題）",
      *     security={{"sessionAuth": {}, "csrfToken": {}}},
      *     @OA\Response(
      *         response=200,
@@ -153,8 +153,8 @@ class AuthController extends Controller
         // 清除 session 資料
         $request->session()->invalidate();
 
-        // 重新產生 CSRF token
-        $request->session()->regenerateToken();
+        // 注意：不重新產生 CSRF token，避免前端 SPA 中的 token 不同步問題
+        // 用戶已登出且 session 已失效，重新產生 CSRF token 的安全價值很低
 
         return ApiResponse::ok();
     }
