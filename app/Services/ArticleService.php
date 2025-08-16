@@ -67,7 +67,7 @@ class ArticleService
         $article = $this->repository->create($data);
 
         // 同步標籤關聯
-        $this->syncArticleTags($article, $data);
+        $article->syncTagsFromData($data);
 
         // 清除文章相關快取
         $this->cacheService->clearListCache();
@@ -94,7 +94,7 @@ class ArticleService
         $this->repository->update($article, $data);
 
         // 同步標籤關聯
-        $this->syncArticleTags($article, $data);
+        $article->syncTagsFromData($data);
 
         // 清除文章相關快取
         $this->cacheService->clearResourceAllCache($id);
@@ -131,17 +131,4 @@ class ArticleService
         return $result;
     }
 
-    /**
-     * 同步文章標籤關聯
-     *
-     * @param Article $article
-     * @param array $data
-     * @return void
-     */
-    private function syncArticleTags(Article $article, array $data): void
-    {
-        if (isset($data['tags'])) {
-            $article->tags()->sync($data['tags']);
-        }
-    }
 } 

@@ -103,4 +103,20 @@ class Article extends Model
     {
         return $this->status === self::STATUS_PUBLISHED;
     }
+
+    /**
+     * 同步文章標籤
+     * 
+     * 統一處理文章標籤的多對多關聯同步邏輯
+     * 消除服務層重複代碼
+     * 
+     * @param array $data 包含標籤資料的陣列
+     * @return void
+     */
+    public function syncTagsFromData(array $data): void
+    {
+        if (isset($data['tags']) && is_array($data['tags'])) {
+            $this->tags()->sync($data['tags']);
+        }
+    }
 }
