@@ -1,6 +1,5 @@
 import { ref, reactive, computed } from 'vue';
 import { tagApi } from '../api';
-import { ERROR_MESSAGES } from '../constants';
 import { useStaticDataStore } from '../stores/staticData';
 import { usePagination } from './usePagination';
 import type { Tag, CreateTagParams } from '../types/tag';
@@ -60,12 +59,7 @@ export function useTags(message: any) {
   
   // 初始化載入
   async function fetchTags() {
-    try {
-      await staticDataStore.ensureLoaded();
-    } catch (error) {
-      message.error(ERROR_MESSAGES.FETCH_FAILED);
-      console.error(error);
-    }
+    await staticDataStore.ensureLoaded();
   }
   
   // 搜尋
@@ -143,43 +137,35 @@ export function useTagForm(message: any, onSuccess: () => void) {
   // 表單提交（樂觀更新策略）
   async function handleFormSubmit(data: CreateTagParams): Promise<void> {
     const isEditMode = isEdit.value && editingId.value;
+    let result;
     
-    try {
-      let result;
+    if (isEditMode) {
+      result = await tagApi.update({
+        id: editingId.value!,
+        data
+      });
       
-      if (isEditMode) {
-        result = await tagApi.update({
-          id: editingId.value!,
-          data
-        });
-        
-        if (result?.data) {
-          const updated = staticDataStore.updateTag(result.data);
-          if (!updated) {
-            console.warn('[useTagForm] Tag update in store failed, forcing reload');
-            await staticDataStore.ensureLoaded(true);
-          }
+      if (result?.data) {
+        const updated = staticDataStore.updateTag(result.data);
+        if (!updated) {
+          console.warn('[useTagForm] Tag update in store failed, forcing reload');
+          await staticDataStore.ensureLoaded(true);
         }
-        
-        message.success('標籤更新成功');
-      } else {
-        result = await tagApi.create(data);
-        
-        if (result?.data) {
-          staticDataStore.addTag(result.data);
-        }
-        
-        message.success('標籤創建成功');
       }
       
-      showForm.value = false;
-      onSuccess();
+      message.success('標籤更新成功');
+    } else {
+      result = await tagApi.create(data);
       
-    } catch (error) {
-      const errorMsg = isEditMode ? ERROR_MESSAGES.UPDATE_FAILED : ERROR_MESSAGES.CREATE_FAILED;
-      message.error(errorMsg);
-      console.error(`[useTagForm] ${isEditMode ? 'Update' : 'Create'} failed:`, error);
+      if (result?.data) {
+        staticDataStore.addTag(result.data);
+      }
+      
+      message.success('標籤創建成功');
     }
+    
+    showForm.value = false;
+    onSuccess();
   }
   
   return {
@@ -228,26 +214,20 @@ export function useTagDelete(message: any, onSuccess: () => void) {
     const tagId = deletingId.value;
     const tagName = deletingTag.value?.name || `ID: ${tagId}`;
     
-    try {
-      await tagApi.delete(tagId);
-      
-      const removed = staticDataStore.removeTag(tagId);
-      if (!removed) {
-        console.warn(`[useTagDelete] Tag ${tagId} not found in store, forcing reload`);
-        await staticDataStore.ensureLoaded(true);
-      }
-      
-      message.success(`標籤「${tagName}」刪除成功`);
-      onSuccess();
-      
-    } catch (error) {
-      message.error(ERROR_MESSAGES.DELETE_FAILED);
-      console.error(`[useTagDelete] Failed to delete tag ${tagId}:`, error);
-    } finally {
-      deletingId.value = null;
-      deletingTag.value = null;
-      showDeleteConfirm.value = false;
+    await tagApi.delete(tagId);
+    
+    const removed = staticDataStore.removeTag(tagId);
+    if (!removed) {
+      console.warn(`[useTagDelete] Tag ${tagId} not found in store, forcing reload`);
+      await staticDataStore.ensureLoaded(true);
     }
+    
+    message.success(`標籤「${tagName}」刪除成功`);
+    onSuccess();
+    
+    deletingId.value = null;
+    deletingTag.value = null;
+    showDeleteConfirm.value = false;
   }
   
   return {

@@ -1,6 +1,5 @@
 import { ref, reactive, computed } from 'vue';
 import { categoryApi } from '../api';
-import { ERROR_MESSAGES } from '../constants';
 import { useStaticDataStore } from '../stores/staticData';
 import { usePagination } from './usePagination';
 import type { Category, CreateCategoryParams } from '../types/category';
@@ -60,12 +59,7 @@ export function useCategories(message: any) {
   
   // 初始化載入
   async function fetchCategories() {
-    try {
-      await staticDataStore.ensureLoaded();
-    } catch (error) {
-      message.error(ERROR_MESSAGES.FETCH_FAILED);
-      console.error(error);
-    }
+    await staticDataStore.ensureLoaded();
   }
   
   // 搜尋
@@ -145,50 +139,40 @@ export function useCategoryForm(message: any, onSuccess: () => void) {
   // 表單提交（樂觀更新策略）
   async function handleFormSubmit(data: CreateCategoryParams): Promise<void> {
     const isEditMode = isEdit.value && editingId.value;
+    let result;
     
-    try {
-      let result;
+    if (isEditMode) {
+      // 更新操作
+      result = await categoryApi.update({
+        id: editingId.value!,
+        data
+      });
       
-      if (isEditMode) {
-        // 更新操作
-        result = await categoryApi.update({
-          id: editingId.value!,
-          data
-        });
-        
-        // API 成功後更新 store
-        if (result?.data) {
-          const updated = staticDataStore.updateCategory(result.data);
-          if (!updated) {
-            console.warn('[useCategoryForm] Category update in store failed, forcing reload');
-            await staticDataStore.ensureLoaded(true);
-          }
+      // API 成功後更新 store
+      if (result?.data) {
+        const updated = staticDataStore.updateCategory(result.data);
+        if (!updated) {
+          console.warn('[useCategoryForm] Category update in store failed, forcing reload');
+          await staticDataStore.ensureLoaded(true);
         }
-        
-        message.success('分類更新成功');
-      } else {
-        // 創建操作
-        result = await categoryApi.create(data);
-        
-        // API 成功後新增到 store
-        if (result?.data) {
-          staticDataStore.addCategory(result.data);
-        }
-        
-        message.success('分類創建成功');
       }
       
-      // 操作成功後關閉表單
-      showForm.value = false;
-      onSuccess();
+      message.success('分類更新成功');
+    } else {
+      // 創建操作
+      result = await categoryApi.create(data);
       
-    } catch (error) {
-      const errorMsg = isEditMode ? ERROR_MESSAGES.UPDATE_FAILED : ERROR_MESSAGES.CREATE_FAILED;
-      message.error(errorMsg);
-      console.error(`[useCategoryForm] ${isEditMode ? 'Update' : 'Create'} failed:`, error);
+      // API 成功後新增到 store
+      if (result?.data) {
+        staticDataStore.addCategory(result.data);
+      }
       
-      // 錯誤時不更新 store，保持資料一致性
+      message.success('分類創建成功');
     }
+    
+    // 操作成功後關閉表單
+    showForm.value = false;
+    onSuccess();
   }
   
   return {
@@ -237,31 +221,22 @@ export function useCategoryDelete(message: any, onSuccess: () => void) {
     const categoryId = deletingId.value;
     const categoryName = deletingCategory.value?.name || `ID: ${categoryId}`;
     
-    try {
-      await categoryApi.delete(categoryId);
-      
-      // API 成功後從 store 移除
-      const removed = staticDataStore.removeCategory(categoryId);
-      if (!removed) {
-        console.warn(`[useCategoryDelete] Category ${categoryId} not found in store, forcing reload`);
-        await staticDataStore.ensureLoaded(true);
-      }
-      
-      message.success(`分類「${categoryName}」刪除成功`);
-      onSuccess();
-      
-    } catch (error) {
-      message.error(ERROR_MESSAGES.DELETE_FAILED);
-      console.error(`[useCategoryDelete] Failed to delete category ${categoryId}:`, error);
-      
-      // 刪除失敗時不更新 store
-      
-    } finally {
-      // 清理狀態
-      deletingId.value = null;
-      deletingCategory.value = null;
-      showDeleteConfirm.value = false;
+    await categoryApi.delete(categoryId);
+    
+    // API 成功後從 store 移除
+    const removed = staticDataStore.removeCategory(categoryId);
+    if (!removed) {
+      console.warn(`[useCategoryDelete] Category ${categoryId} not found in store, forcing reload`);
+      await staticDataStore.ensureLoaded(true);
     }
+    
+    message.success(`分類「${categoryName}」刪除成功`);
+    onSuccess();
+    
+    // 清理狀態
+    deletingId.value = null;
+    deletingCategory.value = null;
+    showDeleteConfirm.value = false;
   }
   
   return {

@@ -67,57 +67,45 @@ export function useAdminArticles(message: any) {
    * 使用 store 的統一載入機制
    */
   async function loadFilterOptions(): Promise<void> {
-    try {
-      await staticDataStore.ensureLoaded();
-      error.value = null;
-    } catch (err) {
-      const errorMsg = '獲取篩選選項失敗';
-      error.value = errorMsg;
-      message.error(errorMsg);
-      console.error('[useAdminArticles] Failed to load filter options:', err);
-    }
+    await staticDataStore.ensureLoaded();
+    error.value = null;
   }
   
   // 獲取文章列表 - 使用管理後台 API
   async function fetchArticles() {
     loading.value = true;
     
-    try {
-      // 構建 API 參數 - 只包含有值的參數
-      const apiParams: ArticleListParams = { ...params.value };
-      
-      // 處理搜尋參數 - 只有非空時才加入
-      if (params.value.search && params.value.search.trim()) {
-        apiParams.search = params.value.search.trim();
-      }
-      
-      // 處理分類篩選
-      if (categoryFilter.value && categoryFilter.value !== 'all') {
-        apiParams.category = categoryFilter.value;
-      }
-      
-      // 處理標籤篩選
-      if (tagFilters.value && tagFilters.value.length > 0) {
-        apiParams.tags = tagFilters.value;
-      }
-      
-      // 使用管理後台專用 API
-      const response = await articleApi.admin.getList(apiParams);
-      articles.value = response.data;
-      
-      if (response.meta?.pagination) {
-        pagination.value = {
-          currentPage: response.meta.pagination.current_page,
-          perPage: response.meta.pagination.per_page,
-          totalItems: response.meta.pagination.total_items
-        };
-      }
-    } catch (error) {
-      message.error(ERROR_MESSAGES.FETCH_FAILED);
-      console.error(error);
-    } finally {
-      loading.value = false;
+    // 構建 API 參數 - 只包含有值的參數
+    const apiParams: ArticleListParams = { ...params.value };
+    
+    // 處理搜尋參數 - 只有非空時才加入
+    if (params.value.search && params.value.search.trim()) {
+      apiParams.search = params.value.search.trim();
     }
+    
+    // 處理分類篩選
+    if (categoryFilter.value && categoryFilter.value !== 'all') {
+      apiParams.category = categoryFilter.value;
+    }
+    
+    // 處理標籤篩選
+    if (tagFilters.value && tagFilters.value.length > 0) {
+      apiParams.tags = tagFilters.value;
+    }
+    
+    // 使用管理後台專用 API
+    const response = await articleApi.admin.getList(apiParams);
+    articles.value = response.data;
+    
+    if (response.meta?.pagination) {
+      pagination.value = {
+        currentPage: response.meta.pagination.current_page,
+        perPage: response.meta.pagination.per_page,
+        totalItems: response.meta.pagination.total_items
+      };
+    }
+    
+    loading.value = false;
   }
   
   // 搜尋處理
@@ -299,24 +287,19 @@ export function useAdminArticleForm(message: any, onSuccess: () => void) {
 
   // 表單提交 - 使用管理後台 API
   async function handleFormSubmit(data: CreateArticleParams) {
-    try {
-      if (isEdit.value && editingId.value) {
-        await articleApi.admin.update({
-          id: editingId.value,
-          data
-        });
-        message.success('文章更新成功');
-      } else {
-        await articleApi.admin.create(data);
-        message.success('文章創建成功');
-      }
-      
-      showForm.value = false; // 關閉模態框，這會觸發下面的 watch
-      onSuccess(); // 調用成功回調
-    } catch (error) {
-      message.error(isEdit.value ? ERROR_MESSAGES.UPDATE_FAILED : ERROR_MESSAGES.CREATE_FAILED);
-      console.error(error);
+    if (isEdit.value && editingId.value) {
+      await articleApi.admin.update({
+        id: editingId.value,
+        data
+      });
+      message.success('文章更新成功');
+    } else {
+      await articleApi.admin.create(data);
+      message.success('文章創建成功');
     }
+    
+    showForm.value = false; // 關閉模態框，這會觸發下面的 watch
+    onSuccess(); // 調用成功回調
   }
 
   // 監聽 showForm 狀態變化
@@ -369,17 +352,12 @@ export function useAdminArticleDelete(message: any, onSuccess: () => void) {
   async function handleDelete() {
     if (!deletingId.value) return;
     
-    try {
-      await articleApi.admin.delete(deletingId.value);
-      message.success('文章刪除成功');
-      onSuccess();
-    } catch (error) {
-      message.error(ERROR_MESSAGES.DELETE_FAILED);
-      console.error(error);
-    } finally {
-      deletingId.value = null;
-      showDeleteConfirm.value = false;
-    }
+    await articleApi.admin.delete(deletingId.value);
+    message.success('文章刪除成功');
+    onSuccess();
+    
+    deletingId.value = null;
+    showDeleteConfirm.value = false;
   }
   
   return {
@@ -424,15 +402,8 @@ export function useAdminOptions(message: any) {
    * 使用 store 的統一管理機制
    */
   async function loadOptions(): Promise<void> {
-    try {
-      await staticDataStore.ensureLoaded();
-      error.value = null;
-    } catch (err) {
-      const errorMsg = '獲取選項失敗';
-      error.value = errorMsg;
-      message.error(errorMsg);
-      console.error('[useAdminOptions] Failed to load options:', err);
-    }
+    await staticDataStore.ensureLoaded();
+    error.value = null;
   }
   
   return {
