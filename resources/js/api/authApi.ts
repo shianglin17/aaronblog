@@ -1,36 +1,38 @@
 import http from './http';
+import { refreshCsrfToken } from './http';
 import { API_ROUTES } from './routes';
 import { LoginParams, RegisterParams, AuthResponse, User } from '../types/auth';
 import { ApiResponse, ApiFunction } from '../types/common';
 
 export const authApi = {
-  login: ((params: LoginParams) => {
-    return http.post(API_ROUTES.AUTH.LOGIN, params)
-      .then(r => {
-        // Session Cookie 方式不需要手動保存 token
-        // Cookie 會自動由瀏覽器管理
-        return r.data;
-      });
+  login: (async (params: LoginParams) => {
+    // 登入前先強制刷新 CSRF token
+    await refreshCsrfToken();
+    const response = await http.post(API_ROUTES.AUTH.LOGIN, params);
+    // 登入成功後，Laravel 會再次重新產生 CSRF token，為下一次請求做準備
+    await refreshCsrfToken();
+    return response.data;
   }) as ApiFunction<AuthResponse, LoginParams>,
-  
+
   register: ((params: RegisterParams) => {
     return http.post(API_ROUTES.AUTH.REGISTER, params)
       .then(r => r.data);
   }) as ApiFunction<AuthResponse, RegisterParams>,
-  
+
   logout: (() => {
     return http.post(API_ROUTES.AUTH.LOGOUT)
       .then(r => {
-        // Session Cookie 會由後端自動清除
+        // 登出成功後，重定向到登入頁以刷新整個應用程式狀態
+        window.location.href = '/login';
         return r.data;
       });
   }) as ApiFunction<null>,
-  
+
   // 獲取當前登入用戶
   getCurrentUser: (() => {
     return http.get(API_ROUTES.AUTH.USER).then(r => r.data);
   }) as ApiFunction<User>,
-  
+
   // 檢查認證狀態（路由守衛專用，不觸發自動重定向）
   checkAuth: (() => {
     return http.get(API_ROUTES.AUTH.USER, {
@@ -39,4 +41,4 @@ export const authApi = {
       .then(r => r.data)
       .catch(() => ({ status: 'error', message: '未登入' }));
   }) as ApiFunction<User>
-}; 
+};

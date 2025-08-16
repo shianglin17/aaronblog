@@ -19,7 +19,7 @@ const http = axios.create({
 /**
  * 獲取新的 CSRF token
  */
-async function refreshCsrfToken(): Promise<string | null> {
+export async function refreshCsrfToken(): Promise<string | null> {
   try {
     // 請求新的 CSRF token
     const response = await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
@@ -41,44 +41,9 @@ async function refreshCsrfToken(): Promise<string | null> {
   }
 }
 
-// 請求攔截器 - 處理 CSRF Token
-http.interceptors.request.use(
-  async (config) => {
-    // 避免對 CSRF cookie 端點的無限循環
-    if (config.url !== '/sanctum/csrf-cookie' && 
-        ['post', 'put', 'patch', 'delete'].includes(config.method?.toLowerCase() || '')) {
-      
-      // 嘗試從 meta tag 獲取 CSRF token
-      let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-      
-      // 如果沒有找到 token 或者是空的，嘗試刷新
-      if (!csrfToken) {
-        console.log('未找到 CSRF token，嘗試刷新...');
-        csrfToken = await refreshCsrfToken();
-        
-        // 更新 meta tag
-        if (csrfToken) {
-          const metaTag = document.querySelector('meta[name="csrf-token"]');
-          if (metaTag) {
-            metaTag.setAttribute('content', csrfToken);
-          }
-        }
-      }
-      
-      // 如果有 CSRF Token，則將其添加到請求頭
-      if (csrfToken) {
-        config.headers['X-CSRF-TOKEN'] = csrfToken;
-      } else {
-        console.warn('無法獲取 CSRF token，這可能會導致請求失敗');
-      }
-    }
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// The custom request interceptor is removed as it was causing issues by unnecessarily
+// refreshing the CSRF token during an active session. Axios's default behavior
+// with `withCredentials: true` is sufficient for Sanctum's cookie-based CSRF protection.
 
 /**
  * 顯示錯誤訊息

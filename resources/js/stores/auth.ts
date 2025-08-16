@@ -90,12 +90,16 @@ export const useAuthStore = defineStore('auth', () => {
   // 登出
   const logout = async () => {
     try {
-      await authApi.logout()
-    } finally {
-      // 無論 API 是否成功，都清除本地狀態
-      user.value = null
+      await authApi.logout();
+      // The redirect is handled within authApi.logout, so no need to clear state here.
+      // The page reload will clear everything.
+    } catch (error) {
+      // If the API call fails, we might want to log it or show a message,
+      // but we still probably want to clear local state as a fallback.
+      console.error('Logout API call failed:', error);
+      user.value = null;
     }
-  }
+  };
   
   // 清除認證狀態（用於登出或認證失效）
   const clearAuth = () => {
