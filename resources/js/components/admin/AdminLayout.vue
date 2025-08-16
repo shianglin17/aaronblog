@@ -125,26 +125,27 @@ async function handleUserMenuSelect(key: string) {
 }
 
 .admin-header {
-  background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--admin-header-bg);
+  box-shadow: var(--admin-header-shadow);
   position: sticky;
   top: 0;
   z-index: 100;
+  height: var(--admin-header-height);
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 24px;
-  height: 64px;
+  padding: 0 var(--admin-content-padding);
+  height: 100%;
 }
 
 .logo h2 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 500;
-  color: #333;
+  color: var(--text-color);
 }
 
 .user-actions {
@@ -157,16 +158,16 @@ async function handleUserMenuSelect(key: string) {
 }
 
 .admin-content {
-  padding: 24px;
-  background-color: #f5f5f5;
-  min-height: calc(100vh - 64px);
+  padding: var(--admin-content-padding);
+  background-color: var(--admin-content-bg);
+  min-height: calc(100vh - var(--admin-header-height));
 }
 
 .content-wrapper {
-  background-color: #fff;
-  border-radius: 4px;
-  padding: 24px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background-color: var(--card-background);
+  border-radius: var(--card-border-radius);
+  padding: var(--card-padding);
+  box-shadow: var(--card-shadow);
 }
 
 .nav-tabs {
@@ -185,7 +186,7 @@ async function handleUserMenuSelect(key: string) {
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: var(--primary-color);
+  background-color: var(--brand-primary);
 }
 
 /* 響應式設計 */
