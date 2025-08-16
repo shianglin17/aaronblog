@@ -99,8 +99,8 @@ withDefaults(defineProps<{
 }>(), {
   profileData: () => ({
     name: 'Aaron Lei',
-    title: '全端工程師',
-    bio: '專注於軟體開發和技術分享，熱愛探索新技術並將經驗記錄下來。歡迎與我交流討論！',
+    title: '後端工程師',
+    bio: '歡迎來到我的個人網站，這裡主要是作為網頁技術的筆記、分享，也會有一些閱讀和心情分享',
     avatar: '/images/aaron-avatar.jpg',
     skills: ['Laravel', 'MySQL', 'Vue.js', 'TypeScript', 'Docker']
   })

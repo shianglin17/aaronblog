@@ -67,7 +67,7 @@ return [
             'middleware' => [
                 'api' => [],
                 'asset' => [],
-                'docs' => [],
+                'docs' => env('APP_ENV') === 'production' ? ['auth'] : [],
                 'oauth2_callback' => [],
             ],
 
@@ -237,12 +237,12 @@ return [
          * Set this to `true` in development mode so that docs would be regenerated on each request
          * Set this to `false` to disable swagger generation on production
          */
-        'generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS', true),
+        'generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS', env('APP_DEBUG', false)),
 
         /*
          * Set this to `true` to generate a copy of documentation in yaml format
          */
-        'generate_yaml_copy' => env('L5_SWAGGER_GENERATE_YAML_COPY', false),
+        'generate_yaml_copy' => env('L5_SWAGGER_GENERATE_YAML_COPY', env('APP_DEBUG', false)),
 
         /*
          * Edit to trust the proxy's ip address - needed for AWS Load Balancer
@@ -261,7 +261,7 @@ return [
          * 'method' (sort by HTTP method).
          * Default is the order returned by the server unchanged.
          */
-        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', null),
+        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', 'alpha'),
 
         /*
          * Pass the validatorUrl parameter to SwaggerUi init on the JS side.
@@ -281,7 +281,7 @@ return [
                  * 'full' (expands the tags and operations),
                  * 'none' (expands nothing).
                  */
-                'doc_expansion' => env('L5_SWAGGER_UI_DOC_EXPANSION', 'list'),
+                'doc_expansion' => env('L5_SWAGGER_UI_DOC_EXPANSION', 'none'),
 
                 /**
                  * If set, enables filtering. The top bar will show an edit box that
@@ -318,7 +318,7 @@ return [
          * Constants which can be used in annotations
          */
         'constants' => [
-            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
+            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', env('APP_URL', 'http://localhost:8000')),
         ],
     ],
 ];
