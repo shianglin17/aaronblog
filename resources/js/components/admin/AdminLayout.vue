@@ -190,21 +190,155 @@ async function handleUserMenuSelect(key: string) {
 }
 
 /* 響應式設計 */
-@media (max-width: 768px) {
+
+/* 極小螢幕：手機直式 (< 480px) */
+@media (max-width: 479px) {
+  .admin-layout {
+    min-height: 100vh;
+  }
+  
+  .admin-header {
+    height: var(--mobile-header-height);
+  }
+  
   .header-content {
-    padding: 0 16px;
+    padding: 0 var(--mobile-padding);
+    height: 100%;
   }
   
-  .admin-content {
-    padding: 16px;
+  .logo h2 {
+    font-size: var(--mobile-font-size-lg);
+    font-weight: 600;
   }
   
-  .content-wrapper {
-    padding: 16px;
+  .nav-tabs {
+    display: none; /* 隱藏導航標籤，改用下拉菜單 */
   }
   
   .user-name {
     display: none;
+  }
+  
+  .admin-content {
+    padding: var(--mobile-content-padding);
+    min-height: calc(100vh - var(--mobile-header-height));
+  }
+  
+  .content-wrapper {
+    padding: var(--mobile-card-padding);
+    border-radius: 4px;
+  }
+}
+
+/* 小螢幕：手機橫式 (480px - 575px) */
+@media (min-width: 480px) and (max-width: 575px) {
+  .admin-header {
+    height: var(--mobile-header-height);
+  }
+  
+  .header-content {
+    padding: 0 var(--mobile-content-padding);
+  }
+  
+  .logo h2 {
+    font-size: var(--mobile-font-size-lg);
+  }
+  
+  .nav-tabs {
+    gap: 4px;
+  }
+  
+  .nav-tabs .n-button {
+    font-size: var(--mobile-font-size-sm);
+    padding: 4px 8px;
+  }
+  
+  .user-name {
+    display: none;
+  }
+  
+  .admin-content {
+    padding: var(--mobile-content-padding);
+    min-height: calc(100vh - var(--mobile-header-height));
+  }
+  
+  .content-wrapper {
+    padding: var(--mobile-card-padding);
+  }
+}
+
+/* 中等螢幕：平板直式 (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .admin-header {
+    height: var(--tablet-header-height);
+  }
+  
+  .header-content {
+    padding: 0 var(--tablet-padding);
+  }
+  
+  .nav-tabs {
+    gap: 6px;
+  }
+  
+  .nav-tabs .n-button {
+    font-size: 0.875rem;
+    padding: 6px 12px;
+  }
+  
+  .user-name {
+    display: none;
+  }
+  
+  .admin-content {
+    padding: var(--tablet-content-padding);
+    min-height: calc(100vh - var(--tablet-header-height));
+  }
+  
+  .content-wrapper {
+    padding: var(--tablet-card-padding);
+  }
+}
+
+/* 大螢幕：平板橫式 (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .header-content {
+    padding: 0 20px;
+  }
+  
+  .nav-tabs {
+    gap: 8px;
+  }
+  
+  .user-name {
+    font-size: 0.875rem;
+  }
+  
+  .admin-content {
+    padding: 20px;
+  }
+  
+  .content-wrapper {
+    padding: 20px;
+  }
+}
+
+/* 超大螢幕：桌機 (> 1200px) */
+@media (min-width: 1200px) {
+  .header-content {
+    padding: 0 32px;
+  }
+  
+  .admin-content {
+    padding: 32px;
+  }
+  
+  .content-wrapper {
+    padding: 32px;
+  }
+  
+  .nav-tabs {
+    gap: 12px;
   }
 }
 </style> 

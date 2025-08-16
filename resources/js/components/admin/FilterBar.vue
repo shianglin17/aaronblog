@@ -110,4 +110,126 @@ function handleStatusChange(value: string) {
 .status-filter {
   width: 120px;
 }
+
+/* 響應式篩選器設計 */
+
+/* 桌機：正常顯示 */
+@media (min-width: 992px) {
+  .filter-bar :deep(.n-space) {
+    flex-wrap: nowrap;
+  }
+}
+
+/* 平板：適度調整 */
+@media (min-width: 768px) and (max-width: 991px) {
+  .filter-bar {
+    margin-bottom: 12px;
+  }
+  
+  .filter-bar :deep(.n-space) {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .filter-bar :deep(.n-input) {
+    min-width: 200px;
+    flex: 1;
+  }
+  
+  .status-filter {
+    width: 110px;
+  }
+}
+
+/* 平板直式：縮小元件 */
+@media (min-width: 576px) and (max-width: 767px) {
+  .filter-bar {
+    margin-bottom: 12px;
+  }
+  
+  .filter-bar :deep(.n-space) {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .filter-bar :deep(.n-input) {
+    min-width: 180px;
+    flex: 1;
+  }
+  
+  .filter-bar :deep(.n-select) {
+    min-width: 100px;
+  }
+  
+  .status-filter {
+    width: 100px;
+  }
+  
+  .filter-bar :deep(.n-button) {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+  }
+}
+
+/* 手機：垂直排列 */
+@media (max-width: 575px) {
+  .filter-bar {
+    margin-bottom: 8px;
+  }
+  
+  .filter-bar :deep(.n-space) {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .filter-bar :deep(.n-input) {
+    width: 100%;
+  }
+  
+  .filter-bar :deep(.n-select) {
+    width: 100%;
+  }
+  
+  .status-filter {
+    width: 100%;
+  }
+  
+  .filter-bar :deep(.n-button) {
+    width: 100%;
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    justify-content: center;
+  }
+  
+  /* 搜索按鈕調整 */
+  .filter-bar :deep(.n-input .n-button) {
+    width: auto;
+    padding: 4px;
+  }
+}
+
+/* 極小螢幕：進一步優化 */
+@media (max-width: 479px) {
+  .filter-bar {
+    margin-bottom: 6px;
+  }
+  
+  .filter-bar :deep(.n-space) {
+    gap: 6px;
+  }
+  
+  .filter-bar :deep(.n-input) {
+    font-size: 0.875rem;
+  }
+  
+  .filter-bar :deep(.n-select) {
+    font-size: 0.875rem;
+  }
+  
+  .filter-bar :deep(.n-button) {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
 </style> 

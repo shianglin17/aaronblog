@@ -158,5 +158,158 @@ function onSorterChange(sorter: { columnKey: string, order: 'ascend' | 'descend'
 <style scoped>
 .data-table-wrapper {
   margin-top: 16px;
+  width: 100%;
+}
+
+/* 響應式表格設計 */
+
+/* 桌機：正常顯示 */
+@media (min-width: 992px) {
+  .data-table-wrapper {
+    overflow-x: visible;
+  }
+}
+
+/* 平板橫式：表格可橫向滾動 */
+@media (min-width: 768px) and (max-width: 991px) {
+  .data-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table) {
+    min-width: var(--table-min-width);
+  }
+  
+  .data-table-wrapper :deep(.n-data-table-wrapper) {
+    border-radius: 8px;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table th) {
+    white-space: nowrap;
+    font-size: 0.875rem;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table td) {
+    white-space: nowrap;
+    font-size: 0.875rem;
+  }
+}
+
+/* 平板直式：縮小字體和間距 */
+@media (min-width: 576px) and (max-width: 767px) {
+  .data-table-wrapper {
+    overflow-x: auto;
+    margin-top: 12px;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table) {
+    min-width: var(--table-min-width);
+    font-size: 0.8rem;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table th) {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table td) {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  
+  .data-table-wrapper :deep(.n-pagination) {
+    justify-content: center;
+    margin-top: 16px;
+  }
+  
+  .data-table-wrapper :deep(.n-pagination .n-pagination-item) {
+    min-width: 32px;
+    height: 32px;
+  }
+}
+
+/* 手機：極簡表格 */
+@media (max-width: 575px) {
+  .data-table-wrapper {
+    margin-top: 8px;
+    overflow-x: auto;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table) {
+    min-width: var(--table-mobile-min-width);
+    font-size: 0.75rem;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table th) {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table td) {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+  
+  /* 行動按鈕優化 */
+  .data-table-wrapper :deep(.n-button) {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    min-width: 48px;
+    height: 28px;
+  }
+  
+  /* 分頁器移動端優化 */
+  .data-table-wrapper :deep(.n-pagination) {
+    justify-content: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .data-table-wrapper :deep(.n-pagination .n-pagination-item) {
+    min-width: 28px;
+    height: 28px;
+    margin: 2px;
+    font-size: 0.75rem;
+  }
+  
+  .data-table-wrapper :deep(.n-pagination .n-pagination-prefix),
+  .data-table-wrapper :deep(.n-pagination .n-pagination-suffix) {
+    font-size: 0.7rem;
+  }
+}
+
+/* 極小螢幕：進一步優化 */
+@media (max-width: 479px) {
+  .data-table-wrapper {
+    margin-top: 4px;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table th) {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+  }
+  
+  .data-table-wrapper :deep(.n-data-table td) {
+    padding: 4px 6px;
+    font-size: 0.7rem;
+  }
+  
+  .data-table-wrapper :deep(.n-button) {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+    min-width: 40px;
+    height: 24px;
+  }
+  
+  .data-table-wrapper :deep(.n-pagination .n-pagination-item) {
+    min-width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
 }
 </style> 

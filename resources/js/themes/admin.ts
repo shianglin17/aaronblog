@@ -134,5 +134,33 @@ export const adminCSSVariables = `
   --status-draft-color: #faad14;
   --status-archived-bg: #f5f5f5;
   --status-archived-color: #8c8c8c;
+  
+  /* RWD 斷點變數 */
+  --breakpoint-xs: 480px;   /* 超小螢幕：手機直式 */
+  --breakpoint-sm: 576px;   /* 小螢幕：手機橫式 */
+  --breakpoint-md: 768px;   /* 中等螢幕：平板直式 */
+  --breakpoint-lg: 992px;   /* 大螢幕：平板橫式/小筆電 */
+  --breakpoint-xl: 1200px;  /* 超大螢幕：桌機 */
+  --breakpoint-xxl: 1600px; /* 極大螢幕：大桌機 */
+  
+  /* 移動端特定變數 */
+  --mobile-header-height: 56px;
+  --mobile-padding: 12px;
+  --mobile-content-padding: 16px;
+  --mobile-card-padding: 16px;
+  --mobile-font-size-sm: 0.75rem;
+  --mobile-font-size-base: 0.875rem;
+  --mobile-font-size-lg: 1rem;
+  
+  /* 平板特定變數 */
+  --tablet-header-height: 60px;
+  --tablet-padding: 16px;
+  --tablet-content-padding: 20px;
+  --tablet-card-padding: 20px;
+  
+  /* 響應式表格變數 */
+  --table-min-width: 800px;
+  --table-mobile-min-width: 320px;
+  --table-scroll-width: 100%;
 }
 `

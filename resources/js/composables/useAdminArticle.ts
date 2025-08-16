@@ -123,14 +123,18 @@ export function useAdminArticles(message: any) {
   }
   
   // 狀態變更處理
-  function handleStatusChange(value: ArticleListParams['status']) {
-    params.value.status = value;
+  function handleStatusChange(value: string) {
+    // 確保類型安全的轉換
+    const statusValue = (value === 'draft' || value === 'published' || value === 'all') 
+      ? value as ArticleListParams['status']
+      : 'all' as ArticleListParams['status'];
+    params.value.status = statusValue;
     params.value.page = 1;
     fetchArticles();
   }
   
   // 分類篩選處理
-  function handleCategoryChange(value: string) {
+  function handleCategoryChange(value: string | undefined) {
     categoryFilter.value = value === 'all' ? undefined : value;
     params.value.page = 1;
     fetchArticles();

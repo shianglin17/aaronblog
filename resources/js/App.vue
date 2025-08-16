@@ -11,11 +11,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineOptions, computed, onMounted, watch } from 'vue'
+import { defineOptions, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import FrontendLayout from './components/layouts/FrontendLayout.vue'
 import AdminLayout from './components/admin/AdminLayout.vue'
-import { getThemeConfig, getThemeTypeFromRoute } from './themes'
+import { getThemeConfig } from './themes'
 
 defineOptions({
     name: 'App'
@@ -23,16 +23,14 @@ defineOptions({
 
 const route = useRoute()
 
+// 統一的路由檢查邏輯
+const isAdminRoute = computed(() => route.path.startsWith('/admin'))
+
 // 根據路由選擇布局
-const currentLayout = computed(() => {
-    if (route.path.startsWith('/admin')) {
-        return AdminLayout
-    }
-    return FrontendLayout
-})
+const currentLayout = computed(() => isAdminRoute.value ? AdminLayout : FrontendLayout)
 
 // 根據路由動態選擇主題
-const currentThemeType = computed(() => getThemeTypeFromRoute(route.path))
+const currentThemeType = computed(() => isAdminRoute.value ? 'admin' : 'frontend')
 const currentThemeConfig = computed(() => getThemeConfig(currentThemeType.value))
 const themeOverrides = computed(() => currentThemeConfig.value.themeOverrides)
 
@@ -56,19 +54,12 @@ const setThemeAttribute = (themeType: string) => {
     document.documentElement.setAttribute('data-theme', themeType)
 }
 
-// 監聽路由變化，更新主題
+// 監聽路由變化，更新主題（immediate: true 已處理初始化）
 watch(currentThemeType, (newThemeType) => {
     const config = getThemeConfig(newThemeType)
     injectThemeCSS(config.cssVariables)
     setThemeAttribute(newThemeType)
 }, { immediate: true })
-
-// 組件掛載時初始化主題
-onMounted(() => {
-    const config = getThemeConfig(currentThemeType.value)
-    injectThemeCSS(config.cssVariables)
-    setThemeAttribute(currentThemeType.value)
-})
 </script>
 
 <style>
