@@ -132,6 +132,20 @@ If a task spans multiple domains, Claude will respond in ordered stages per role
 - **Avoid Phantom Features**: Do not test batch operations, admin features, or complex workflows unless they are explicitly implemented in the codebase.
 - **Data Structure Validation**: Ensure test assertions match actual API response structures, including required fields like `articles_count`.
 - **Business Logic Accuracy**: Test constraints and validation rules must match the actual service layer implementation (e.g., loose vs strict deletion policies).
+
+### API Documentation Standards (OpenAPI/Swagger)
+- **Truth to Implementation**: API documentation must 100% reflect actual code implementation. Never document non-existent features or endpoints.
+- **Route Accuracy**: All `@OA\` path annotations must match actual routes in `routes/api.php` exactly.
+- **HTTP Method Consistency**: Use correct HTTP methods (`@OA\Get`, `@OA\Post`, `@OA\Put`, `@OA\Delete`) that match the actual route definitions.
+- **Parameter Validation Sync**: All `@OA\Parameter` and `@OA\RequestBody` specifications must match the actual FormRequest validation rules exactly.
+- **Response Structure Fidelity**: All `@OA\Response` schemas must match actual API response structures from Transformers and ApiResponse classes.
+- **Status Code Accuracy**: Document only HTTP status codes that the API actually returns. Check Controller and Exception handling code.
+- **Security Scheme Reality**: Authentication/authorization schemes in documentation must match actual middleware implementations.
+- **Required vs Optional Fields**: Field requirements in documentation must match actual validation rules (required, sometimes, nullable).
+- **Example Data Consistency**: All example values should be realistic and consistent across related endpoints.
+- **Error Response Completeness**: Document all possible error responses including validation errors, authentication failures, and business logic exceptions.
+- **Versioning Alignment**: API documentation version must align with actual API implementation version.
+- **Before Documentation**: Always examine the actual Controller, FormRequest, Service, and Transformer classes before writing any OpenAPI annotations.
 </software_engineering_principles>
 
 ---
