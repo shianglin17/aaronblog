@@ -1,5 +1,5 @@
 <template>
-    <div class="admin-container">
+    <div class="admin-layout">
       <n-layout>
         <n-layout-header class="admin-header">
           <div class="header-content">
@@ -59,7 +59,6 @@
         </n-layout-header>
         <n-layout-content class="admin-content">
           <div class="content-wrapper">
-            <!-- 頁面內容 -->
             <slot></slot>
           </div>
         </n-layout-content>
@@ -118,8 +117,11 @@ async function handleUserMenuSelect(key: string) {
 </script>
 
 <style scoped>
-.admin-container {
+.admin-layout {
   min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .admin-header {

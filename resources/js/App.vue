@@ -2,21 +2,32 @@
     <n-config-provider :theme-overrides="themeOverrides">
         <n-message-provider>
             <div class="app-container">
-                <main class="main-content">
+                <component :is="currentLayout">
                     <router-view></router-view>
-                </main>
-                <Footer />
+                </component>
             </div>
         </n-message-provider>
     </n-config-provider>
 </template>
 
 <script setup lang="ts">
-import { defineOptions } from 'vue'
-import Footer from './components/Footer.vue'
+import { defineOptions, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import FrontendLayout from './components/layouts/FrontendLayout.vue'
+import AdminLayout from './components/admin/AdminLayout.vue'
 
 defineOptions({
     name: 'App'
+})
+
+const route = useRoute()
+
+// 根據路由選擇布局
+const currentLayout = computed(() => {
+    if (route.path.startsWith('/admin')) {
+        return AdminLayout
+    }
+    return FrontendLayout
 })
 
 const themeOverrides = {
@@ -185,12 +196,6 @@ body {
     min-height: 100vh;
     padding: 0;
     overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.main-content {
-    flex: 1;
 }
 
 a {

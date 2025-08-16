@@ -1,6 +1,5 @@
 <template>
   <n-message-provider>
-    <AdminLayout>
       <div class="page-header">
         <h1>文章管理</h1>
         
@@ -98,14 +97,12 @@
           確定要刪除這篇文章嗎？
         </template>
       </n-modal>
-    </AdminLayout>
   </n-message-provider>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useMessage } from 'naive-ui';
-import AdminLayout from '../../components/admin/AdminLayout.vue';
 import DataTable from '../../components/admin/DataTable.vue';
 import ArticleFilterBar from '../../components/admin/ArticleFilterBar.vue';
 import FormModal from '../../components/admin/FormModal.vue';

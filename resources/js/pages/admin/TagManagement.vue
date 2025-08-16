@@ -1,6 +1,5 @@
 <template>
   <n-message-provider>
-    <AdminLayout>
       <div class="page-header">
         <h1>標籤管理</h1>
         
@@ -59,14 +58,12 @@
         @confirm="handleDelete"
         @cancel="cancelDelete"
       />
-    </AdminLayout>
   </n-message-provider>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useMessage } from 'naive-ui';
-import AdminLayout from '../../components/admin/AdminLayout.vue';
 import DataTable from '../../components/admin/DataTable.vue';
 import FilterBar from '../../components/admin/FilterBar.vue';
 import FormModal from '../../components/admin/FormModal.vue';
