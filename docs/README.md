@@ -37,49 +37,11 @@
 
 ### API 文件
 
-- [API 總覽](api/README.md) - API 一覽表及規範 ✅
+本專案使用 **Swagger/OpenAPI** 自動生成 API 文件，確保文件與代碼實作同步。
 
-#### 認證相關 API
-
-- [登入](api/auth/login.md) - 用戶登入 API ✅
-- [登出](api/auth/logout.md) - 用戶登出 API ✅
-- [用戶資訊](api/auth/user.md) - 獲取當前登入用戶資訊 API ✅
-- [認證流程詳解](api/auth/auth-flow.md) - Laravel Sanctum 認證系統工作原理 ✅
-
-#### 文章相關 API
-
-- [文章列表](api/article/list.md) - 獲取文章列表 API ✅
-- [文章詳情](api/article/show.md) - 獲取文章詳情 API ✅
-- [建立文章](api/article/create.md) - 建立新文章 API ✅
-- [更新文章](api/article/update.md) - 更新文章 API ✅
-- [刪除文章](api/article/delete.md) - 刪除文章 API ✅
-
-#### 分類相關 API
-
-- [分類列表](api/category/list.md) - 獲取分類列表 API ✅
-- [分類詳情](api/category/show.md) - 獲取分類詳情 API ✅
-- [建立分類](api/category/create.md) - 建立新分類 API ✅
-- [更新分類](api/category/update.md) - 更新分類 API ✅
-- [刪除分類](api/category/delete.md) - 刪除分類 API ✅
-
-#### 標籤相關 API
-
-- [標籤列表](api/tag/list.md) - 獲取標籤列表 API ✅
-- [標籤詳情](api/tag/show.md) - 獲取標籤詳情 API ✅
-- [建立標籤](api/tag/create.md) - 建立新標籤 API ✅
-- [更新標籤](api/tag/update.md) - 更新標籤 API ✅
-- [刪除標籤](api/tag/delete.md) - 刪除標籤 API ✅
-
-#### 通用設定
-
-- [通用參數](api/common-parameters.md) - API 通用參數說明 ✅
-- [錯誤處理](api/error-handling.md) - API 錯誤處理規範 ✅
-- [分頁說明](api/pagination.md) - API 分頁機制說明 ✅
-- [限流說明](api/rate-limiting.md) - API 限流機制說明 ✅
-
-### Postman 集合
-
-- [API 測試集合](postman/README.md) - Postman API 測試集合使用指南 ✅
+- **Swagger UI**: `/api/documentation` - 互動式 API 文件界面
+- **OpenAPI JSON**: `/api/documentation.json` - API 規格文件
+- **OpenAPI YAML**: 儲存於 `storage/api-docs/api-docs.yaml`
 
 ## 項目開發狀態
 
