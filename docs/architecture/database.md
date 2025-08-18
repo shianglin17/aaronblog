@@ -88,11 +88,13 @@
 | updated_at     | timestamp    | nullable                | 更新時間            |
 
 ### 7. sessions（Session 表）
+*由 `php artisan session:table` 指令創建的系統表*
+
 | 欄位名稱      | 型別           | 屬性              | 說明            |
 |--------------|---------------|------------------|----------------|
-| id           | string(255)   | primary key      | Session ID     |
+| id           | varchar       | primary key      | Session ID     |
 | user_id      | integer       | nullable, index  | 使用者 ID        |
-| ip_address   | string(45)    | nullable         | IP 地址         |
+| ip_address   | varchar       | nullable         | IP 地址         |
 | user_agent   | text          | nullable         | 使用者代理字串    |
 | payload      | text          | not null         | Session 資料    |
 | last_activity| integer       | not null, index  | 最後活動時間      |
@@ -109,7 +111,7 @@
 - 文章（articles）與使用者（users）：多對一，user_id 外鍵，刪除使用者時 user_id 設為 NULL。
 - 文章（articles）與分類（categories）：多對一，category_id 外鍵，刪除分類時 category_id 設為 NULL。
 - 文章（articles）與標籤（tags）：多對多，透過 article_tag 關聯表，刪除文章或標籤時自動移除關聯。
-- 使用者（users）與 Session（sessions）：一對多，Session 資料存儲於 Redis 中。
+- 使用者（users）與 Session（sessions）：一對多，Session 資料存儲於 SQLite 資料庫中。
 
 ## 備份策略
 

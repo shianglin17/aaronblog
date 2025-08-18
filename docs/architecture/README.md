@@ -1,95 +1,211 @@
-# 架構文檔總覽
+# Aaron Blog 系統架構
 
-## 文檔結構
+## 專案概述
 
-本目錄包含 Aaron Blog 系統的完整架構文檔，按照不同層面進行組織：
+Aaron Blog 是現代化的個人部落格系統，成功部署於 [aaronlei.com](https://aaronlei.com/)。針對 GCP e2-micro 免費資源進行深度優化，實現高效的記憶體管理和效能表現。
 
-### 📋 系統概述
-- **[system-overview.md](system-overview.md)** - 系統架構概述，技術棧選型與整體設計
+## 🏗️ 核心架構
 
-### 🧩 核心模組
-- **[modules/authentication.md](modules/authentication.md)** - 認證模組架構
-- **[modules/article-management.md](modules/article-management.md)** - 文章管理模組架構
+### 技術棧
+- **後端**: Laravel 12 + PHP 8.2
+- **前端**: Vue 3 + TypeScript + Naive UI
+- **資料庫**: SQLite (生產環境)
+- **快取**: Redis
+- **認證**: Laravel Sanctum (Session Cookie)
+- **容器化**: Docker
+- **部署**: GCP e2-micro VM
+- **CI/CD**: GitHub Actions
 
-### 🚀 部署架構
-- **[deployment/](deployment/)** - 部署相關文檔（Docker、GCP 優化、部署策略）
-
-### 🔄 CI/CD 流程
-- **[cicd/](cicd/)** - 持續整合與部署文檔（GitHub Actions、發布流程）
-
-### 🏗️ 基礎設施
-- **[infrastructure/](infrastructure/)** - 基礎設施文檔（Redis、Nginx、Cloudflare）
-
-### 💻 程式碼架構
-- **[codebase/](codebase/)** - 程式碼架構文檔（目錄結構、設計模式、編碼規範）
-
-### 🗄️ 資料庫設計
-- **[database.md](database.md)** - 資料庫架構與設計（整合自 database/ 目錄）
-
-
-## 技術洞察與演進
-
-本專案的技術決策和架構演進過程詳細記錄在 [technical-insights.md](../technical-insights.md) 中，包含：
-
-### 🎯 重要技術決策
-- **認證機制演進**：從 Bearer Token 到 Session Cookie 的完整遷移過程
-- **錯誤處理重構**：Service 層異常處理架構的建立
-- **快取策略設計**：多層快取與 Redis Tags 的實作
-- **Repository 模式**：泛型設計與程式碼簡化
-
-### 📊 量化成果
-- **程式碼減少**：BaseRepository 重構減少 275 行重複程式碼
-- **架構優化**：12 個檔案的錯誤處理重構，提升可維護性
-- **快取效能**：分層快取策略實現 3600s TTL 的高效快取
-
-### 🔄 技術演進軌跡
-1. **基礎建立**：CRUD + 軟刪除機制（後期已移除）
-2. **架構重構**：Repository 模式 + 快取策略
-3. **錯誤處理**：Exception 導向的錯誤處理架構
-4. **認證優化**：Session Cookie 認證機制
-5. **前端現代化**：Vue 3 + TypeScript 架構
-
-## 閱讀建議
-
-### 🎯 新手入門
-1. 從 [system-overview.md](system-overview.md) 開始了解整體架構
-2. 閱讀 [modules/](modules/) 了解核心業務模組
-3. 查看 [database.md](database.md) 了解資料結構
-
-### 🔧 開發者
-1. 重點關注 [codebase/](codebase/) 程式碼架構
-2. 參考 [modules/](modules/) 中的設計模式
-3. 查閱 [../testing-guide.md](../testing-guide.md) 了解測試策略
-
-### 🚀 運維人員
-1. 查看 [deployment/](deployment/) 部署文檔
-2. 了解 [infrastructure/](infrastructure/) 基礎設施配置
-3. 參考 [cicd/](cicd/) 自動化流程
-
-## 版本控制與發布
-
-本專案採用語義化版本控制（Semantic Versioning），詳細規範請參考 [versioning.md](../versioning.md)。
-
-### 📋 版本發布流程
-- **MAJOR**：不相容的 API 修改（如資料庫結構重大變更）
-- **MINOR**：新增功能且向下相容（如新增 API 端點）
-- **PATCH**：向下相容的問題修正（如 Bug 修復）
-
-### 🚀 發布命令
-```bash
-# 使用發布腳本
-./scripts/release.sh patch   # 修訂版本
-./scripts/release.sh minor   # 次版本
-./scripts/release.sh major   # 主版本
+### 分層架構
+```
+┌─────────────────┐
+│   HTTP Layer    │  ← Controllers, Requests, Middleware
+├─────────────────┤
+│  Service Layer  │  ← Business Logic, Cache Services  
+├─────────────────┤
+│Repository Layer │  ← Data Access, Query Optimization
+├─────────────────┤
+│   Model Layer   │  ← Eloquent Models, Relations
+└─────────────────┘
 ```
 
-## 文檔維護
+## 📊 資料庫設計
 
-- **更新頻率**：隨程式碼變更同步更新
-- **版本控制**：與程式碼版本保持一致
-- **審核流程**：架構變更需經過 PR 審核
-- **技術洞察**：重要技術決策記錄在 technical-insights.md
+### 核心實體關聯
+```
+┌───────────┐      ┌───────────┐      ┌───────────┐
+│   users   │──1:n─▶  articles ◀─n:1──│ categories│
+└───────────┘      └─────┬─────┘      └───────────┘
+                         │ n:m
+                         ▼
+                   ┌───────────┐
+                   │    tags   │
+                   └───────────┘
+```
 
----
+### 關鍵設計決策
+- **SQLite**: 針對個人部落格場景，節省記憶體和成本
+- **無軟刪除**: 簡化查詢邏輯，提升效能
+- **slug 唯一性**: 支援 SEO 友善的 URL 結構
 
-*此架構文檔體系提供了完整的系統設計視角，從高層架構到具體實作細節，幫助團隊成員快速理解和維護系統。* 
+## 🚀 部署架構
+
+### 生產環境配置
+- **平台**: Google Cloud Platform e2-micro (免費方案)
+- **資源限制**: 1 vCPU, 1GB RAM
+- **容器化**: Docker + docker-compose
+- **反向代理**: Nginx
+- **SSL**: Let's Encrypt (Cloudflare)
+
+### 記憶體優化分配
+```
+應用程式:      ~450MB
+SQLite:        ~50MB  
+Redis:         ~80MB
+系統保留:      ~420MB
+總計:          1GB (100% 利用率)
+```
+
+## ⚡ Redis 快取策略
+
+### 資料庫分離架構
+```
+┌─────────────────────────────┐
+│        Redis Cache          │
+├─────────────────────────────┤
+│  Database 0: 預設           │
+│  ├── Session Storage       │
+│  ├── Queue Jobs            │
+│  └── General Purpose       │
+├─────────────────────────────┤
+│  Database 1: 應用快取        │
+│  ├── Article Cache         │
+│  ├── Category Cache        │
+│  ├── Tag Cache             │
+│  └── API Response Cache    │
+└─────────────────────────────┘
+```
+
+### TTL 分層策略
+- **文章快取**: 列表 30 分鐘, 詳情 60 分鐘
+- **分類快取**: 列表 2 小時, 詳情 4 小時  
+- **標籤快取**: 列表 1 小時, 詳情 2 小時
+
+### 標籤式快取管理
+- **分類標籤**: `article:list`, `article:detail`, `category:list`
+- **精確清理**: 使用 Redis Tags 進行批量快取失效
+- **關聯清理**: 文章更新時自動清理相關分類、標籤快取
+
+### 記憶體優化配置
+- **記憶體限制**: 100MB (maxmemory)
+- **淘汰策略**: allkeys-lru (最近最少使用)
+- **持久化**: appendonly + everysec
+
+## 🔧 核心設計模式
+
+### Repository Pattern
+- **BaseRepository**: 泛型 CRUD 操作，大幅減少重複代碼
+- **ArticleRepository**: 精確查詢與關聯載入優化
+- **程式碼簡化**: CategoryRepository、TagRepository 僅需 3 行代碼
+
+### API 回應架構
+- **統一格式**: ApiResponse::ok(), ApiResponse::paginated()
+- **異常處理**: ApiException 基類 + 具體異常類別
+- **全域處理**: 自動轉換異常為標準 API 回應
+
+### 快取服務架構
+- **BaseCacheService**: 模板方法模式，統一快取操作
+- **服務分層**: 每個業務實體有專門的快取服務
+- **標準化**: cacheList(), cacheDetail(), clearCache() 統一介面
+
+## 🔐 安全架構
+
+### 認證機制
+- **Session Cookie**: HttpOnly + SameSite=Lax 防護
+- **CSRF 保護**: 所有 CUD 操作必須提供 CSRF Token
+- **權限控制**: AdminOnly 中介軟體保護後台 API
+
+### API 安全
+- **速率限制**: 每分鐘 30 次請求
+- **輸入驗證**: Laravel FormRequest 嚴格驗證
+- **錯誤處理**: 統一錯誤回應，避免資訊洩漏
+
+## 📱 前後台分離架構
+
+### 前台 (公開 API)
+- **路由**: `/api/articles`, `/api/categories`, `/api/tags`
+- **資料範圍**: 僅已發布內容，支援 SEO
+- **快取策略**: 長時間快取，重視效能
+
+### 後台 (管理 API)
+- **路由**: `/api/admin/*`
+- **認證保護**: Laravel Sanctum Session 認證
+- **功能**: 完整 CRUD，包含草稿管理
+- **快取策略**: 短時間快取，重視即時性
+
+## 🔄 CI/CD 自動化流程
+
+### GitHub Actions 流水線
+```
+推送到 main → 自動測試 → 並行構建 → 自動部署 → 狀態通知
+            ├── SQLite + Redis 測試環境
+            ├── 前端構建 (npm cache)
+            ├── Docker 構建 (layer cache)
+            └── GCP 部署 (自動回滾)
+```
+
+### 自動化特性
+- **測試環境**: 與生產環境一致的 SQLite + Redis
+- **構建優化**: npm cache + Docker layer cache
+- **部署安全**: 自動備份 + 失敗回滾
+- **狀態監控**: 部署成功/失敗自動通知
+
+## 📈 效能優化策略
+
+### 查詢優化
+- **精確查詢**: 只選擇需要的欄位，避免冗余
+- **關聯預載入**: with() 避免 N+1 查詢問題
+- **索引策略**: 基於實際查詢模式設計
+
+### 前端優化
+- **程式碼分割**: Vite 自動 Code Splitting
+- **懶載入**: 路由層級組件懶載入
+- **快取策略**: 瀏覽器快取 + CDN 加速
+
+### 快取效能
+- **命中率**: > 90% (文章列表、分類標籤)
+- **效能提升**: 首頁載入從 480ms → 120ms (75% 改善)
+- **預熱策略**: 應用啟動時預熱熱門內容
+
+## 🔍 監控與維護
+
+### 關鍵效能指標
+- **API 回應時間**: < 100ms
+- **頁面載入時間**: < 2s
+- **記憶體使用率**: < 85% (850MB)
+- **快取命中率**: > 90%
+- **資料庫大小**: < 50MB
+
+### 自動化維護
+- **部署流程**: GitHub Actions 全自動
+- **資料備份**: 每日自動備份 SQLite
+- **資源清理**: 定期清理 Docker 映像
+- **健康檢查**: Redis 連線、記憶體監控
+
+## 📚 相關文件
+
+### 詳細技術決策
+重要決策的背景和原因請參考 [ADR 文件](../adr/README.md)：
+- [ADR-001](../adr/001-sqlite-production-database.md) - SQLite 資料庫選擇
+- [ADR-002](../adr/002-redis-caching-strategy.md) - Redis 快取策略
+- [ADR-003](../adr/003-session-csrf-authentication.md) - 認證機制設計
+- [ADR-005](../adr/005-frontend-backend-separation.md) - 前後台分離
+- [ADR-006](../adr/006-github-actions-cicd.md) - CI/CD 自動化
+
+### API 規格文件
+- **Swagger UI**: `/api/documentation` - 互動式 API 文件
+- **OpenAPI JSON**: `/api/documentation.json` - 機器可讀規格
+
+### 詳細設計文件
+- **[系統概述](system-overview.md)** - 完整的系統架構說明
+- **[資料庫設計](database.md)** - 資料表結構與關聯設計 
