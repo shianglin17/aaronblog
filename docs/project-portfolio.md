@@ -1,39 +1,28 @@
 # AaronBlog - 全端個人部落格系統
 
-## 專案概述
+## 🎯 專案概述
 
 一個採用現代技術棧的全端部落格系統，已成功部署並運行於生產環境（[aaronlei.com](https://aaronlei.com/)）。此專案展現了從架構設計、程式開發到雲端部署的完整開發流程，並針對雲端資源成本進行了深度優化。
 
-## 技術亮點
+> **技術架構詳情請參考**：[系統架構文檔](architecture/README.md)
 
-### 系統架構
-- **前後端分離**：RESTful API 設計，支援多端應用擴展
-- **分層架構**：Controller → Service → Repository → Model，清晰的職責分工
-- **設計模式**：Repository Pattern、Transformer Pattern、Exception Handling
-- **程式碼品質**：E2E 測試、PHPDoc 文檔、程式碼規範
+## 🚀 技術亮點
 
-### 技術棧
+### 架構創新
+- **分層架構**：實現清晰的職責分工，提升程式碼可維護性
+- **前後端分離**：支援多端應用擴展，提升開發靈活性  
+- **設計模式應用**：運用多種設計模式解決複雜業務邏輯
 
-**後端技術**
-- **框架**：Laravel 12（最新版本）+ PHP 8.2+
-- **認證**：Laravel Sanctum Session Cookie 認證
-- **資料庫**：SQLite 檔案型資料庫（資源優化）
-- **快取**：Redis 7 + 自定義快取服務層
-- **API 設計**：RESTful API + 統一回應格式
+### 成本優化創新
+- **資源極限挑戰**：在 GCP 免費層 VM (1GB RAM) 上運行完整應用
+- **SQLite 生產化**：檔案型資料庫降低記憶體佔用 ~50MB
+- **Redis 記憶體優化**：100MB 限制 + LRU 淘汰策略
+- **Docker 資源配置**：精確的容器資源分配與監控
 
-**前端技術**
-- **框架**：Vue 3 + Composition API + TypeScript
-- **UI 套件**：Naive UI（現代化管理介面）
-- **路由**：Vue Router 4
-- **建構工具**：Vite（快速開發體驗）
-- **功能**：Markdown 渲染、程式碼高亮、響應式設計
-
-**DevOps & 部署**
-- **容器化**：Docker + Docker Compose
-- **雲端平台**：Google Cloud Platform VM
-- **Web 伺服器**：Nginx
-- **CDN & 安全**：Cloudflare DNS + Proxy 代理
-- **自動化**：腳本化部署流程、資源監控
+### 開發效率提升
+- **程式碼優化**：重構後減少 275 行重複代碼，提升維護效率
+- **快取體系**：統一快取操作介面，提升開發體驗
+- **錯誤處理**：建立完整的異常處理機制，提升系統穩定性
 
 ## 核心功能
 
