@@ -101,8 +101,11 @@ npm run dev
 - **[測試指南](docs/testing-guide.md)** - 測試策略與開發流程
 
 ### API 文檔
-- **Swagger UI**: http://localhost:8080/api/documentation
-- **OpenAPI 規格**: http://localhost:8080/api/documentation.json
+本專案使用 Swagger (OpenAPI) 自動生成互動式 API 文件。
+
+- **生產環境 API 文檔**: [https://aaronlei.com/docs](https://aaronlei.com/docs)
+- **本地開發 API 文檔**: http://localhost:8080/docs
+- **OpenAPI 規格 (JSON)**: http://aaronlei.com/api/documentation
 
 ## 專案成果
 

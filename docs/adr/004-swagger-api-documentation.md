@@ -2,6 +2,7 @@
 
 ## Status
 Accepted - 2025年8月16日
+**Deployed** - 2025年8月18日 (已部署至生產環境)
 
 ## Context
 
