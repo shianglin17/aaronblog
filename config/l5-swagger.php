@@ -241,8 +241,9 @@ return [
         /*
          * Set this to `true` in development mode so that docs would be regenerated on each request
          * Set this to `false` to disable swagger generation on production
+         * 改為 true 確保每個環境都能生成符合自己配置的文檔
          */
-        'generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS', env('APP_DEBUG', false)),
+        'generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS', true),
 
         /*
          * Set this to `true` to generate a copy of documentation in yaml format
@@ -314,10 +315,10 @@ return [
             ],
             
             /*
-             * 純文檔模式配置 - 禁用 "Try it out" 功能
+             * API 測試模式配置 - 啟用 "Try it out" 功能
              */
-            'supported_submit_methods' => [], // 空陣列 = 禁用所有 Try it out 按鈕
-            'try_it_out_enabled' => false,    // 禁用 Try it out 功能
+            'supported_submit_methods' => ['get', 'post', 'put', 'delete', 'patch'], // 啟用所有 HTTP 方法
+            'try_it_out_enabled' => true,     // 啟用 Try it out 功能
         ],
         /*
          * Constants which can be used in annotations
