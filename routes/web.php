@@ -9,7 +9,7 @@ Route::get('/sanctum/csrf-cookie', function () {
     return response()->noContent();
 });
 
-// 將所有前端路由交給Vue處理
+// 將所有前端路由交給Vue處理（排除 api 路徑）
 Route::get('/{any}', function () {
     return view('app');
-})->where('any', '.*');
+})->where('any', '^(?!api).*$');
