@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $documentationTitle }}</title>
-    <link rel="stylesheet" type="text/css" href="{{ l5_swagger_asset($documentation, 'swagger-ui.css') }}">
-    <link rel="icon" type="image/png" href="{{ l5_swagger_asset($documentation, 'favicon-32x32.png') }}" sizes="32x32"/>
-    <link rel="icon" type="image/png" href="{{ l5_swagger_asset($documentation, 'favicon-16x16.png') }}" sizes="16x16"/>
+    <link rel="stylesheet" type="text/css" href="/swagger-ui/swagger-ui.css">
+    <link rel="icon" type="image/png" href="/swagger-ui/favicon-32x32.png" sizes="32x32"/>
+    <link rel="icon" type="image/png" href="/swagger-ui/favicon-16x16.png" sizes="16x16"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
     <style>
@@ -209,8 +209,8 @@
 <body @if(config('l5-swagger.defaults.ui.display.dark_mode')) id="dark-mode" @endif>
 <div id="swagger-ui"></div>
 
-<script src="{{ l5_swagger_asset($documentation, 'swagger-ui-bundle.js') }}"></script>
-<script src="{{ l5_swagger_asset($documentation, 'swagger-ui-standalone-preset.js') }}"></script>
+<script src="/swagger-ui/swagger-ui-bundle.js"></script>
+<script src="/swagger-ui/swagger-ui-standalone-preset.js"></script>
 <script>
     window.onload = function() {
         const urls = [];

@@ -2,6 +2,6 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    App\Providers\LogFormatServiceProvider::class,
     App\Providers\SqlLogServiceProvider::class,
+    L5Swagger\L5SwaggerServiceProvider::class,
 ];

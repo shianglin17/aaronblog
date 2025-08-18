@@ -10,9 +10,14 @@ return [
 
             'routes' => [
                 /*
-                 * Route for accessing api documentation interface
+                 * Route for accessing swagger UI interface
                  */
-                'api' => 'api/documentation',
+                'api' => 'docs',
+                
+                /*
+                 * Route for accessing parsed swagger annotations (JSON/YAML)
+                 */
+                'docs' => 'api/documentation',
             ],
             'paths' => [
                 /*
@@ -23,7 +28,7 @@ return [
                 /*
                 * Edit to set path where swagger ui assets should be stored
                 */
-                'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.5/'),
+                'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'public/swagger-ui/'),
 
                 /*
                  * File name of the generated json documentation file
