@@ -9,7 +9,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./public:/var/www/public:ro
+      # 只掛載前端構建文件，其他靜態資源由 Docker image 提供
+      - ./public/build:/var/www/public/build:ro
       # SQLite 資料庫檔案掛載到 storage 目錄（Laravel 最佳實踐）
       - sqlite-storage:/var/www/storage/app/database
       # 日誌檔案掛載，確保容器重啟後日誌不會丟失
@@ -36,8 +37,8 @@ services:
     volumes:
       # 掛載 nginx 配置
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      # 直接掛載 VM 上的 public 資料夾
-      - ./public:/var/www/public:ro  # ro = read-only，nginx 只需讀取
+      # 只掛載前端構建文件，其他靜態資源從容器內取得
+      - ./public/build:/var/www/public/build:ro  # ro = read-only，nginx 只需讀取
     depends_on:
       - app
     networks:
