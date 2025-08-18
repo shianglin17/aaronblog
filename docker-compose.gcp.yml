@@ -9,7 +9,8 @@ services:
     env_file:
       - .env
     volumes:
-      # 移除 public 掛載，讓應用容器使用 Docker image 內的文件
+      # 恢復完整 public 掛載，因為我們的策略中 git 不會包含 public/build 資料夾
+      - ./public:/var/www/public:ro
       # SQLite 資料庫檔案掛載到 storage 目錄（Laravel 最佳實踐）
       - sqlite-storage:/var/www/storage/app/database
       # 日誌檔案掛載，確保容器重啟後日誌不會丟失
