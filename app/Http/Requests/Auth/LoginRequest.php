@@ -24,6 +24,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => 'required|string|email',
             'password' => 'required|string',
+            'remember' => 'sometimes|boolean',
         ];
     }
 
@@ -36,6 +37,7 @@ class LoginRequest extends FormRequest
             'email.required' => '電子郵件為必填項',
             'email.email' => '請輸入有效的電子郵件地址',
             'password.required' => '密碼為必填項',
+            'remember.boolean' => '記住我選項格式不正確',
         ];
     }
 }

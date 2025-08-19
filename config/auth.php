@@ -130,4 +130,19 @@ return [
 
     'super_admins' => env('SUPER_ADMIN_IDS', '1'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Remember Me Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the remember me functionality behavior.
+    | The lifetime is specified in minutes.
+    |
+    */
+
+    'remember' => [
+        'lifetime' => env('AUTH_REMEMBER_LIFETIME', 43200), // 30天（預設）
+        'name' => env('AUTH_REMEMBER_COOKIE_NAME', 'remember_web'),
+    ],
+
 ];

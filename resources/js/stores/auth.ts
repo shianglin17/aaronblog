@@ -44,10 +44,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
   
   // 登入
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, remember: boolean = false) => {
     try {
       isLoading.value = true
-      const response: ApiResponse<AuthResponse> = await authApi.login({ email, password })
+      const response: ApiResponse<AuthResponse> = await authApi.login({ email, password, remember })
       
       if (response.status === 'success') {
         user.value = response.data.user

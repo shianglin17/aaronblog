@@ -119,7 +119,7 @@ async function handleLogin() {
   try {
     await formRef.value?.validate();
     
-    const result = await authStore.login(form.email, form.password);
+    const result = await authStore.login(form.email, form.password, form.remember);
     
     if (result.success) {
       // 成功登入，導向管理頁面

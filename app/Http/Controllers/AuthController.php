@@ -32,7 +32,8 @@ class AuthController extends Controller
      *         @OA\JsonContent(
      *             required={"email", "password"},
      *             @OA\Property(property="email", type="string", format="email", example="user@example.com", description="電子郵件地址"),
-     *             @OA\Property(property="password", type="string", example="password123", description="密碼")
+     *             @OA\Property(property="password", type="string", example="password123", description="密碼"),
+     *             @OA\Property(property="remember", type="boolean", example=false, description="是否記住登入狀態（可選，預設為 false）")
      *         )
      *     ),
      *     @OA\Response(
@@ -89,9 +90,18 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
          // 驗證請求已在 LoginRequest 中完成
-         $credentials = $request->validated();
+         $validated = $request->validated();
+         
+         // 提取認證憑證（移除 remember 參數）
+         $credentials = [
+             'email' => $validated['email'],
+             'password' => $validated['password'],
+         ];
+         
+         // 動態處理記住我功能
+         $remember = $validated['remember'] ?? false;
 
-         if (!Auth::guard('web')->attempt($credentials, true)) {
+         if (!Auth::guard('web')->attempt($credentials, $remember)) {
              // 登入失敗
              throw ValidationException::withMessages([
                  'email' => ['提供的憑證不正確。'],
