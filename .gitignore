@@ -25,3 +25,6 @@ yarn-error.log
 
 # OpenAPI/Swagger 生成文檔 - 每個環境自行生成
 /storage/api-docs/
+
+# 備份配置檔案 - 包含敏感資訊
+backup-config.env
