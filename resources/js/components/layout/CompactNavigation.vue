@@ -48,8 +48,7 @@
             <div class="filter-section">
               <label class="filter-label">分類</label>
               <select 
-                v-model="selectedCategory" 
-                @change="handleCategoryChange"
+                v-model="selectedCategory"
                 class="filter-select"
               >
                 <option value="">全部分類</option>
@@ -163,13 +162,7 @@ const handleSearch = () => {
   showFilters.value = false;
 };
 
-const handleCategoryChange = () => {
-  if (selectedCategory.value) {
-    emit('category-filter', selectedCategory.value);
-  } else {
-    emit('clear-category-filter');
-  }
-};
+// 分類選擇現在統一通過 applyFilters 觸發，提供更一致的使用體驗
 
 const toggleTag = (tagSlug: string) => {
   const index = selectedTags.value.indexOf(tagSlug);
@@ -181,15 +174,26 @@ const toggleTag = (tagSlug: string) => {
 };
 
 const applyFilters = () => {
+  // 統一處理所有篩選條件
   if (searchQuery.value.trim()) {
     emit('search', searchQuery.value.trim());
   }
+  
+  // 分類篩選：有選擇就篩選，沒選擇就清除
   if (selectedCategory.value) {
     emit('category-filter', selectedCategory.value);
+  } else {
+    emit('clear-category-filter');
   }
+  
+  // 標籤篩選：有選擇就篩選，沒選擇就清除
   if (selectedTags.value.length > 0) {
     emit('tag-filter', selectedTags.value);
+  } else {
+    emit('clear-tag-filter');
   }
+  
+  // 套用後收起篩選面板
   showFilters.value = false;
   showMobileMenu.value = false;
 };
