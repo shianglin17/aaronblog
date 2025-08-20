@@ -131,14 +131,9 @@ defineProps<{
   tags: Tag[];
 }>();
 
-// Events
+// 簡化事件系統：只保留必要的統一事件
 const emit = defineEmits<{
-  search: [query: string];
-  'category-filter': [slug: string];
-  'tag-filter': [slugs: string[]];
-  'clear-search': [];
-  'clear-category-filter': [];
-  'clear-tag-filter': [];
+  'apply-filters': [filters: { search?: string; category?: string; tags?: string[] }];
   'clear-all-filters': [];
 }>();
 
@@ -154,11 +149,14 @@ const hasActiveFilters = computed(() =>
   searchQuery.value || selectedCategory.value || selectedTags.value.length > 0
 );
 
-// 事件處理
+// 事件處理：直接搜尋（Enter 鍵觸發）
 const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    emit('search', searchQuery.value.trim());
-  }
+  // 直接觸發統一的篩選事件
+  emit('apply-filters', {
+    search: searchQuery.value.trim() || undefined,
+    category: selectedCategory.value || undefined,
+    tags: selectedTags.value.length > 0 ? selectedTags.value : undefined
+  });
   showFilters.value = false;
 };
 
@@ -174,24 +172,12 @@ const toggleTag = (tagSlug: string) => {
 };
 
 const applyFilters = () => {
-  // 統一處理所有篩選條件
-  if (searchQuery.value.trim()) {
-    emit('search', searchQuery.value.trim());
-  }
-  
-  // 分類篩選：有選擇就篩選，沒選擇就清除
-  if (selectedCategory.value) {
-    emit('category-filter', selectedCategory.value);
-  } else {
-    emit('clear-category-filter');
-  }
-  
-  // 標籤篩選：有選擇就篩選，沒選擇就清除
-  if (selectedTags.value.length > 0) {
-    emit('tag-filter', selectedTags.value);
-  } else {
-    emit('clear-tag-filter');
-  }
+  // 統一發送所有篩選條件，避免多次 API 調用
+  emit('apply-filters', {
+    search: searchQuery.value.trim() || undefined,
+    category: selectedCategory.value || undefined,
+    tags: selectedTags.value.length > 0 ? selectedTags.value : undefined
+  });
   
   // 套用後收起篩選面板
   showFilters.value = false;
@@ -200,7 +186,12 @@ const applyFilters = () => {
 
 const clearSearch = () => {
   searchQuery.value = '';
-  emit('clear-search');
+  // 清除搜尋後立即套用篩選
+  emit('apply-filters', {
+    search: undefined,
+    category: selectedCategory.value || undefined,
+    tags: selectedTags.value.length > 0 ? selectedTags.value : undefined
+  });
 };
 
 const clearAllFilters = () => {

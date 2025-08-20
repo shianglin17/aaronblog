@@ -4,12 +4,7 @@
     <CompactNavigation 
       :categories="staticDataStore.categories"
       :tags="staticDataStore.tags"
-      @search="handleSearch"
-      @clear-search="clearSearch"
-      @category-filter="filterByCategory"
-      @tag-filter="filterByTags"
-      @clear-category-filter="clearCategoryFilter"
-      @clear-tag-filter="clearTagFilter"
+      @apply-filters="handleApplyFilters"
       @clear-all-filters="clearAllFilters"
     />
 
@@ -71,7 +66,15 @@ const totalArticles = ref(0);
 const totalCategories = ref(0);
 const totalTags = ref(0);
 
-// 獲取文章列表
+// 條件性統計數據更新邏輯（分離的職責）
+const updateStatsIfNeeded = (params: ArticleListParams, totalItems: number) => {
+  // 僅在首頁且無篩選條件時更新總文章數
+  if (params.page === 1 && !params.search && !params.category && !params.tags) {
+    totalArticles.value = totalItems;
+  }
+};
+
+// 獲取文章列表（保持單一職責：純粹的數據獲取）
 async function fetchArticles() {
   loading.value = true;
   error.value = '';
@@ -85,6 +88,9 @@ async function fetchArticles() {
     const response = await articleApi.getList(params);
     articles.value = response.data;
     pagination.value = response.meta?.pagination;
+    
+    // 分離的統計更新邏輯
+    updateStatsIfNeeded(params, response.meta?.pagination?.total_items || 0);
   } catch (err) {
     error.value = '獲取文章列表失敗，請稍後再試';
     console.error(err);
@@ -108,79 +114,81 @@ function changePageSize(pageSize: number) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 搜尋處理
-const handleSearch = (query: string) => {
-  currentParams.value.search = query || undefined;
-  currentParams.value.page = 1;
+// 統一的參數更新和 API 調用函數
+const updateFiltersAndFetch = (updates: Partial<ArticleListParams>) => {
+  // 使用展開運算符保持不變性，符合 Vue 響應式最佳實踐
+  currentParams.value = {
+    ...currentParams.value,
+    ...updates,
+    page: 1
+  };
   fetchArticles();
 };
 
-const clearSearch = () => {
-  currentParams.value.search = undefined;
-  currentParams.value.page = 1;
-  fetchArticles();
-};
-
-// 分類和標籤篩選
-const filterByCategory = (categorySlug: string) => {
-  currentParams.value.category = categorySlug;
-  currentParams.value.page = 1;
-  fetchArticles();
-};
-
-const filterByTags = (tagSlugs: string[]) => {
-  currentParams.value.tags = tagSlugs.length > 0 ? tagSlugs : undefined;
-  currentParams.value.page = 1;
-  fetchArticles();
-};
-
-const clearCategoryFilter = () => {
-  currentParams.value.category = undefined;
-  currentParams.value.page = 1;
-  fetchArticles();
-};
-
-const clearTagFilter = () => {
-  currentParams.value.tags = undefined;
-  currentParams.value.page = 1;
-  fetchArticles();
-};
+// 舊的個別事件處理函數已移除，統一使用 handleApplyFilters
 
 const clearAllFilters = () => {
-  currentParams.value.search = undefined;
-  currentParams.value.category = undefined;
-  currentParams.value.tags = undefined;
-  currentParams.value.page = 1;
-  fetchArticles();
+  updateFiltersAndFetch({ 
+    search: undefined, 
+    category: undefined, 
+    tags: undefined 
+  });
 };
 
-// 載入統計數據（不受搜尋影響的總數）
-async function loadStats() {
+// 篩選參數介面定義（加強類型安全）
+interface FilterParams {
+  search?: string;
+  category?: string;
+  tags?: string[];
+}
+
+// 清理和驗證篩選參數
+const cleanFilters = (filters: FilterParams): Partial<ArticleListParams> => {
+  const cleaned: Partial<ArticleListParams> = {};
+  
+  // 搜尋關鍵字：非空字串
+  if (filters.search && filters.search.trim()) {
+    cleaned.search = filters.search.trim();
+  }
+  
+  // 分類：非空字串
+  if (filters.category && filters.category.trim()) {
+    cleaned.category = filters.category.trim();
+  }
+  
+  // 標籤：非空陣列
+  if (filters.tags && Array.isArray(filters.tags) && filters.tags.length > 0) {
+    cleaned.tags = filters.tags.filter(tag => tag && tag.trim());
+  }
+  
+  return cleaned;
+};
+
+// 統一篩選處理（解決 CompactNavigation 多事件問題）
+const handleApplyFilters = (filters: FilterParams) => {
+  const validFilters = cleanFilters(filters);
+  updateFiltersAndFetch(validFilters);
+};
+
+// 載入靜態統計數據（分類和標籤總數）
+async function loadStaticStats() {
   try {
-    // 載入總文章數
-    const articlesResponse = await articleApi.getList({ 
-      status: 'published',
-      per_page: 1 // 只要總數
-    });
-    totalArticles.value = articlesResponse.meta?.pagination?.total_items || 0;
-    
-    // 載入分類和標籤總數
     await staticDataStore.ensureLoaded();
     totalCategories.value = staticDataStore.categories.length;
     totalTags.value = staticDataStore.tags.length;
   } catch (error) {
-    console.error('載入統計數據失敗:', error);
+    console.error('載入靜態統計數據失敗:', error);
   }
 }
 
 // 初始化資料載入
 onMounted(async () => {
   try {
-    // 載入統計數據
-    await loadStats();
-    
-    // 載入文章列表
-    await fetchArticles();
+    // 並行載入靜態數據和文章列表（文章總數會在 fetchArticles 中更新）
+    await Promise.all([
+      loadStaticStats(),
+      fetchArticles()
+    ]);
   } catch (error) {
     console.error('初始化資料載入失敗:', error);
   }
