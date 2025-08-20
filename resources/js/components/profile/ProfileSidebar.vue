@@ -39,7 +39,7 @@
 
         <!-- 技能標籤 -->
         <div class="profile-skills">
-          <h3 class="skills-title">技術專長</h3>
+          <h3 class="skills-title">本專案使用技術</h3>
           <div class="skills-tags">
             <span 
               v-for="skill in profileData.skills" 
@@ -49,6 +49,11 @@
               {{ skill }}
             </span>
           </div>
+        </div>
+
+        <!-- 輔助開發工具 -->
+        <div class="development-tools">
+          <p class="tools-text">使用 Claude Code, Cursor 輔助開發</p>
         </div>
 
         <!-- 統計資訊 -->
@@ -102,7 +107,7 @@ withDefaults(defineProps<{
     title: '後端工程師',
     bio: '歡迎來到我的個人網站，這裡主要是作為網頁技術的筆記、分享，也會有一些閱讀和心情分享',
     avatar: '/images/aaron-avatar.jpg',
-    skills: ['Laravel', 'MySQL', 'Vue.js', 'TypeScript', 'Docker']
+    skills: ['Laravel', 'SQL', 'Vue.js', 'TypeScript', 'Docker', 'Nginx', 'Redis', 'Linux', 'Git', 'Docker', 'Github Actions', 'CI/CD']
   })
 });
 
@@ -121,8 +126,6 @@ const toggleExpanded = () => {
   position: sticky;
   top: calc(80px + 2rem); /* 導航高度 + 間距 */
   align-self: flex-start;
-  max-height: calc(100vh - 120px); /* 防止過高內容 */
-  overflow-y: auto;
 }
 
 .profile-card {
@@ -300,6 +303,19 @@ const toggleExpanded = () => {
   box-shadow: var(--shadow-sm);
 }
 
+/* 輔助開發工具 */
+.development-tools {
+  margin-bottom: 20px;
+}
+
+.tools-text {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  text-align: center;
+  font-style: italic;
+}
+
 /* 統計資訊 */
 .profile-stats {
   display: flex;
@@ -376,6 +392,7 @@ const toggleExpanded = () => {
     padding: 4px 10px;
     font-size: 0.75rem;
   }
+  
 }
 
 @media (max-width: 768px) {
