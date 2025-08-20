@@ -50,6 +50,15 @@ export async function refreshCsrfToken(): Promise<string | null> {
  * 處理不同類型的錯誤並顯示適當的提示
  */
 function showErrorMessage(error: any): void {
+  // 檢查當前路由，在登入/註冊頁面不顯示認證相關錯誤
+  const currentPath = window.location.pathname;
+  const isAuthPage = ['/login', '/register'].includes(currentPath);
+  
+  // 401 錯誤且在認證頁面時，不顯示錯誤訊息
+  if (error.response?.status === 401 && isAuthPage) {
+    return;
+  }
+  
   const data = error.response?.data;
   let errorMessage = '操作失敗，請稍後再試';
   
