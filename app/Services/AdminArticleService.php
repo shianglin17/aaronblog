@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Article;
 use App\Repositories\AdminArticleRepository;
 use App\Services\Cache\AdminArticleCacheService;
+use App\Services\Cache\ArticleCacheService;
 use App\Services\Cache\TagCacheService;
 use App\Services\Cache\CategoryCacheService;
 use App\Services\AuthorizationService;
@@ -17,6 +18,7 @@ class AdminArticleService
     /**
      * @param AdminArticleRepository $repository
      * @param AdminArticleCacheService $cacheService
+     * @param ArticleCacheService $frontendCacheService
      * @param TagCacheService $tagCacheService
      * @param CategoryCacheService $categoryCacheService
      * @param AuthorizationService $authorizationService
@@ -24,6 +26,7 @@ class AdminArticleService
     public function __construct(
         protected readonly AdminArticleRepository $repository,
         protected readonly AdminArticleCacheService $cacheService,
+        protected readonly ArticleCacheService $frontendCacheService,
         protected readonly TagCacheService $tagCacheService,
         protected readonly CategoryCacheService $categoryCacheService,
         protected readonly AuthorizationService $authorizationService
@@ -127,8 +130,12 @@ class AdminArticleService
      */
     private function clearRelatedCache(int $articleId, ?int $userId = null): void
     {
-        // 清除用戶文章相關快取
+        // 清除用戶文章相關快取（後台）
         $this->cacheService->clearUserArticleCache($articleId, $userId);
+        
+        // 清除前台文章快取
+        $this->frontendCacheService->clearListCache();
+        $this->frontendCacheService->clearDetailCache($articleId);
         
         // 清除標籤和分類快取（因為文章數量可能改變）
         $this->tagCacheService->clearAllCache();
