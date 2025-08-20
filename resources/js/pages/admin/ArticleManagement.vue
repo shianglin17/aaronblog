@@ -16,6 +16,7 @@
           @category-change="handleCategoryChange"
           @tags-change="handleTagsChange"
           @reset="resetFilters"
+          @apply-filters="handleApplyFilters"
         >
           <template #suffix>
             <n-button type="primary" @click="openCreateForm">新增文章</n-button>
@@ -160,6 +161,15 @@ const {
   tagOptions: formTagOptions,
   loadOptions
 } = useAdminOptions(message);
+
+// 處理統一篩選套用
+function handleApplyFilters() {
+  // 重置頁碼
+  params.value.page = 1;
+  
+  // 觸發 API 調用
+  fetchArticles();
+}
 
 // 初始化
 onMounted(() => {

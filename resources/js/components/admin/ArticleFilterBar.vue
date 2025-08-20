@@ -31,7 +31,6 @@
                 :options="categoryOptions"
                 placeholder="選擇分類"
                 clearable
-                @update:value="handleCategoryChange"
               />
             </n-form-item>
             
@@ -42,7 +41,6 @@
                 placeholder="選擇標籤"
                 multiple
                 clearable
-                @update:value="handleTagsChange"
               />
             </n-form-item>
             
@@ -111,6 +109,7 @@ const emit = defineEmits<{
   (e: 'category-change', value: string | undefined): void;
   (e: 'tags-change', value: string[]): void;
   (e: 'reset'): void;
+  (e: 'apply-filters'): void; // 新增套用篩選事件
   (e: 'update:search', value: string): void;
   (e: 'update:status', value: string): void;
   (e: 'update:category', value: string | undefined): void;
@@ -153,17 +152,7 @@ function handleStatusChange(value: string) {
   emit('status-change', value);
 }
 
-// 處理分類變化
-function handleCategoryChange(value: string | undefined) {
-  emit('update:category', value);
-  emit('category-change', value);
-}
-
-// 處理標籤變化
-function handleTagsChange(value: string[]) {
-  emit('update:tags', value);
-  emit('tags-change', value);
-}
+// 分類和標籤變化現在統一通過 applyFilters 觸發，提供更一致的使用體驗
 
 // 重置所有篩選
 function resetFilters() {
@@ -181,10 +170,17 @@ function resetFilters() {
 
 // 套用篩選
 function applyFilters() {
-  emit('search', searchKeyword.value);
-  emit('status-change', statusFilter.value);
-  emit('category-change', categoryFilter.value);
-  emit('tags-change', tagFilters.value);
+  // 更新 v-model 值
+  emit('update:search', searchKeyword.value);
+  emit('update:status', statusFilter.value);
+  emit('update:category', categoryFilter.value);
+  emit('update:tags', tagFilters.value);
+  
+  // 發出統一的套用事件給父元件處理
+  // 移除個別的篩選變更事件觸發，避免重複 API 請求
+  emit('apply-filters');
+  
+  // 收起進階篩選面板
   showAdvancedFilters.value = false;
 }
 
