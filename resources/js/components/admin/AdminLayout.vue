@@ -84,6 +84,10 @@ const currentRoute = computed(() => route.path);
 // 用戶菜單選項
 const userMenuOptions = computed(() => [
   {
+    key: 'frontend',
+    label: '回到前台'
+  },
+  {
     key: 'logout',
     label: '登出'
   }
@@ -102,7 +106,10 @@ const userInitials = computed(() => {
 
 // 處理用戶菜單選擇
 async function handleUserMenuSelect(key: string) {
-  if (key === 'logout') {
+  if (key === 'frontend') {
+    // 導航回前台首頁
+    router.push('/');
+  } else if (key === 'logout') {
     try {
       await authStore.logout();
       message.success('登出成功');
