@@ -49,13 +49,9 @@ export async function refreshCsrfToken(): Promise<string | null> {
  * 顯示錯誤訊息
  * 處理不同類型的錯誤並顯示適當的提示
  */
-function showErrorMessage(error: any): void {
-  // 檢查當前路由，在登入/註冊頁面不顯示認證相關錯誤
-  const currentPath = window.location.pathname;
-  const isAuthPage = ['/login', '/register'].includes(currentPath);
-  
-  // 401 錯誤且在認證頁面時，不顯示錯誤訊息
-  if (error.response?.status === 401 && isAuthPage) {
+function showErrorMessage(error: any, shouldShow: boolean = true): void {
+  // 如果指定不顯示錯誤，直接返回
+  if (!shouldShow) {
     return;
   }
   
@@ -97,6 +93,9 @@ http.interceptors.response.use(
     return response;
   },
   async (error) => {
+    // 檢查是否應該顯示錯誤訊息
+    const shouldShowError = error.config?.headers?.['X-Skip-Auth-Redirect'] !== 'true';
+    
     // 先處理認證相關錯誤
     if (error.response?.status === 401) {
       // 檢查是否為認證檢查請求，如果是則不重定向
@@ -130,8 +129,8 @@ http.interceptors.response.use(
       }
     }
     
-    // 統一錯誤訊息處理
-    showErrorMessage(error);
+    // 統一錯誤訊息處理，根據標頭決定是否顯示
+    showErrorMessage(error, shouldShowError);
     
     return Promise.reject(error);
   }
