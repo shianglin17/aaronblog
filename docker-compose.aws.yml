@@ -1,0 +1,74 @@
+# AWS EC2 生產環境配置
+# 使用方式: docker-compose -f docker-compose.aws.yml up -d
+# 特色：基於 GCP 版本優化，針對 AWS EC2 調整權限和資源配置
+
+services:
+  app:
+    image: aaronlei17/aaronblog-app:latest
+    container_name: aaronblog-app
+    env_file:
+      - .env
+    # 設置用戶 ID，確保容器內外權限一致（AWS EC2 權限優化）
+    user: "1000:1000"
+    volumes:
+      # 靜態文件掛載為只讀
+      - ./public:/var/www/public:ro
+      # SQLite 資料庫檔案直接掛載到伺服器（便於備份和管理）
+      - ./storage/database:/var/www/storage/app/database
+      # 完整 storage 掛載，確保權限正確
+      - ./storage/logs:/var/www/storage/logs
+      - ./storage/framework:/var/www/storage/framework
+      - ./storage/app:/var/www/storage/app
+      - .env:/var/www/.env
+    # AWS EC2 通常有更多資源，適當增加
+    mem_limit: 768m
+    mem_reservation: 384m
+    restart: unless-stopped
+    networks:
+      - aaronblog-net
+    # 暴露 PHP-FPM 端口
+    expose:
+      - "9000"
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx:alpine
+    container_name: aaronblog-nginx
+    ports:
+      - "80:80"    # HTTP (Cloudflare 處理 HTTPS)
+    volumes:
+      # Nginx 配置
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      # 靜態文件服務
+      - ./public:/var/www/public:ro
+    depends_on:
+      - app
+    networks:
+      - aaronblog-net
+    # AWS EC2 環境增加資源
+    mem_limit: 256m
+    mem_reservation: 128m
+    restart: unless-stopped
+
+  # Redis 快取服務
+  redis:
+    image: redis:7-alpine
+    container_name: aaronblog-redis
+    # 提升 Redis 性能配置
+    mem_limit: 256m
+    mem_reservation: 128m
+    # 針對 AWS EC2 調整的 Redis 配置
+    command: redis-server --maxmemory 200mb --maxmemory-policy allkeys-lru
+    expose:
+      - "6379"
+    networks:
+      - aaronblog-net
+    restart: unless-stopped
+
+# volumes:
+# SQLite 數據庫現在直接綁定到伺服器，不需要 Docker volume
+
+networks:
+  aaronblog-net:
+    driver: bridge
