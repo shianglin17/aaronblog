@@ -19,9 +19,9 @@ services:
       - ./storage/framework:/var/www/storage/framework
       - ./storage/app:/var/www/storage/app
       - .env:/var/www/.env
-    # AWS EC2 通常有更多資源，適當增加
-    mem_limit: 768m
-    mem_reservation: 384m
+    # AWS EC2 環境下給 Laravel 主應用更多記憶體資源
+    mem_limit: 1.2g
+    mem_reservation: 600m
     restart: unless-stopped
     networks:
       - aaronblog-net
@@ -45,20 +45,20 @@ services:
       - app
     networks:
       - aaronblog-net
-    # AWS EC2 環境增加資源
-    mem_limit: 256m
-    mem_reservation: 128m
+    # Nginx 輕量級配置，專注靜態文件服務
+    mem_limit: 128m
+    mem_reservation: 64m
     restart: unless-stopped
 
   # Redis 快取服務
   redis:
     image: redis:7-alpine
     container_name: aaronblog-redis
-    # 提升 Redis 性能配置
-    mem_limit: 256m
-    mem_reservation: 128m
-    # 針對 AWS EC2 調整的 Redis 配置
-    command: redis-server --maxmemory 200mb --maxmemory-policy allkeys-lru
+    # AWS EC2 環境下大幅提升 Redis 快取性能
+    mem_limit: 512m
+    mem_reservation: 256m
+    # 針對 AWS EC2 調整的 Redis 配置，提高快取容量
+    command: redis-server --maxmemory 400mb --maxmemory-policy allkeys-lru
     expose:
       - "6379"
     networks:

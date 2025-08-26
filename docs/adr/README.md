@@ -18,6 +18,7 @@
 | [006](006-github-actions-cicd.md) | GitHub Actions CI/CD 自動化部署 | Accepted | 2025-07-05 |
 | [007](007-remove-soft-delete.md) | 移除軟刪除機制 | Accepted | 2025-06-11 |
 | [008](008-api-response-architecture.md) | API 回應與異常處理架構演進 | Accepted | 2025年 |
+| [009](009-aws-ec2-deployment-migration.md) | AWS EC2 部署環境遷移 | Accepted | 2025-08-26 |
 
 ## 決策狀態說明
 
