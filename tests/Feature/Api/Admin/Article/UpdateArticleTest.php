@@ -50,19 +50,9 @@ class UpdateArticleTest extends AdminTestCase
 
         $response = $this->putJson("/api/admin/articles/{$article->id}", $updateData);
 
-        $response->assertOk()
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => '成功'
-                 ])
-                 ->assertJsonStructure([
-                     'data' => [
-                         'id',
-                         'title',
-                         'category' => ['id', 'name', 'slug'],
-                         'updated_at'
-                     ]
-                 ]);
+        // Assert - 使用統一的成功斷言和資源結構驗證
+        $this->assertApiSuccess($response, 200, '成功');
+        $this->assertArticleResourceStructure($response);
 
         // 驗證文章已更新
         $this->assertDatabaseHas('articles', [
@@ -108,7 +98,8 @@ class UpdateArticleTest extends AdminTestCase
             'title' => '新標題'
         ]);
 
-        $response->assertOk();
+        // Assert - 簡化成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
         
         $this->assertDatabaseHas('articles', [
             'id' => $article->id,
@@ -142,7 +133,8 @@ class UpdateArticleTest extends AdminTestCase
 
         $response = $this->putJson("/api/admin/articles/{$article->id}", $updateData);
 
-        $response->assertOk();
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
         
         // 驗證標籤關聯已正確更新
         $article->refresh();

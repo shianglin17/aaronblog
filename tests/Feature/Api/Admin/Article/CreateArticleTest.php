@@ -42,25 +42,9 @@ class CreateArticleTest extends AdminTestCase
 
         $response = $this->postJson('/api/admin/articles', $articleData);
 
-        $response->assertStatus(201)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => '創建成功'
-                 ])
-                 ->assertJsonStructure([
-                     'data' => [
-                         'id',
-                         'title',
-                         'slug',
-                         'description',
-                         'content',
-                         'status',
-                         'author' => ['id', 'name'],
-                         'category' => ['id', 'name', 'slug'],
-                         'tags',
-                         'created_at'
-                     ]
-                 ]);
+        // Assert - 使用統一的斷言方法
+        $this->assertApiSuccess($response, 201, '創建成功');
+        $this->assertArticleResourceStructure($response);
 
         // 驗證文章存在於資料庫，且自動設定為當前用戶
         $this->assertDatabaseHas('articles', [
@@ -82,15 +66,8 @@ class CreateArticleTest extends AdminTestCase
     {
         $response = $this->postJson('/api/admin/articles', []);
 
-        $response->assertStatus(422)
-                 ->assertJsonStructure([
-                     'status',
-                     'code',
-                     'message',
-                     'meta' => [
-                         'errors'
-                     ]
-                 ]);
+        // Assert - 使用統一的錯誤斷言
+        $this->assertApiError($response, 422);
     }
 
     /**
@@ -111,8 +88,9 @@ class CreateArticleTest extends AdminTestCase
 
         $response = $this->postJson('/api/admin/articles', $articleData);
 
-        $response->assertStatus(201)
-                 ->assertJsonPath('data.author.id', $this->authenticatedUser->id);
+        // Assert - 使用統一的斷言且驗證作者資訊
+        $this->assertApiSuccess($response, 201, '創建成功');
+        $response->assertJsonPath('data.author.id', $this->authenticatedUser->id);
                  
         // 驗證資料庫中的文章歸屬
         $this->assertDatabaseHas('articles', [
@@ -143,7 +121,8 @@ class CreateArticleTest extends AdminTestCase
 
         $response = $this->postJson('/api/admin/articles', $articleData);
 
-        $response->assertStatus(201);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 201, '創建成功');
         
         // 驗證所有標籤都已關聯且屬於當前用戶
         $article = Article::where('slug', 'multi-tag-article')->first();

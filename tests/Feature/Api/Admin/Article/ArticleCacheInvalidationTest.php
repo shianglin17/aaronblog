@@ -40,7 +40,7 @@ class ArticleCacheInvalidationTest extends AdminTestCase
 
         // 第一次請求標籤列表（建立快取）
         $response1 = $this->getJson('/api/tags');
-        $response1->assertOk();
+        $this->assertApiSuccess($response1, 200, '成功');
         $tag1Count = collect($response1->json('data'))
             ->firstWhere('id', $tag1->id)['articles_count'];
         
@@ -48,11 +48,11 @@ class ArticleCacheInvalidationTest extends AdminTestCase
 
         // 刪除文章
         $response = $this->deleteJson("/api/admin/articles/{$article->id}");
-        $response->assertOk();
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 再次請求標籤列表（應該從更新後的快取獲取）
         $response2 = $this->getJson('/api/tags');
-        $response2->assertOk();
+        $this->assertApiSuccess($response2, 200, '成功');
         $tag1CountAfter = collect($response2->json('data'))
             ->firstWhere('id', $tag1->id)['articles_count'];
         
@@ -74,7 +74,7 @@ class ArticleCacheInvalidationTest extends AdminTestCase
 
         // 第一次請求分類列表（建立快取）
         $response1 = $this->getJson('/api/categories');
-        $response1->assertOk();
+        $this->assertApiSuccess($response1, 200, '成功');
         $categoryCount = collect($response1->json('data'))
             ->firstWhere('id', $category->id)['articles_count'];
         
@@ -82,11 +82,11 @@ class ArticleCacheInvalidationTest extends AdminTestCase
 
         // 刪除文章
         $response = $this->deleteJson("/api/admin/articles/{$article->id}");
-        $response->assertOk();
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 再次請求分類列表（應該從更新後的快取獲取）
         $response2 = $this->getJson('/api/categories');
-        $response2->assertOk();
+        $this->assertApiSuccess($response2, 200, '成功');
         $categoryCountAfter = collect($response2->json('data'))
             ->firstWhere('id', $category->id)['articles_count'];
         
@@ -104,7 +104,7 @@ class ArticleCacheInvalidationTest extends AdminTestCase
         
         // 第一次請求標籤列表（建立快取）
         $response1 = $this->getJson('/api/tags');
-        $response1->assertOk();
+        $this->assertApiSuccess($response1, 200, '成功');
         $tagCount = collect($response1->json('data'))
             ->firstWhere('id', $tag->id)['articles_count'];
         
@@ -122,11 +122,11 @@ class ArticleCacheInvalidationTest extends AdminTestCase
         ];
 
         $response = $this->postJson('/api/admin/articles', $articleData);
-        $response->assertStatus(201);
+        $this->assertApiSuccess($response, 201, '創建成功');
 
         // 再次請求標籤列表（應該從更新後的快取獲取）
         $response2 = $this->getJson('/api/tags');
-        $response2->assertOk();
+        $this->assertApiSuccess($response2, 200, '成功');
         $tagCountAfter = collect($response2->json('data'))
             ->firstWhere('id', $tag->id)['articles_count'];
         
@@ -153,7 +153,7 @@ class ArticleCacheInvalidationTest extends AdminTestCase
 
         // 第一次請求標籤列表（建立快取）
         $response1 = $this->getJson('/api/tags');
-        $response1->assertOk();
+        $this->assertApiSuccess($response1, 200, '成功');
         $tag1Count = collect($response1->json('data'))
             ->firstWhere('id', $tag1->id)['articles_count'];
         $tag2Count = collect($response1->json('data'))
@@ -169,11 +169,11 @@ class ArticleCacheInvalidationTest extends AdminTestCase
         ];
 
         $response = $this->putJson("/api/admin/articles/{$article->id}", $updateData);
-        $response->assertOk();
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 再次請求標籤列表（應該從更新後的快取獲取）
         $response2 = $this->getJson('/api/tags');
-        $response2->assertOk();
+        $this->assertApiSuccess($response2, 200, '成功');
         $tag1CountAfter = collect($response2->json('data'))
             ->firstWhere('id', $tag1->id)['articles_count'];
         $tag2CountAfter = collect($response2->json('data'))

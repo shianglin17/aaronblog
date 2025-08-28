@@ -31,11 +31,8 @@ class DeleteArticleTest extends AdminTestCase
 
         $response = $this->deleteJson("/api/admin/articles/{$article->id}");
 
-        $response->assertOk()
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => '成功'
-                 ]);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 驗證文章已從資料庫中刪除
         $this->assertDatabaseMissing('articles', [
@@ -72,7 +69,8 @@ class DeleteArticleTest extends AdminTestCase
 
         $response = $this->deleteJson("/api/admin/articles/{$article->id}");
 
-        $response->assertOk();
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 驗證文章已刪除
         $this->assertDatabaseMissing('articles', [
@@ -108,7 +106,8 @@ class DeleteArticleTest extends AdminTestCase
         // 刪除其中一篇文章
         $response = $this->deleteJson("/api/admin/articles/{$article1->id}");
 
-        $response->assertOk();
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 驗證分類和標籤仍然存在
         $this->assertDatabaseHas('categories', ['id' => $category->id]);

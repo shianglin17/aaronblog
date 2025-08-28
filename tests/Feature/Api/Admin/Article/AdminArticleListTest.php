@@ -32,9 +32,9 @@ class AdminArticleListTest extends AdminTestCase
         // Act: 呼叫 API
         $response = $this->getJson('/api/admin/articles');
 
-        // Assert: 只能看到自己的文章
-        $response->assertStatus(200)
-                 ->assertJsonCount(2, 'data'); // 只有2篇自己的文章
+        // Assert - 使用統一的成功斷言並驗證數量
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response->assertJsonCount(2, 'data'); // 只有2篇自己的文章
 
         // 確認回傳的文章都屬於當前用戶
         $responseData = $response->json('data');
@@ -61,9 +61,9 @@ class AdminArticleListTest extends AdminTestCase
         // Act: 呼叫 API
         $response = $this->getJson('/api/admin/articles');
 
-        // Assert: 可以看到所有狀態
-        $response->assertStatus(200)
-                 ->assertJsonCount(2, 'data');
+        // Assert - 使用統一的成功斷言並驗證数量
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response->assertJsonCount(2, 'data');
     }
 
     /**
@@ -83,13 +83,13 @@ class AdminArticleListTest extends AdminTestCase
 
         // Act & Assert: 測試只看已發布的文章
         $response = $this->getJson('/api/admin/articles?status=published');
-        $response->assertStatus(200)
-                 ->assertJsonCount(1, 'data');
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response->assertJsonCount(1, 'data');
 
         // Act & Assert: 測試只看草稿文章
         $response = $this->getJson('/api/admin/articles?status=draft');
-        $response->assertStatus(200)
-                 ->assertJsonCount(1, 'data');
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response->assertJsonCount(1, 'data');
     }
 
     /**
@@ -118,20 +118,11 @@ class AdminArticleListTest extends AdminTestCase
         // Act: 呼叫 API 要求第2頁，每頁10筆
         $response = $this->getJson('/api/admin/articles?page=2&per_page=10');
 
-        // Assert: 驗證分頁回應格式
-        $response->assertStatus(200)
-                 ->assertJsonCount(10, 'data')
-                 ->assertJsonStructure([
-                     'meta' => [
-                         'pagination' => [
-                             'current_page',
-                             'total_pages',
-                             'total_items',
-                             'per_page'
-                         ]
-                     ]
-                 ])
-                 ->assertJsonPath('meta.pagination.current_page', 2)
+        // Assert - 使用統一的成功斷言和列表結構驗證
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response->assertJsonCount(10, 'data');
+        $this->assertArticleListStructure($response);
+        $response->assertJsonPath('meta.pagination.current_page', 2)
                  ->assertJsonPath('meta.pagination.per_page', 10)
                  ->assertJsonPath('meta.pagination.total_items', 20);
     }
