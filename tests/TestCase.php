@@ -4,9 +4,12 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Cache;
+use Tests\Support\JsonAssertions;
 
 abstract class TestCase extends BaseTestCase
 {
+    use JsonAssertions;
+
     /**
      * 在每個測試前執行
      * 
