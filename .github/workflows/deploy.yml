@@ -122,7 +122,7 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: aaronlei17/aaronblog-app:aws-latest
+          tags: aaronlei17/aaronblog-app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -178,12 +178,9 @@ jobs:
             echo "📥 拉取最新程式碼..."
             git pull origin main
             
-            # 拉取 AWS 專用的 Docker image
+            # 拉取最新 Docker image
             echo "🐳 拉取最新 Docker image..."
-            docker pull aaronlei17/aaronblog-app:aws-latest
-            
-            # 更新 docker-compose 中的 image tag
-            sed -i 's/aaronlei17\/aaronblog-app:latest/aaronlei17\/aaronblog-app:aws-latest/g' docker-compose.prod.yml
+            docker pull aaronlei17/aaronblog-app:latest
       
       - name: Upload frontend assets
         uses: appleboy/scp-action@v0.1.7
