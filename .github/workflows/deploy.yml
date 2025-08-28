@@ -176,6 +176,8 @@ jobs:
             
             # 拉取最新程式碼
             echo "📥 拉取最新程式碼..."
+            git config core.filemode false
+            git reset --hard origin/main
             git pull origin main
             
             # 拉取最新 Docker image
