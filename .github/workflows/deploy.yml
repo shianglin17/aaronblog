@@ -62,7 +62,6 @@ jobs:
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
-          # 添加 Redis 設定，讓 github action 測試環境使用 Redis 快取
           CACHE_STORE: redis
           REDIS_HOST: localhost
           REDIS_PORT: 6379
@@ -123,12 +122,12 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: aaronlei17/aaronblog-app:latest
+          tags: aaronlei17/aaronblog-app:aws-latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   deploy:
-    name: Deploy to Production
+    name: Deploy to AWS EC2
     needs: [build-frontend, build-docker]
     runs-on: ubuntu-latest
     if: success()
@@ -143,95 +142,105 @@ jobs:
           name: frontend-build
           path: public/build/
       
-      - name: Deploy to GCP VM
+      - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.GCP_HOST }}
-          username: ${{ secrets.GCP_USER }}
-          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
           script: |
-            echo "開始部署新版本..."
+            echo "🚀 開始 AWS EC2 部署..."
             
             # 進入專案目錄
             cd ~/aaronblog
             
             # 建立備份
-            echo "建立前端資源備份..."
+            echo "📦 建立前端資源備份..."
             if [ -d "public/build" ]; then
               cp -r public/build public/build.backup.$(date +%Y%m%d-%H%M%S)
             fi
             
-            # 拉取最新後端程式碼（前端資源透過 git pull）
-            echo "拉取最新程式碼..."
+            # 創建必要的目錄結構
+            echo "📁 確保目錄結構正確..."
+            mkdir -p storage/database  # SQLite 數據庫直接存放位置
+            mkdir -p storage/logs
+            mkdir -p storage/framework/{cache,sessions,views}
+            mkdir -p storage/app
+            
+            # 設置正確的權限（AWS EC2 優化）
+            echo "🔐 設置檔案權限..."
+            sudo chown -R $USER:$USER ~/aaronblog
+            chmod -R 755 ~/aaronblog
+            chmod -R 775 ~/aaronblog/storage
+            chmod -R 775 ~/aaronblog/bootstrap/cache
+            
+            # 拉取最新程式碼
+            echo "📥 拉取最新程式碼..."
             git pull origin main
             
-            # 拉取最新 Docker image（還原 README 步驟）
-            echo "拉取最新 Docker image..."
-            docker pull aaronlei17/aaronblog-app:latest
+            # 拉取 AWS 專用的 Docker image
+            echo "🐳 拉取最新 Docker image..."
+            docker pull aaronlei17/aaronblog-app:aws-latest
+            
+            # 更新 docker-compose 中的 image tag
+            sed -i 's/aaronlei17\/aaronblog-app:latest/aaronlei17\/aaronblog-app:aws-latest/g' docker-compose.prod.yml
       
       - name: Upload frontend assets
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.GCP_HOST }}
-          username: ${{ secrets.GCP_USER }}
-          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
           source: "public/build/"
           target: "~/aaronblog/public/"
           strip_components: 1
-          # 註：原始 README 流程是透過 git push 包含前端資源
-          # 但為了避免在 repo 中產生額外的 commit，使用 SCP 上傳
-          # 效果相同：讓 VM 上的 public/build 目錄有最新的前端資源
       
-      - name: Restart services
+      - name: Restart services and health check
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.GCP_HOST }}
-          username: ${{ secrets.GCP_USER }}
-          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
           script: |
-            echo "重啟服務..."
+            echo "🔄 重啟 AWS EC2 服務..."
             cd ~/aaronblog
             
-            # 重啟 Docker 服務（還原 README 步驟）
-            docker-compose -f docker-compose.gcp.yml down
-            docker-compose -f docker-compose.gcp.yml up -d
+            # 停止現有服務
+            docker-compose -f docker-compose.prod.yml down
             
-            # 等待服務啟動（可以從 15 秒減少到 10 秒）
-            echo "等待服務啟動..."
-            sleep 10
+            # 清理未使用的 Docker 資源（AWS EC2 磁盤空間優化）
+            docker system prune -f
             
-            # 驗證部署成功
-            echo "驗證部署狀態..."
-            if docker-compose -f docker-compose.gcp.yml ps | grep -q "Up"; then
-              echo "✅ 部署成功！"
+            # 啟動新服務
+            docker-compose -f docker-compose.prod.yml up -d
+            
+            # 等待服務啟動
+            echo "⏳ 等待服務啟動..."
+            sleep 15
+            
+            # 簡單健康檢查
+            echo "🏥 檢查服務狀態..."
+            
+            # 檢查容器是否啟動
+            if docker-compose -f docker-compose.prod.yml ps | grep -q "Up"; then
+              echo "✅ 容器啟動成功"
               
-              # 清理舊的備份（保留最近3個）
-              find ~/aaronblog/public -name "build.backup.*" -type d | sort -r | tail -n +4 | xargs rm -rf
-              
-            else
-              echo "❌ 部署失敗！開始回滾..."
-              
-              # 回滾前端資源
-              LATEST_BACKUP=$(find ~/aaronblog/public -name "build.backup.*" -type d | sort -r | head -n 1)
-              if [ -n "$LATEST_BACKUP" ]; then
-                rm -rf ~/aaronblog/public/build
-                cp -r "$LATEST_BACKUP" ~/aaronblog/public/build
-                echo "已回滾前端資源"
-              fi
-              
-              # 重新啟動服務
-              docker-compose -f docker-compose.gcp.yml down
-              docker-compose -f docker-compose.gcp.yml up -d
-              
-              sleep 8  # 回滾時可以稍微減少等待時間
-              
-              if docker-compose -f docker-compose.gcp.yml ps | grep -q "Up"; then
-                echo "✅ 回滾成功！"
-                exit 1
+              # 簡單 HTTP 檢查
+              if curl -f http://localhost:80 > /dev/null 2>&1; then
+                echo "✅ 網站服務正常"
+                echo "🎉 AWS EC2 部署成功！"
+                
+                # 清理舊備份（只保留1個）
+                find ~/aaronblog/public -name "build.backup.*" -type d | sort -r | tail -n +2 | xargs rm -rf 2>/dev/null || true
+                
               else
-                echo "❌ 回滾也失敗了！請手動檢查！"
-                exit 1
+                echo "⚠️  HTTP 檢查異常，但容器已啟動"
+                echo "🔍 請手動檢查網站狀態"
               fi
+            else
+              echo "❌ 容器啟動失敗！"
+              docker-compose -f docker-compose.prod.yml logs --tail=50
+              exit 1
             fi
 
   notify:
@@ -243,12 +252,13 @@ jobs:
     steps:
       - name: Notify deployment success
         run: |
-          echo "🎉 部署成功！"
+          echo "🎉 AWS EC2 部署成功！"
           echo "✅ 測試通過"
           echo "✅ 前端構建完成"
           echo "✅ Docker 映像構建完成"
-          echo "✅ 部署到生產環境成功"
+          echo "✅ 部署到 AWS EC2 成功"
           echo "📅 部署時間: $(date)"
+          echo "🏷️  Docker Tag: aws-latest"
 
   notify-failure:
     name: Notify Failure
@@ -259,15 +269,9 @@ jobs:
     steps:
       - name: Send failure notification
         run: |
-          echo "❌ 部署失敗！"
-          echo "時間: $(date)"
-          echo "提交: ${{ github.sha }}"
-          echo "分支: ${{ github.ref_name }}"
-          echo "作者: ${{ github.actor }}"
-          echo "失敗原因: 請檢查上述步驟的日誌"
-          
-          # 這裡可以添加更多通知方式，例如：
-          # - 發送 Email
-          # - 發送 Slack 消息
-          # - 發送 Discord 消息
-          # - 發送推送通知 
+          echo "❌ AWS EC2 部署失敗！"
+          echo "🕐 時間: $(date)"
+          echo "📝 提交: ${{ github.sha }}"
+          echo "🌿 分支: ${{ github.ref_name }}"
+          echo "👤 作者: ${{ github.actor }}"
+          echo "🔍 失敗原因: 請檢查上述步驟的日誌"

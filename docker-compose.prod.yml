@@ -1,6 +1,6 @@
-# AWS EC2 生產環境配置
-# 使用方式: docker-compose -f docker-compose.aws.yml up -d
-# 特色：基於 GCP 版本優化，針對 AWS EC2 調整權限和資源配置
+# 生產環境配置 (AWS EC2)
+# 使用方式: docker-compose -f docker-compose.prod.yml up -d
+# 特色：針對 AWS EC2 優化的權限和資源配置
 
 services:
   app:
