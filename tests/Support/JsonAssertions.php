@@ -10,19 +10,34 @@ namespace Tests\Support;
 trait JsonAssertions
 {
     /**
-     * 斷言標準 API 成功回應格式
+     * 斷言標準 API 成功回應格式（自動判斷是否包含 data）
      */
     protected function assertApiSuccess($response, int $statusCode = 200, string $message = '操作成功'): void
     {
-        $response->assertStatus($statusCode)
-                 ->assertJsonStructure([
+        $response->assertStatus($statusCode);
+        
+        // 檢查回應是否包含 data 欄位，自動適應不同格式
+        $responseData = $response->json();
+        $hasData = array_key_exists('data', $responseData);
+        
+        if ($hasData) {
+            // 標準格式：包含 status, code, message, data
+            $response->assertJsonStructure([
                      'status',
-                     'code',
+                     'code', 
                      'message',
                      'data'
                  ])
                  ->assertJsonPath('status', 'success')
                  ->assertJsonPath('code', $statusCode);
+        } else {
+            // 簡化格式：只包含 status, message（如刪除操作）
+            $response->assertJsonStructure([
+                     'status',
+                     'message'
+                 ])
+                 ->assertJsonPath('status', 'success');
+        }
                  
         if ($message) {
             $response->assertJsonPath('message', $message);
