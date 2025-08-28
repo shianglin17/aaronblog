@@ -27,25 +27,10 @@ class TagApiTest extends TestCase
         // Act: 呼叫 API
         $response = $this->getJson('/api/tags');
 
-        // Assert: 驗證回應格式
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'status',
-                     'code',
-                     'message',
-                     'data' => [
-                         '*' => [
-                             'id',
-                             'name',
-                             'slug',
-                             'articles_count',
-                             'created_at'
-                         ]
-                     ]
-                 ])
-                 ->assertJsonPath('status', 'success')
-                 ->assertJsonPath('code', 200)
-                 ->assertJsonCount(3, 'data');
+        // Assert - 使用統一的成功斷言和列表結構驗證
+        $this->assertApiSuccess($response, 200, '成功');
+        $this->assertTagListStructure($response);
+        $response->assertJsonCount(3, 'data');
     }
 
     /**
@@ -57,9 +42,8 @@ class TagApiTest extends TestCase
         $response = $this->getJson('/api/tags');
 
         // Assert: 驗證回應
-        $response->assertStatus(200)
-                 ->assertJsonPath('status', 'success')
-                 ->assertJsonPath('code', 200)
-                 ->assertJsonCount(0, 'data');
+        // Assert - 使用統一的成功斷言並驗證空列表
+        $this->assertApiSuccess($response, 200, '成功');
+        $response->assertJsonCount(0, 'data');
     }
 } 

@@ -37,22 +37,10 @@ class CategoryDetailTest extends TestCase
         // Act
         $response = $this->getJson("/api/categories/{$category->id}");
 
-        // Assert
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'status',
-                     'code',
-                     'message',
-                     'data' => [
-                         'id',
-                         'name',
-                         'slug',
-                         'description',
-                         'articles_count',
-                         'created_at'
-                     ]
-                 ])
-                 ->assertJsonPath('status', 'success')
+        // Assert - 使用統一的成功斷言和資源結構驗證
+        $this->assertApiSuccess($response, 200, '成功');
+        $this->assertCategoryResourceStructure($response);
+        $response
                  ->assertJsonPath('data.name', 'Technology')
                  ->assertJsonPath('data.slug', 'technology')
                  ->assertJsonPath('data.description', 'Tech articles')
@@ -87,8 +75,9 @@ class CategoryDetailTest extends TestCase
         $response = $this->getJson("/api/categories/{$category->id}");
 
         // Assert - 只計算已發布的文章
-        $response->assertStatus(200)
-                 ->assertJsonPath('data.articles_count', 2);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
+        $response->assertJsonPath('data.articles_count', 2);
     }
 
     /**

@@ -27,26 +27,10 @@ class CategoryApiTest extends TestCase
         // Act: 呼叫 API
         $response = $this->getJson('/api/categories');
 
-        // Assert: 驗證回應格式
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'status',
-                     'code',
-                     'message',
-                     'data' => [
-                         '*' => [
-                             'id',
-                             'name',
-                             'slug',
-                             'description',
-                             'articles_count',
-                             'created_at'
-                         ]
-                     ]
-                 ])
-                 ->assertJsonPath('status', 'success')
-                 ->assertJsonPath('code', 200)
-                 ->assertJsonCount(3, 'data');
+        // Assert - 使用統一的成功斷言和列表結構驗證
+        $this->assertApiSuccess($response, 200, '成功');
+        $this->assertCategoryListStructure($response);
+        $response->assertJsonCount(3, 'data');
     }
 
     /**
@@ -57,10 +41,8 @@ class CategoryApiTest extends TestCase
         // Act: 呼叫 API（沒有建立任何分類）
         $response = $this->getJson('/api/categories');
 
-        // Assert: 驗證回應
-        $response->assertStatus(200)
-                 ->assertJsonPath('status', 'success')
-                 ->assertJsonPath('code', 200)
-                 ->assertJsonCount(0, 'data');
+        // Assert - 使用統一的成功斷言並驗證空列表
+        $this->assertApiSuccess($response, 200, '成功');
+        $response->assertJsonCount(0, 'data');
     }
 } 

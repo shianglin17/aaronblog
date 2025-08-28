@@ -47,52 +47,10 @@ class ArticleApiTest extends TestCase
         // Act: 呼叫 API
         $response = $this->getJson('/api/articles');
 
-        // Assert: 驗證回應格式
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'status',
-                     'code', 
-                     'message',
-                     'data' => [
-                         '*' => [
-                             'id',
-                             'title',
-                             'slug',
-                             'description',
-                             'content',
-                             'status',
-                             'created_at',
-                             'updated_at',
-                             'author' => [
-                                 'id',
-                                 'name'
-                             ],
-                             'category' => [
-                                 'id',
-                                 'name',
-                                 'slug'
-                             ],
-                             'tags' => [
-                                 '*' => [
-                                     'id',
-                                     'name',
-                                     'slug'
-                                 ]
-                             ]
-                         ]
-                     ],
-                     'meta' => [
-                         'pagination' => [
-                             'current_page',
-                             'total_pages',
-                             'total_items',
-                             'per_page'
-                         ]
-                     ]
-                 ])
-                 ->assertJsonPath('status', 'success')
-                 ->assertJsonPath('code', 200)
-                 ->assertJsonCount(3, 'data');
+        // Assert - 使用統一的成功斷言和列表結構驗證
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $this->assertArticleListStructure($response);
+        $response->assertJsonCount(3, 'data');
     }
 
     /**
@@ -114,9 +72,9 @@ class ArticleApiTest extends TestCase
         // Act: 呼叫 API
         $response = $this->getJson("/api/articles?per_page={$perPage}&page={$page}");
 
-        // Assert: 驗證分頁結果
-        $response->assertStatus(200)
-                 ->assertJsonCount($expectedCount, 'data')
+        // Assert - 使用統一的成功斷言並驗證分頁結果
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response->assertJsonCount($expectedCount, 'data')
                  ->assertJsonPath('meta.pagination.per_page', $perPage)
                  ->assertJsonPath('meta.pagination.current_page', $page)
                  ->assertJsonPath('meta.pagination.total_pages', $expectedTotalPages)
@@ -161,9 +119,9 @@ class ArticleApiTest extends TestCase
         // Act: 搜尋
         $response = $this->getJson("/api/articles?search=" . urlencode($searchKeyword));
 
-        // Assert: 驗證搜尋結果
-        $response->assertStatus(200)
-                 ->assertJsonCount(count($expectedTitles), 'data');
+        // Assert - 使用統一的成功斷言並驗證搜尋結果
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response->assertJsonCount(count($expectedTitles), 'data');
 
         if (!empty($expectedTitles)) {
             $responseData = $response->json('data');
@@ -230,7 +188,9 @@ class ArticleApiTest extends TestCase
         $response = $this->getJson("/api/articles?sort_by={$sortBy}&sort_direction={$sortDirection}");
 
         // Assert: 驗證排序結果
-        $response->assertStatus(200);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response;
         
         $responseData = $response->json('data');
         $actualTitles = collect($responseData)->pluck('title')->toArray();
@@ -314,7 +274,9 @@ class ArticleApiTest extends TestCase
 
         // Act & Assert: 按分類 slug 過濾
         $response = $this->getJson('/api/articles?category=lifestyle');
-        $response->assertStatus(200)
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response
                  ->assertJsonCount(1, 'data')
                  ->assertJsonPath('data.0.title', 'Life Article')
                  ->assertJsonPath('data.0.category.name', 'Lifestyle');
@@ -359,12 +321,16 @@ class ArticleApiTest extends TestCase
 
         // Act & Assert: 按單一標籤過濾
         $response = $this->getJson('/api/articles?tags[]=php');
-        $response->assertStatus(200)
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response
                  ->assertJsonCount(2, 'data'); // PHP Article + Full Stack Article
 
         // Act & Assert: 按多個標籤過濾
         $response = $this->getJson('/api/articles?tags[]=php&tags[]=laravel');
-        $response->assertStatus(200)
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response
                  ->assertJsonCount(2, 'data'); // 應該還是 2 個（有 php 或 laravel 的文章）
     }
 
@@ -385,7 +351,9 @@ class ArticleApiTest extends TestCase
         $response = $this->getJson('/api/articles');
 
         // Assert: 只顯示已發布的文章
-        $response->assertStatus(200)
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response
                  ->assertJsonCount(2, 'data');
 
         // 驗證所有回傳的文章都是 published 狀態
@@ -409,42 +377,10 @@ class ArticleApiTest extends TestCase
         // Act: 呼叫 API
         $response = $this->getJson("/api/articles/{$article->id}");
 
-        // Assert: 驗證回應格式
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'status',
-                     'code',
-                     'message', 
-                     'data' => [
-                         'id',
-                         'title',
-                         'slug',
-                         'description',
-                         'content',
-                         'status',
-                         'created_at',
-                         'updated_at',
-                         'author' => [
-                             'id',
-                             'name'
-                         ],
-                         'category' => [
-                             'id',
-                             'name',
-                             'slug'
-                         ],
-                         'tags' => [
-                             '*' => [
-                                 'id',
-                                 'name',
-                                 'slug'
-                             ]
-                         ]
-                     ]
-                 ])
-                 ->assertJsonPath('status', 'success')
-                 ->assertJsonPath('code', 200)
-                 ->assertJsonPath('data.title', 'Test Article')
+        // Assert - 使用統一的成功斷言和資源結構驗證
+        $this->assertApiSuccess($response, 200, '成功');
+        $this->assertArticleResourceStructure($response);
+        $response->assertJsonPath('data.title', 'Test Article')
                  ->assertJsonPath('data.id', $article->id);
     }
 
@@ -487,7 +423,9 @@ class ArticleApiTest extends TestCase
         $response = $this->getJson('/api/articles?search=Laravel');
 
         // Assert: 驗證只回傳已發布的文章
-        $response->assertStatus(200);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '獲取列表成功');
+        $response;
         
         $responseData = $response->json('data');
         $this->assertCount(1, $responseData); // 只應該有 1 篇已發布的 Laravel 文章
