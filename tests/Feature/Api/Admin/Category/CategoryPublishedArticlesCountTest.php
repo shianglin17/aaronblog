@@ -40,7 +40,8 @@ class CategoryPublishedArticlesCountTest extends AdminTestCase
         // 獲取分類列表
         $response = $this->getJson('/api/categories');
 
-        $response->assertOk();
+        // Assert - 使用統一的成功斷言（公開 API）
+        $this->assertApiSuccess($response, 200, '成功');
         
         $categoryData = collect($response->json('data'))
             ->firstWhere('id', $category->id);
@@ -76,7 +77,8 @@ class CategoryPublishedArticlesCountTest extends AdminTestCase
             'name' => '更新的分類名稱'
         ]);
 
-        $response->assertOk();
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
         
         $responseData = $response->json('data');
         $this->assertEquals(4, $responseData['articles_count'], '更新分類時應該只計算已發布文章');

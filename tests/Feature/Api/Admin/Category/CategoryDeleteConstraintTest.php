@@ -23,12 +23,8 @@ class CategoryDeleteConstraintTest extends AdminTestCase
         // 嘗試刪除分類
         $response = $this->deleteJson("/api/admin/categories/{$category->id}");
 
-        // 應該成功刪除
-        $response->assertOk();
-        $response->assertJson([
-            'status' => 'success',
-            'message' => '成功'
-        ]);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 確認分類已被刪除
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
@@ -51,12 +47,12 @@ class CategoryDeleteConstraintTest extends AdminTestCase
         // 嘗試刪除分類
         $response = $this->deleteJson("/api/admin/categories/{$category->id}");
 
-        // 應該返回錯誤
-        $response->assertStatus(409);
-        $response->assertJson([
-            'status' => 'error',
-            'message' => "無法刪除 分類（ID: {$category->id}），因為仍有 3 篇文章正在使用此分類"
-        ]);
+        // Assert - 驗證分類刪除約束錯誤
+        $response->assertStatus(409)
+                 ->assertJson([
+                     'status' => 'error',
+                     'message' => "無法刪除 分類（ID: {$category->id}），因為仍有 3 篇文章正在使用此分類"
+                 ]);
 
         // 確認分類仍然存在
         $this->assertDatabaseHas('categories', ['id' => $category->id]);

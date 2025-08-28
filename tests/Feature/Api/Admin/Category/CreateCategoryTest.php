@@ -29,21 +29,9 @@ class CreateCategoryTest extends AdminTestCase
 
         $response = $this->postJson('/api/admin/categories', $categoryData);
 
-        $response->assertStatus(201)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => '創建成功'
-                 ])
-                 ->assertJsonStructure([
-                     'data' => [
-                         'id',
-                         'name',
-                         'slug',
-                         'description',
-                         'articles_count',
-                         'created_at'
-                     ]
-                 ]);
+        // Assert - 使用統一的斷言方法
+        $this->assertApiSuccess($response, 201, '創建成功');
+        $this->assertCategoryResourceStructure($response);
 
         $this->assertDatabaseHas('categories', $categoryData);
         
@@ -59,15 +47,8 @@ class CreateCategoryTest extends AdminTestCase
     {
         $response = $this->postJson('/api/admin/categories', []);
 
-        $response->assertStatus(422)
-                 ->assertJsonStructure([
-                     'status',
-                     'code',
-                     'message',
-                     'meta' => [
-                         'errors'
-                     ]
-                 ]);
+        // Assert - 使用統一的錯誤斷言
+        $this->assertApiError($response, 422);
     }
 
     /**
@@ -85,6 +66,7 @@ class CreateCategoryTest extends AdminTestCase
             'description' => '測試描述'
         ]);
 
-        $response->assertStatus(422);
+        // Assert - 驗證重複 slug 錯誤
+        $this->assertApiError($response, 422);
     }
 } 
