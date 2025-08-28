@@ -46,7 +46,8 @@ class TagPublishedArticlesCountTest extends AdminTestCase
         // 獲取標籤列表
         $response = $this->getJson('/api/tags');
 
-        $response->assertOk();
+        // Assert - 使用統一的成功斷言（公開 API）
+        $this->assertApiSuccess($response, 200, '成功');
         
         $tagData = collect($response->json('data'))
             ->firstWhere('id', $tag->id);
@@ -85,7 +86,8 @@ class TagPublishedArticlesCountTest extends AdminTestCase
             'name' => '更新的標籤名稱'
         ]);
 
-        $response->assertOk();
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
         
         $responseData = $response->json('data');
         $this->assertEquals(1, $responseData['articles_count'], '更新標籤時應該只計算已發布文章');
@@ -101,7 +103,8 @@ class TagPublishedArticlesCountTest extends AdminTestCase
             'slug' => 'new-tag'
         ]);
 
-        $response->assertStatus(201);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 201, '創建成功');
         
         $responseData = $response->json('data');
         $this->assertEquals(0, $responseData['articles_count'], '新創建的標籤文章計數應該是0');

@@ -32,12 +32,8 @@ class TagDeleteConstraintTest extends AdminTestCase
         // 嘗試刪除標籤
         $response = $this->deleteJson("/api/admin/tags/{$tag->id}");
 
-        // 應該成功刪除
-        $response->assertOk();
-        $response->assertJson([
-            'status' => 'success',
-            'message' => '成功'
-        ]);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 確認標籤已被刪除
         $this->assertDatabaseMissing('tags', ['id' => $tag->id]);
@@ -69,12 +65,8 @@ class TagDeleteConstraintTest extends AdminTestCase
         // 嘗試刪除標籤（寬鬆模式：允許刪除）
         $response = $this->deleteJson("/api/admin/tags/{$tag->id}");
 
-        // 應該成功刪除
-        $response->assertOk();
-        $response->assertJson([
-            'status' => 'success',
-            'message' => '成功'
-        ]);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 確認標籤已被刪除
         $this->assertDatabaseMissing('tags', ['id' => $tag->id]);
@@ -130,8 +122,8 @@ class TagDeleteConstraintTest extends AdminTestCase
         // 刪除目標標籤
         $response = $this->deleteJson("/api/admin/tags/{$targetTag->id}");
 
-        // 應該成功刪除
-        $response->assertOk();
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
 
         // 確認目標標籤已被刪除
         $this->assertDatabaseMissing('tags', ['id' => $targetTag->id]);

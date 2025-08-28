@@ -33,11 +33,8 @@ class UpdateTagTest extends AdminTestCase
 
         $response = $this->putJson("/api/admin/tags/{$tag->id}", $updateData);
 
-        $response->assertOk()
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => '成功'
-                 ]);
+        // Assert - 使用統一的成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
 
         $this->assertDatabaseHas('tags', [
             'id' => $tag->id,
@@ -72,7 +69,8 @@ class UpdateTagTest extends AdminTestCase
             'name' => '新名稱'
         ]);
 
-        $response->assertOk();
+        // Assert - 簡化成功斷言
+        $this->assertApiSuccess($response, 200, '成功');
         
         $this->assertDatabaseHas('tags', [
             'id' => $tag->id,
@@ -94,7 +92,8 @@ class UpdateTagTest extends AdminTestCase
             'slug' => 'existing-slug' // 嘗試使用已存在的 slug
         ]);
 
-        $response->assertStatus(422);
+        // Assert - 重複 slug 驗證錯誤
+        $this->assertApiError($response, 422);
     }
 
     /**
@@ -129,15 +128,9 @@ class UpdateTagTest extends AdminTestCase
 
         $response = $this->putJson("/api/admin/tags/{$tag->id}", $updateData);
 
-        $response->assertOk()
-                 ->assertJsonStructure([
-                     'data' => [
-                         'id',
-                         'name',
-                         'slug',
-                         'articles_count'
-                     ]
-                 ]);
+        // Assert - 使用統一的成功斷言和資源結構驗證
+        $this->assertApiSuccess($response, 200, '成功');
+        $this->assertTagResourceStructure($response);
 
         // 驗證 articles_count 正確
         $responseData = $response->json('data');

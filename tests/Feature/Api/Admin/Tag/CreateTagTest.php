@@ -28,20 +28,9 @@ class CreateTagTest extends AdminTestCase
 
         $response = $this->postJson('/api/admin/tags', $tagData);
 
-        $response->assertStatus(201)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => '創建成功'
-                 ])
-                 ->assertJsonStructure([
-                     'data' => [
-                         'id',
-                         'name',
-                         'slug',
-                         'articles_count',
-                         'created_at'
-                     ]
-                 ]);
+        // Assert - 使用統一的斷言方法
+        $this->assertApiSuccess($response, 201, '創建成功');
+        $this->assertTagResourceStructure($response);
 
         $this->assertDatabaseHas('tags', $tagData);
         
@@ -57,15 +46,8 @@ class CreateTagTest extends AdminTestCase
     {
         $response = $this->postJson('/api/admin/tags', []);
 
-        $response->assertStatus(422)
-                 ->assertJsonStructure([
-                     'status',
-                     'code',
-                     'message',
-                     'meta' => [
-                         'errors'
-                     ]
-                 ]);
+        // Assert - 使用統一的錯誤斷言
+        $this->assertApiError($response, 422);
     }
 
     /**
@@ -82,7 +64,8 @@ class CreateTagTest extends AdminTestCase
             'slug' => 'existing-slug'
         ]);
 
-        $response->assertStatus(422);
+        // Assert - 驗證重複 slug 錯誤
+        $this->assertApiError($response, 422);
     }
 
     /**
@@ -97,7 +80,8 @@ class CreateTagTest extends AdminTestCase
 
         $response = $this->postJson('/api/admin/tags', $tagData);
 
-        $response->assertStatus(201);
+        // Assert - 簡化成功斷言
+        $this->assertApiSuccess($response, 201, '創建成功');
         $this->assertDatabaseHas('tags', $tagData);
     }
 } 
