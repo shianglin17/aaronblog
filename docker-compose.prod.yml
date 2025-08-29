@@ -8,17 +8,14 @@ services:
     container_name: aaronblog-app
     env_file:
       - .env
-    # 暫時使用預設權限，確保部署穩定性
+    # 優化的 volume 策略，減少權限衝突
     volumes:
-      # 靜態文件掛載為只讀
+      # 靜態文件掛載為只讀（nginx 需要存取）
       - ./public:/var/www/public:ro
-      # SQLite 資料庫檔案直接掛載到伺服器（便於備份和管理）
-      - ./storage/database:/var/www/storage/app/database
-      # 完整 storage 掛載，確保權限正確
-      - ./storage/logs:/var/www/storage/logs
-      - ./storage/framework:/var/www/storage/framework
-      - ./storage/app:/var/www/storage/app
-      - .env:/var/www/.env
+      # 統一掛載整個 storage 目錄，避免部分掛載導致的權限問題
+      - ./storage:/var/www/storage
+      # 環境變數檔案
+      - .env:/var/www/.env:ro
     # AWS EC2 環境下給 Laravel 主應用更多記憶體資源
     mem_limit: 1.2g
     mem_reservation: 600m
@@ -64,9 +61,6 @@ services:
     networks:
       - aaronblog-net
     restart: unless-stopped
-
-# volumes:
-# SQLite 數據庫現在直接綁定到伺服器，不需要 Docker volume
 
 networks:
   aaronblog-net:

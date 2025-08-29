@@ -160,20 +160,6 @@ jobs:
               cp -r public/build public/build.backup.$(date +%Y%m%d-%H%M%S)
             fi
             
-            # 創建必要的目錄結構
-            echo "📁 確保目錄結構正確..."
-            mkdir -p storage/database  # SQLite 數據庫直接存放位置
-            mkdir -p storage/logs
-            mkdir -p storage/framework/{cache,sessions,views}
-            mkdir -p storage/app
-            
-            # 設置正確的權限（AWS EC2 優化）
-            echo "🔐 設置檔案權限..."
-            sudo chown -R $USER:$USER ~/aaronblog
-            chmod -R 755 ~/aaronblog
-            chmod -R 775 ~/aaronblog/storage
-            chmod -R 775 ~/aaronblog/bootstrap/cache
-            
             # 拉取最新程式碼
             echo "📥 拉取最新程式碼..."
             git config core.filemode false
