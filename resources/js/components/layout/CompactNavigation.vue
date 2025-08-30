@@ -119,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onBeforeUnmount } from 'vue';
 import { SearchOutline, CloseOutline, OptionsOutline, MenuOutline, RefreshOutline } from '@vicons/ionicons5';
 import MobileFilterMenu from './MobileFilterMenu.vue';
 import type { Category } from '../../types/category';
@@ -202,6 +202,33 @@ const clearAllFilters = () => {
   showFilters.value = false;
   showMobileMenu.value = false;
 };
+
+// 點擊外部關閉篩選面板
+const handleClickOutside = (event: Event) => {
+  // 安全的類型檢查
+  if (!event.target) return;
+  
+  const target = event.target as Element;
+  if (!(target instanceof Element)) return;
+  
+  if (!target.closest('.desktop-search')) {
+    showFilters.value = false;
+  }
+};
+
+// 監聽篩選面板開關狀態
+watch(showFilters, (isOpen) => {
+  if (isOpen) {
+    document.addEventListener('click', handleClickOutside);
+  } else {
+    document.removeEventListener('click', handleClickOutside);
+  }
+});
+
+// 組件銷毀時清理事件監聽器
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <style scoped>
