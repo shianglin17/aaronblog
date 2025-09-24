@@ -16,12 +16,14 @@
         v-for="article in articles"
         :key="article.id"
         class="article-item"
-        @click="navigateToArticle(article)"
+        @click="goToArticle(article.slug)"
         tabindex="0"
-        @keydown.enter="navigateToArticle(article)"
+        @keydown.enter="goToArticle(article.slug)"
       >
         <h2 class="article-title">
-          {{ article.title }}
+          <a class="article-title-link" :href="`/article/${article.slug}`" @click.stop>
+            {{ article.title }}
+          </a>
         </h2>
         
         <!-- 文章元數據區塊 -->
@@ -86,7 +88,7 @@ import {
 } from '@vicons/ionicons5';
 import type { Article } from '../types/article';
 import type { PaginationMeta } from '../types/common';
-import { useRouter } from 'vue-router';
+// 使用 SSR，改為標準連結導向
 import { formatDate } from '../utils/date';
 
 const props = defineProps<{
@@ -96,7 +98,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['page-change', 'page-size-change']);
-const router = useRouter();
 const currentPage = ref(1);
 
 // 初始化
@@ -106,12 +107,9 @@ onMounted(() => {
   }
 });
 
-// 導航到文章詳情頁
-const navigateToArticle = (article: Article) => {
-  router.push({
-    path: `/article/${article.slug}`,
-    query: { id: article.id?.toString() || '' }
-  });
+// 導向至 SSR 文章詳情頁
+const goToArticle = (slug: string) => {
+  window.location.assign(`/article/${slug}`);
 };
 
 // 處理分頁變更
@@ -159,6 +157,10 @@ const handlePageChange = (page: number) => {
   color: var(--text-color);
   text-decoration: none;
   transition: color 0.2s;
+}
+
+.article-title-link {
+  display: inline-block;
 }
 
 .article-title:hover {

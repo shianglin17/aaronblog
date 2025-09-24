@@ -1,6 +1,5 @@
-import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../pages/Home.vue'
-import ArticleDetail from '../pages/ArticleDetail.vue'
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
 import { useAuthStore } from '../stores/auth'
@@ -11,15 +10,7 @@ const routes = [
         name: 'home',
         component: Home
     },
-    {
-        path: '/article/:slug',
-        name: 'article-detail',
-        component: ArticleDetail,
-        props: (route: RouteLocationNormalized) => ({ 
-            slug: route.params.slug,
-            id: Number(route.query.id) 
-        })
-    },
+    // 前台文章詳情改為後端 SSR 提供，移除此 SPA 路由
     {
         path: '/login',
         name: 'login',
