@@ -41,341 +41,190 @@
     <meta name="twitter:image" content="{{ $seoData['featured_image'] }}">
     @endif
     
-    {{-- Preconnect for fonts --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&display=swap" rel="stylesheet">
-    
     {{-- CSS Styles --}}
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/article.css'])
     
     {{-- JSON-LD Structured Data --}}
     <script type="application/ld+json">
     {!! json_encode($structuredData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
 </head>
-<body>
-    {{-- 主要內容區域 --}}
-    <div class="container">
-        {{-- 返回導航 --}}
-        <div class="navigation-back">
-            <a href="/" class="back-button">
-                ← 返回首頁
+<body class="dark">
+    {{-- 文章容器 --}}
+    <div class="article-container">
+        {{-- 導航區域 --}}
+        <nav class="article-nav">
+            <a href="/" class="nav-button fade-in">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 6L8 2.5 4.5 6 7 6v4h2V6h1.5z"/>
+                </svg>
+                返回首頁
             </a>
-        </div>
+        </nav>
         
-        {{-- 文章內容 --}}
-        <article class="article-detail">
-            {{-- 文章標題 --}}
-            <header>
-                <h1 class="article-title">{{ $article->title }}</h1>
-                
-                {{-- 文章元資料 --}}
-                <div class="article-meta-wrapper">
+        {{-- 文章主體 --}}
+        <main class="article-main">
+            <article class="article-card fade-in">
+                {{-- 文章標題區域 --}}
+                <header class="article-header">
+                    <h1 class="article-title">
+                        {{ $article->title }}
+                    </h1>
+                    
+                    {{-- 文章元數據 --}}
                     <div class="article-meta">
-                        <span class="article-author">
-                            <span class="meta-icon">👤</span>
+                        <div class="meta-item">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 4a4 4 0 100 8 4 4 0 000-8zM6 8a6 6 0 1112 0A6 6 0 016 8zM12 14c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z"/>
+                            </svg>
                             {{ $article->author->name }}
-                        </span>
-                        <span class="article-category">
-                            <span class="meta-icon">📁</span>
+                        </div>
+                        
+                        <div class="meta-item">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M2 6a2 2 0 012-2h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM4 8v10h16V8H4z"/>
+                                <path d="M6 6h2v2H6zM10 6h2v2h-2zM14 6h2v2h-2z"/>
+                            </svg>
                             {{ $article->category->name }}
-                        </span>
-                        <time datetime="{{ $article->created_at->toISOString() }}" class="article-date">
-                            <span class="meta-icon">🕒</span>
-                            {{ $article->created_at->format('Y年m月d日') }}
+                        </div>
+                        
+                        <time datetime="{{ $article->created_at->toISOString() }}" class="meta-item">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                                <path d="M12 7v5l3.25 1.63-.75 1.37L11 13V7h1z"/>
+                            </svg>
+                            {{ $article->created_at->format('Y年n月j日') }}
                         </time>
+                        
+                        <div class="meta-item">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                                <path d="M12 6v6l4 2-1 1.73-5-3V6h2z"/>
+                            </svg>
+                            約 {{ ceil(mb_strlen(strip_tags($renderedContent), 'UTF-8') / 400) }} 分鐘閱讀
+                        </div>
                     </div>
                     
                     {{-- 文章標籤 --}}
                     @if($article->tags && $article->tags->count() > 0)
                     <div class="article-tags">
-                        <span class="tag-label">
-                            <span class="meta-icon">🏷️</span>
-                            標籤：
+                        <span class="tags-label">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 2 2 2h11c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+                            </svg>
+                            標籤
                         </span>
                         @foreach($article->tags as $tag)
-                        <span class="article-tag">
+                        <span class="tag">
                             {{ $tag->name }}
                         </span>
                         @endforeach
                     </div>
                     @endif
+                </header>
+                
+                {{-- 文章描述 --}}
+                @if($article->description)
+                <div class="article-description">
+                    {{ $article->description }}
                 </div>
-            </header>
-            
-            {{-- 文章描述（如果有） --}}
-            @if($article->description)
-            <div class="article-description">
-                <p>{{ $article->description }}</p>
-            </div>
-            @endif
-            
-            {{-- 文章內容 --}}
-            <div class="article-content">
-                <div class="markdown-wrapper">
-                    <div class="markdown-body">
+                @endif
+                
+                {{-- 文章內容 --}}
+                <div class="article-content">
+                    <div class="prose">
                         {!! $renderedContent !!}
                     </div>
                 </div>
-            </div>
-        </article>
-        
-        {{-- 頁面底部資訊 --}}
-        <footer class="article-footer">
-            <div class="article-info">
-                <p>發布於 {{ $article->created_at->format('Y年m月d日') }}</p>
-                @if($article->updated_at != $article->created_at)
-                <p>最後更新於 {{ $article->updated_at->format('Y年m月d日') }}</p>
-                @endif
-            </div>
-            
-            <div class="back-to-top">
-                <a href="#top" class="scroll-to-top">回到頂部 ↑</a>
-            </div>
-        </footer>
+                
+                {{-- 頁面底部 --}}
+                <footer class="article-footer">
+                    <div class="footer-content">
+                        <div class="footer-info">
+                            <div>發布於 {{ $article->created_at->format('Y年n月j日') }}</div>
+                            @if($article->updated_at->gt($article->created_at))
+                            <div>最後更新於 {{ $article->updated_at->format('Y年n月j日') }}</div>
+                            @endif
+                        </div>
+                        
+                        <div class="footer-actions">
+                            <button onclick="shareArticle()" class="action-button secondary">
+                                分享文章
+                            </button>
+                            <button onclick="scrollToTop()" class="action-button">
+                                回到頂部
+                            </button>
+                        </div>
+                    </div>
+                </footer>
+            </article>
+        </main>
     </div>
     
-    {{-- 漸進式增強的 JavaScript --}}
+    {{-- JavaScript --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 平滑滾動回到頂部
-            const backToTopLinks = document.querySelectorAll('.scroll-to-top');
-            backToTopLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
+        // 回到頂部功能
+        function scrollToTop() {
+            window.scrollTo({ 
+                top: 0, 
+                behavior: 'smooth' 
             });
-            
+        }
+        
+        // 分享文章功能
+        function shareArticle() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ $article->title }}',
+                    text: '{{ $article->description ?? "值得一讀的技術文章" }}',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // 複製網址
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = '已複製連結';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                });
+            }
+        }
+        
+        // 頁面載入完成後的增強功能
+        document.addEventListener('DOMContentLoaded', function() {
             // 平滑滾動到錨點
-            const anchorLinks = document.querySelectorAll('a[href^="#"]');
-            anchorLinks.forEach(link => {
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
                 link.addEventListener('click', function(e) {
                     const targetId = this.getAttribute('href').substring(1);
                     const targetElement = document.getElementById(targetId);
                     
                     if (targetElement) {
                         e.preventDefault();
-                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                        targetElement.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
                 });
             });
             
-            // 程式碼區塊增強（如果需要複製功能）
-            const codeBlocks = document.querySelectorAll('pre code');
-            codeBlocks.forEach(block => {
-                // 為程式碼區塊加入語言標籤（如果有）
-                const language = block.className.match(/language-(\w+)/);
-                if (language) {
-                    const pre = block.parentElement;
-                    const label = document.createElement('div');
-                    label.className = 'code-language';
-                    label.textContent = language[1].toUpperCase();
-                    pre.insertBefore(label, block);
+            // 鍵盤快捷鍵
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + K: 分享
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    shareArticle();
+                }
+                
+                // Home 鍵：回到頂部
+                if (e.key === 'Home') {
+                    e.preventDefault();
+                    scrollToTop();
                 }
             });
         });
     </script>
-    
-    {{-- 結構化樣式 --}}
-    <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 32px 20px;
-            background: var(--background-color, #ffffff);
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        .navigation-back {
-            margin-bottom: 30px;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 8px 16px;
-            color: #7d6e5d;
-            text-decoration: none;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .back-button:hover {
-            background-color: #7d6e5d;
-            color: white;
-            border-color: #7d6e5d;
-        }
-
-        .article-detail {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e0e0e0;
-        }
-
-        .article-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 24px;
-            line-height: 1.3;
-            color: #333;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 16px;
-        }
-
-        .article-meta-wrapper {
-            margin-bottom: 36px;
-        }
-
-        .article-meta {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-            font-size: 0.9rem;
-            color: #666;
-            align-items: center;
-        }
-
-        .meta-icon {
-            margin-right: 6px;
-            opacity: 0.8;
-        }
-
-        .article-tags {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .tag-label {
-            color: #666;
-            font-size: 0.85rem;
-        }
-
-        .article-tag {
-            background: #f0f0f0;
-            color: #7d6e5d;
-            font-size: 0.8rem;
-            padding: 4px 12px;
-            border-radius: 16px;
-            display: inline-block;
-            border: 1px solid #d0d0d0;
-        }
-
-        .article-description {
-            background: #f8f9fa;
-            padding: 16px 20px;
-            border-left: 4px solid #7d6e5d;
-            margin-bottom: 32px;
-            border-radius: 0 6px 6px 0;
-            font-style: italic;
-            color: #666;
-        }
-
-        .article-content {
-            margin-top: 32px;
-        }
-
-        .markdown-wrapper {
-            background: white;
-            border-radius: 8px;
-        }
-
-        .markdown-body {
-            line-height: 1.75;
-            color: #333;
-            font-size: 1.05rem;
-        }
-
-        .article-footer {
-            margin-top: 48px;
-            padding-top: 24px;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .back-to-top a {
-            color: #7d6e5d;
-            text-decoration: none;
-            padding: 6px 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        .back-to-top a:hover {
-            background-color: #7d6e5d;
-            color: white;
-        }
-
-        .code-language {
-            background: #333;
-            color: white;
-            font-size: 0.7rem;
-            padding: 4px 8px;
-            border-radius: 4px 4px 0 0;
-            display: inline-block;
-            margin-bottom: 0;
-        }
-
-        /* 響應式設計 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px 16px;
-            }
-            
-            .article-detail {
-                padding: 24px 20px;
-            }
-            
-            .article-title {
-                font-size: 1.8rem;
-                margin-bottom: 20px;
-            }
-            
-            .article-meta {
-                flex-direction: column;
-                gap: 12px;
-                align-items: flex-start;
-            }
-            
-            .article-footer {
-                flex-direction: column;
-                gap: 16px;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 16px 12px;
-            }
-            
-            .article-detail {
-                padding: 20px 16px;
-            }
-            
-            .article-title {
-                font-size: 1.6rem;
-                margin-bottom: 16px;
-            }
-            
-            .markdown-body {
-                font-size: 1rem;
-            }
-        }
-    </style>
 </body>
 </html>

@@ -6,7 +6,11 @@ import path from 'path';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.ts'],
+            input: [
+                'resources/css/app.css', 
+                'resources/css/article.css',  // 新增文章專用樣式
+                'resources/js/app.ts'
+            ],
             refresh: true,
         }),
         vue({
