@@ -22,6 +22,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+.mcp.json
 
 # OpenAPI/Swagger 生成文檔 - 每個環境自行生成
 /storage/api-docs/
