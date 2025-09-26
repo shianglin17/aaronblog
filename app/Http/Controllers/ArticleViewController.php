@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Services\ArticleService;
 use App\Services\MarkdownService;
-use Illuminate\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\View\View;
+use League\CommonMark\Exception\CommonMarkException;
 
 /**
  * 文章 SSR 視圖控制器
@@ -26,6 +27,7 @@ class ArticleViewController extends Controller
      *
      * @param string $slug 文章 slug
      * @return View
+     * @throws CommonMarkException
      */
     public function show(string $slug): View
     {
@@ -84,6 +86,7 @@ class ArticleViewController extends Controller
      *
      * @param Article $article
      * @return array
+     * @throws CommonMarkException
      */
     private function generateSeoData(Article $article): array
     {
@@ -116,6 +119,7 @@ class ArticleViewController extends Controller
      *
      * @param Article $article
      * @return array
+     * @throws CommonMarkException
      */
     private function generateStructuredData(Article $article): array
     {
