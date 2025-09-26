@@ -8,7 +8,8 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css', 
-                'resources/css/article.css',  // 新增文章專用樣式
+                'resources/css/article.css',  // 文章專用樣式
+                'resources/css/home.css',     // 首頁專用樣式
                 'resources/js/app.ts'
             ],
             refresh: true,

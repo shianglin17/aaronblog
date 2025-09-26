@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleViewController;
+use App\Http\Controllers\HomeController;
 
 // CSRF Token 端點 - 為前端 SPA 提供 CSRF Token
 // 前端在發送需要 CSRF 保護的請求前，必須先呼叫此端點取得 CSRF Token
@@ -13,6 +14,10 @@ Route::get('/sanctum/csrf-cookie', function () {
 // ========================================
 // SSR 路由 - 優先於 SPA 路由
 // ========================================
+
+// 首頁 SSR - 優先於 SPA
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home');
 
 // 文章詳情頁面 SSR - 用於 SEO 優化
 Route::get('/article/{slug}', [ArticleViewController::class, 'show'])

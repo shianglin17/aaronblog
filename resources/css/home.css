@@ -1,0 +1,830 @@
+/*
+ * 首頁樣式 - 繼承文章頁面的俐落現代設計
+ * 重用 article.css 的設計變數和元件
+ */
+
+/* 匯入文章頁面的設計系統 */
+@import url('./article.css');
+
+/* 首頁容器 */
+.home-container {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* 首頁導航 - 比文章頁面的導航更豐富 */
+.home-nav {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-3) 0;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 品牌標誌 */
+.brand-logo {
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.brand-text {
+  color: var(--text);
+}
+
+.brand-accent {
+  color: var(--accent);
+}
+
+/* 搜尋表單 */
+.search-form {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.search-wrapper {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.search-input-container {
+  position: relative;
+  width: 300px;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--space-2) var(--space-6) var(--space-2) 40px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  transition: all 0.15s ease;
+  border-radius: 2px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+.clear-button {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 2px;
+  transition: color 0.15s ease;
+}
+
+.clear-button:hover {
+  color: var(--accent);
+}
+
+/* 篩選按鈕 */
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  border-radius: 2px;
+}
+
+.filter-toggle:hover {
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+.filter-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* 篩選面板 */
+.filter-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: var(--space-3);
+  margin-top: var(--space-1);
+  min-width: 280px;
+  border-radius: 2px;
+}
+
+.filter-section {
+  margin-bottom: var(--space-3);
+}
+
+.filter-section:last-child {
+  margin-bottom: 0;
+}
+
+.filter-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-select {
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  border-radius: 2px;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.tag-checkbox {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tag-checkbox input {
+  margin-right: 4px;
+}
+
+.tag-label {
+  color: var(--text-secondary);
+  transition: color 0.15s ease;
+}
+
+.tag-checkbox:hover .tag-label {
+  color: var(--accent);
+}
+
+.filter-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.apply-filters-btn {
+  background: var(--accent);
+  color: var(--bg);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--accent);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-radius: 2px;
+}
+
+.apply-filters-btn:hover {
+  background: var(--accent-hover);
+}
+
+.clear-filters-btn {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-2);
+  font-size: 14px;
+  transition: color 0.15s ease;
+}
+
+.clear-filters-btn:hover {
+  color: var(--accent);
+}
+
+/* 主要內容區域 */
+.home-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-3);
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* 個人資料側邊欄 */
+.profile-sidebar {
+  position: sticky;
+  top: var(--space-4);
+}
+
+.profile-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: var(--space-4);
+  border-radius: 2px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.avatar-container {
+  position: relative;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  object-fit: cover;
+  object-position: center top;
+}
+
+.avatar-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: var(--accent);
+  color: var(--bg);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg);
+}
+
+.profile-info h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--text);
+}
+
+.profile-title {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.profile-bio {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-bio p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 技術棧區域 */
+.tech-stack {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.tech-stack-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.tech-tag {
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.tech-tag:hover {
+  opacity: 0.8;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* 文章區域 */
+.articles-section {
+  min-height: 400px;
+}
+
+.search-result-info {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--accent);
+}
+
+.articles-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* 文章卡片 */
+.article-card {
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: all 0.15s ease;
+  border-radius: 2px;
+}
+
+.article-card:hover {
+  border-color: var(--accent);
+}
+
+.article-card-header {
+  margin-bottom: var(--space-2);
+}
+
+.article-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1.3;
+}
+
+.article-card-title a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.article-card-title a:hover {
+  color: var(--accent);
+}
+
+.article-card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.category-tag {
+  background: var(--accent);
+  color: var(--bg);
+  padding: 2px 6px;
+  font-weight: 500;
+  border-radius: 2px;
+}
+
+.article-card-excerpt {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+.article-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.article-card-tags .tag {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+  border-radius: 2px;
+}
+
+.article-card-tags .tag:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 分頁 */
+.pagination-nav {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: var(--space-3);
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border-radius: 2px;
+  min-width: 32px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg-secondary);
+}
+
+.pagination-btn.current {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.pagination-btn.prev-next {
+  padding: var(--space-1);
+  width: 32px;
+  height: 32px;
+}
+
+.pagination-ellipsis {
+  color: var(--text-muted);
+  padding: 0 4px;
+  font-weight: bold;
+  user-select: none;
+}
+
+/* 無文章狀態 */
+.no-articles {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--text-muted);
+}
+
+.no-articles h2 {
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: var(--space-2);
+}
+
+.return-home-btn {
+  display: inline-block;
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--bg);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border-radius: 2px;
+}
+
+.return-home-btn:hover {
+  background: var(--accent-hover);
+}
+
+/* 頁腳 */
+.home-footer {
+  margin-top: var(--space-8);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+  text-align: center;
+}
+
+.footer-content p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* 響應式設計 */
+@media (max-width: 1024px) {
+  .home-main {
+    grid-template-columns: 280px 1fr;
+    gap: var(--space-4);
+  }
+  
+  .nav-container {
+    padding: 0 var(--space-2);
+  }
+}
+
+/* 手機版漢堡選單 */
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.mobile-menu-toggle:hover {
+  background: var(--bg-secondary);
+  color: var(--accent);
+}
+
+.hamburger-icon {
+  transition: transform 0.2s ease;
+}
+
+/* 手機版個人資料收合功能 */
+.mobile-profile-toggle {
+  display: none;
+}
+
+/* 桌面版顯示完整個人資料 - 只在大螢幕時生效 */
+@media (min-width: 769px) {
+  .profile-details {
+    display: block !important;
+  }
+}
+
+.desktop-profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.profile-basic {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mobile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  object-fit: cover;
+  object-position: center top;
+}
+
+.mobile-profile-info h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.mobile-profile-info p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 2px 0 0 0;
+}
+
+.collapse-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.collapse-btn:hover {
+  color: var(--accent);
+  background: var(--bg-secondary);
+}
+
+.collapse-icon {
+  transition: transform 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .home-main {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-2);
+  }
+  
+  .profile-sidebar {
+    position: static;
+    order: -1;
+  }
+  
+  .profile-card {
+    padding: var(--space-3);
+  }
+  
+  /* 手機版分頁優化 */
+  .pagination-info {
+    font-size: 12px;
+    margin-bottom: var(--space-2);
+  }
+  
+  .pagination-btn {
+    font-size: 12px;
+    padding: 6px 8px;
+    min-width: 28px;
+  }
+  
+  .pagination-btn.prev-next {
+    width: 28px;
+    height: 28px;
+  }
+  
+  /* 顯示手機版收合介面 */
+  .mobile-profile-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+  }
+  
+  /* 預設隱藏詳細資料 */
+  .profile-details {
+    display: none;
+  }
+  
+  /* 手機版隱藏桌面版頭像區域 */
+  .desktop-profile-header {
+    display: none;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-2);
+  }
+  
+  .nav-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--space-2);
+  }
+  
+  .home-nav {
+    padding: var(--space-2) 0;
+    position: relative;
+  }
+  
+  /* 顯示漢堡選單按鈕 */
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  /* 搜尋容器在手機版預設隱藏 */
+  .nav-search-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: var(--space-3);
+    z-index: 10;
+  }
+  
+  .search-wrapper {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .search-input-container {
+    width: 100%;
+  }
+  
+  .filter-panel {
+    right: auto;
+    left: 0;
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-name {
+    font-size: 24px;
+  }
+  
+  
+  .mobile-avatar {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .article-card {
+    padding: var(--space-3);
+  }
+  
+  .article-card-title {
+    font-size: 16px;
+  }
+  
+  .profile-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
