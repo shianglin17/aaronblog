@@ -582,23 +582,86 @@
 
 /* 頁腳 */
 .home-footer {
-  margin-top: var(--space-8);
-  padding: var(--space-4) 0;
-  border-top: 1px solid var(--border);
-  background: var(--bg-secondary);
+  background-color: var(--bg);
+  padding: 18px 20px 12px;
+  margin-top: auto;
+  position: relative;
+}
+
+/* 頁腳水平線 */
+.home-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background-color: var(--border);
 }
 
 .footer-content {
-  max-width: 1200px;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 0 var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 社交媒體區域 */
+.social-media {
   text-align: center;
 }
 
-.footer-content p {
-  font-size: 14px;
+.social-links {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: center;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
   color: var(--text-muted);
-  margin: 0;
+  text-decoration: none;
+}
+
+.social-link:hover {
+  color: var(--accent);
+  background: var(--bg-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-xs);
+}
+
+.social-link svg {
+  transition: transform 0.3s ease;
+}
+
+.social-link:hover svg {
+  transform: scale(1.05);
+}
+
+/* 版權資訊 */
+.copyright {
+  text-align: center;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.copyright p {
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+
+.copyright .version {
+  font-size: 0.75rem;
+  opacity: 0.8;
 }
 
 /* 響應式設計 */
@@ -716,6 +779,37 @@
     padding: var(--space-3);
   }
   
+  /* Footer 響應式 */
+  .home-footer {
+    padding: 16px 16px 10px;
+  }
+  
+  .home-footer::before {
+    left: 16px;
+    right: 16px;
+  }
+  
+  .footer-content {
+    gap: 10px;
+  }
+  
+  .social-links {
+    gap: 16px;
+  }
+  
+  .social-link {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .copyright p {
+    font-size: 0.8rem;
+  }
+  
+  .copyright .version {
+    font-size: 0.7rem;
+  }
+  
   /* 手機版分頁優化 */
   .pagination-info {
     font-size: 12px;
@@ -826,5 +920,28 @@
   
   .profile-stats {
     grid-template-columns: repeat(3, 1fr);
+  }
+  
+  /* Footer 小螢幕優化 */
+  .home-footer {
+    padding: 14px 12px 8px;
+  }
+  
+  .home-footer::before {
+    left: 12px;
+    right: 12px;
+  }
+  
+  .social-links {
+    gap: 14px;
+  }
+  
+  .social-link {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .copyright .version {
+    font-size: 0.65rem;
   }
 }
