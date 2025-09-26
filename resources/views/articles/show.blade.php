@@ -12,6 +12,9 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ $seoData['canonical'] }}">
     
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    
     {{-- Open Graph Tags --}}
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{ $article->title }}">
@@ -56,7 +59,7 @@
         <nav class="article-nav">
             <a href="/" class="nav-button fade-in">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 6L8 2.5 4.5 6 7 6v4h2V6h1.5z"/>
+                    <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
                 </svg>
                 返回首頁
             </a>
@@ -192,8 +195,41 @@
             }
         }
         
+        // 主題初始化 - 讀取首頁設定的主題偏好
+        function initTheme() {
+            const body = document.body;
+            // 從 localStorage 獲取主題設置，預設為深色
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
+        }
+
+        function setTheme(theme) {
+            const body = document.body;
+            if (theme === 'light') {
+                body.classList.remove('dark');
+                body.classList.add('light');
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+            }
+        }
+
+        // 跨頁籤主題同步 - 監聽其他頁籤的主題變更
+        function watchThemeChanges() {
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'theme' && e.newValue) {
+                    setTheme(e.newValue);
+                }
+            });
+        }
+
         // 頁面載入完成後的增強功能
         document.addEventListener('DOMContentLoaded', function() {
+            // 初始化主題
+            initTheme();
+            
+            // 啟用跨頁籤主題同步
+            watchThemeChanges();
             // 平滑滾動到錨點
             document.querySelectorAll('a[href^="#"]').forEach(link => {
                 link.addEventListener('click', function(e) {

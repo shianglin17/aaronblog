@@ -50,6 +50,7 @@
   --accent-hover: var(--dark-accent-hover);
 }
 
+
 /* 重置 */
 * {
   box-sizing: border-box;
@@ -72,6 +73,9 @@ body {
 
 /* 導航 - 無裝飾 */
 .article-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: var(--space-4) 0 var(--space-2);
   max-width: 680px;
   margin: 0 auto;

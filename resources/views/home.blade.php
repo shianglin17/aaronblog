@@ -10,6 +10,9 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ $seoData['canonical'] }}">
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
     {{-- Open Graph Tags --}}
     <meta property="og:type" content="{{ $seoData['type'] }}">
     <meta property="og:title" content="{{ $seoData['title'] }}">
@@ -106,6 +109,22 @@
                                         <span class="tag-label">{{ $tag['name'] }}</span>
                                     </label>
                                 @endforeach
+                            </div>
+                        </div>
+
+                        {{-- 主題偏好設定 --}}
+                        <div class="filter-section">
+                            <label class="filter-label">檢視偏好</label>
+                            <div class="preference-item">
+                                <span class="preference-label">主題模式</span>
+                                <button id="theme-toggle" class="theme-toggle" title="切換主題">
+                                    <span class="theme-icon light-icon">☀️</span>
+                                    <span class="theme-icon dark-icon">🌙</span>
+                                    <span class="theme-text">
+                                        <span class="light-text">亮色</span>
+                                        <span class="dark-text">深色</span>
+                                    </span>
+                                </button>
                             </div>
                         </div>
 
@@ -480,6 +499,60 @@
 
         // 頁面載入完成後獲取版本
         fetchVersionInfo();
+
+        // 主題切換功能
+        function initTheme() {
+            const themeToggle = document.getElementById('theme-toggle');
+            if (!themeToggle) return; // 如果找不到按鈕就退出
+            
+            const body = document.body;
+            
+            // 從 localStorage 獲取主題設置，預設為深色
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
+            
+            // 點擊切換主題
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.classList.contains('dark') ? 'dark' : 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                setTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
+
+        function setTheme(theme) {
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            if (theme === 'light') {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                if (themeToggle) {
+                    themeToggle.setAttribute('title', '切換到深色模式');
+                }
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                if (themeToggle) {
+                    themeToggle.setAttribute('title', '切換到亮色模式');
+                }
+            }
+        }
+
+        // 跨頁籤主題同步 - 監聽其他頁籤的主題變更
+        function watchThemeChanges() {
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'theme' && e.newValue) {
+                    setTheme(e.newValue);
+                }
+            });
+        }
+
+        // 初始化主題
+        initTheme();
+        
+        // 啟用跨頁籤主題同步
+        watchThemeChanges();
     </script>
 </body>
 </html>

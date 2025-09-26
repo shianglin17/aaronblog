@@ -13,7 +13,7 @@ use Illuminate\View\View;
 
 /**
  * 首頁 SSR 控制器
- * 
+ *
  * 處理首頁的伺服器端渲染，重用 Service 層和 Transformer
  * 提供與 Home.vue 相同的功能：搜尋、篩選、分頁
  */
@@ -39,17 +39,17 @@ class HomeController extends Controller
         try {
             // 解析搜尋和篩選參數
             $filters = $this->parseFilters($request);
-            
+
             // 獲取文章列表（重用 ArticleService 和快取）
             $articlesData = $this->getArticlesData($filters);
-            
+
             // 獲取分類和標籤（用於篩選器）
             $categoriesData = $this->getCategoriesData();
             $tagsData = $this->getTagsData();
-            
+
             // 計算統計數據
             $stats = $this->calculateStats($articlesData, $categoriesData, $tagsData);
-            
+
             return view('home', [
                 'articles' => $articlesData['data'],
                 'pagination' => $articlesData['meta']['pagination'],
@@ -60,18 +60,18 @@ class HomeController extends Controller
                 'pageTitle' => $this->generatePageTitle($filters),
                 'seoData' => $this->generateHomeSeoData($filters),
             ]);
-            
+
         } catch (\Exception $e) {
             \Log::error('Home SSR Error: ' . $e->getMessage(), [
                 'filters' => $request->all(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             // 降級到基本首頁
             return $this->renderFallbackHome();
         }
     }
-    
+
     /**
      * 解析請求中的篩選參數
      */
@@ -88,7 +88,7 @@ class HomeController extends Controller
             'status' => 'published' // 固定為已發布
         ];
     }
-    
+
     /**
      * 獲取文章列表數據（重用 Service 層）
      */
@@ -96,12 +96,12 @@ class HomeController extends Controller
     {
         // 使用 ArticleService 獲取分頁文章（含快取）
         $articles = $this->articleService->getArticles($filters);
-        
+
         // 使用 ArticleTransformer 轉換數據（重用 API 層邏輯）
         $transformedArticles = $articles->map(function ($article) {
             return $this->articleTransformer->transform($article);
         });
-        
+
         return [
             'data' => $transformedArticles->toArray(),
             'meta' => [
@@ -117,31 +117,31 @@ class HomeController extends Controller
             ]
         ];
     }
-    
+
     /**
      * 獲取所有分類數據
      */
     private function getCategoriesData(): array
     {
         $categories = $this->categoryService->getAllCategories();
-        
+
         return $categories->map(function ($category) {
             return $this->categoryTransformer->transform($category);
         })->toArray();
     }
-    
+
     /**
      * 獲取所有標籤數據
      */
     private function getTagsData(): array
     {
         $tags = $this->tagService->getAllTags();
-        
+
         return $tags->map(function ($tag) {
             return $this->tagTransformer->transform($tag);
         })->toArray();
     }
-    
+
     /**
      * 計算統計數據
      */
@@ -153,38 +153,38 @@ class HomeController extends Controller
             'totalTags' => count($tagsData),
         ];
     }
-    
+
     /**
      * 生成頁面標題
      */
     private function generatePageTitle(array $filters): string
     {
-        $title = 'Aaron Blog';
-        
+        $title = 'Aaron 的部落格';
+
         if ($filters['search']) {
-            $title = "搜尋「{$filters['search']}」 - Aaron Blog";
+            $title = "搜尋「{$filters['search']}」 - Aaron 的部落格";
         } elseif ($filters['category']) {
-            $title = "分類「{$filters['category']}」 - Aaron Blog";
+            $title = "分類「{$filters['category']}」 - Aaron 的部落格";
         }
-        
+
         if ($filters['page'] > 1) {
             $title .= " - 第 {$filters['page']} 頁";
         }
-        
+
         return $title;
     }
-    
+
     /**
      * 生成首頁 SEO 資料
      */
     private function generateHomeSeoData(array $filters): array
     {
         $description = '分享程式設計、技術開發和個人學習心得的技術部落格';
-        
+
         if ($filters['search']) {
             $description = "搜尋「{$filters['search']}」的相關文章 - " . $description;
         }
-        
+
         return [
             'title' => $this->generatePageTitle($filters),
             'description' => $description,
@@ -192,7 +192,7 @@ class HomeController extends Controller
             'type' => 'website'
         ];
     }
-    
+
     /**
      * 渲染降級版本的首頁
      */
@@ -205,9 +205,9 @@ class HomeController extends Controller
             'tags' => [],
             'stats' => ['totalArticles' => 0, 'totalCategories' => 0, 'totalTags' => 0],
             'filters' => [],
-            'pageTitle' => 'Aaron Blog',
+            'pageTitle' => 'Aaron 的部落格',
             'seoData' => [
-                'title' => 'Aaron Blog',
+                'title' => 'Aaron 的部落格',
                 'description' => '技術部落格',
                 'canonical' => url('/'),
                 'type' => 'website'

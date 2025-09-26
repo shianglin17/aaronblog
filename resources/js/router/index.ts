@@ -1,16 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../pages/Home.vue'
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
 import { useAuthStore } from '../stores/auth'
 
 const routes = [
-    {
-        path: '/',
-        name: 'home',
-        component: Home
-    },
-    // 前台文章詳情改為後端 SSR 提供，移除此 SPA 路由
     {
         path: '/login',
         name: 'login',
@@ -58,7 +51,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory('/'),
+    history: createWebHistory(),
     routes
 })
 

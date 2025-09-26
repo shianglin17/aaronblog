@@ -13,6 +13,9 @@
     <meta name="author" content="Aaron">
     <link rel="canonical" href="{{ config('app.url') }}">
     
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    
     {{-- Open Graph Tags --}}
     <meta property="og:type" content="website">
     <meta property="og:title" content="Aaron 的部落格 - 網頁開發與程式設計技術分享">

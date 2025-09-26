@@ -6,6 +6,91 @@
 /* 匯入文章頁面的設計系統 */
 @import url('./article.css');
 
+/* 篩選面板中的偏好設定 */
+.preference-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-1) 0;
+}
+
+.preference-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* 主題切換按鈕 - 篩選面板樣式 */
+.filter-panel .theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.filter-panel .theme-toggle:hover {
+  border-color: var(--accent);
+  background: var(--bg);
+  color: var(--accent);
+}
+
+.filter-panel .theme-icon {
+  font-size: 12px;
+  transition: opacity 0.15s ease;
+}
+
+.filter-panel .theme-text {
+  font-size: 11px;
+  position: relative;
+}
+
+.light .filter-panel .theme-toggle .light-icon,
+.light .filter-panel .theme-toggle .light-text,
+.dark .filter-panel .theme-toggle .dark-icon,
+.dark .filter-panel .theme-toggle .dark-text {
+  opacity: 1;
+}
+
+.light .filter-panel .theme-toggle .dark-icon,
+.light .filter-panel .theme-toggle .dark-text,
+.dark .filter-panel .theme-toggle .light-icon,
+.dark .filter-panel .theme-toggle .light-text {
+  opacity: 0;
+  position: absolute;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  .preference-item {
+    padding: 6px 0;
+  }
+  
+  .preference-label {
+    font-size: 12px;
+  }
+  
+  .filter-panel .theme-toggle {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  
+  .filter-panel .theme-icon {
+    font-size: 10px;
+  }
+  
+  .filter-panel .theme-text {
+    font-size: 9px;
+  }
+}
+
 /* 首頁容器 */
 .home-container {
   min-height: 100vh;
