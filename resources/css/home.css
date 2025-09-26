@@ -72,20 +72,20 @@
   .preference-item {
     padding: 6px 0;
   }
-  
+
   .preference-label {
     font-size: 12px;
   }
-  
+
   .filter-panel .theme-toggle {
     padding: 4px 8px;
     font-size: 10px;
   }
-  
+
   .filter-panel .theme-icon {
     font-size: 10px;
   }
-  
+
   .filter-panel .theme-text {
     font-size: 9px;
   }
@@ -207,6 +207,7 @@
   transition: all 0.15s ease;
   position: relative;
   border-radius: 2px;
+  line-height: 1;
 }
 
 .filter-toggle:hover {
@@ -755,7 +756,7 @@
     grid-template-columns: 280px 1fr;
     gap: var(--space-4);
   }
-  
+
   .nav-container {
     padding: 0 var(--space-2);
   }
@@ -854,64 +855,64 @@
     gap: var(--space-3);
     padding: var(--space-3) var(--space-2);
   }
-  
+
   .profile-sidebar {
     position: static;
     order: -1;
   }
-  
+
   .profile-card {
     padding: var(--space-3);
   }
-  
+
   /* Footer 響應式 */
   .home-footer {
     padding: 16px 16px 10px;
   }
-  
+
   .home-footer::before {
     left: 16px;
     right: 16px;
   }
-  
+
   .footer-content {
     gap: 10px;
   }
-  
+
   .social-links {
     gap: 16px;
   }
-  
+
   .social-link {
     width: 32px;
     height: 32px;
   }
-  
+
   .copyright p {
     font-size: 0.8rem;
   }
-  
+
   .copyright .version {
     font-size: 0.7rem;
   }
-  
+
   /* 手機版分頁優化 */
   .pagination-info {
     font-size: 12px;
     margin-bottom: var(--space-2);
   }
-  
+
   .pagination-btn {
     font-size: 12px;
     padding: 6px 8px;
     min-width: 28px;
   }
-  
+
   .pagination-btn.prev-next {
     width: 28px;
     height: 28px;
   }
-  
+
   /* 顯示手機版收合介面 */
   .mobile-profile-toggle {
     display: flex;
@@ -921,40 +922,40 @@
     padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--border);
   }
-  
+
   /* 預設隱藏詳細資料 */
   .profile-details {
     display: none;
   }
-  
+
   /* 手機版隱藏桌面版頭像區域 */
   .desktop-profile-header {
     display: none;
   }
-  
+
   .profile-header {
     flex-direction: column;
     text-align: center;
     gap: var(--space-2);
   }
-  
+
   .nav-container {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: 0 var(--space-2);
   }
-  
+
   .home-nav {
     padding: var(--space-2) 0;
     position: relative;
   }
-  
+
   /* 顯示漢堡選單按鈕 */
   .mobile-menu-toggle {
     display: block;
   }
-  
+
   /* 搜尋容器在手機版預設隱藏 */
   .nav-search-container {
     display: none;
@@ -967,16 +968,16 @@
     padding: var(--space-3);
     z-index: 10;
   }
-  
+
   .search-wrapper {
     flex-direction: column;
     gap: var(--space-2);
   }
-  
+
   .search-input-container {
     width: 100%;
   }
-  
+
   .filter-panel {
     right: auto;
     left: 0;
@@ -988,44 +989,44 @@
   .brand-name {
     font-size: 24px;
   }
-  
-  
+
+
   .mobile-avatar {
     width: 60px;
     height: 60px;
   }
-  
+
   .article-card {
     padding: var(--space-3);
   }
-  
+
   .article-card-title {
     font-size: 16px;
   }
-  
+
   .profile-stats {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   /* Footer 小螢幕優化 */
   .home-footer {
     padding: 14px 12px 8px;
   }
-  
+
   .home-footer::before {
     left: 12px;
     right: 12px;
   }
-  
+
   .social-links {
     gap: 14px;
   }
-  
+
   .social-link {
     width: 28px;
     height: 28px;
   }
-  
+
   .copyright .version {
     font-size: 0.65rem;
   }
