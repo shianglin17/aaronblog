@@ -4,21 +4,11 @@
  */
 
 export const API_ROUTES = {
-  ARTICLE: {
-    LIST: '/articles',
-    DETAIL: (id: number) => `/articles/${id}`,
-    CREATE: '/articles',
-    UPDATE: (id: number) => `/articles/${id}`,
-    DELETE: (id: number) => `/articles/${id}`,
-    CATEGORIES: '/categories'
-  },
   TAG: {
-    LIST: '/tags',
-    DETAIL: (id: number) => `/tags/${id}`
+    LIST: '/tags'
   },
   CATEGORY: {
-    LIST: '/categories',
-    DETAIL: (id: number) => `/categories/${id}`
+    LIST: '/categories'
   },
   ADMIN: {
     ARTICLE: {
@@ -48,4 +38,4 @@ export const API_ROUTES = {
     PROFILE: '/user/profile',
     UPDATE_PROFILE: '/user/profile'
   }
-}; 
+};

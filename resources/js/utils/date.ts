@@ -17,16 +17,6 @@ function convertToTaipeiTime(date: Date): Date {
 }
 
 /**
- * 格式化日期為台北時區的本地化字符串
- * @param dateString - ISO格式的日期字符串
- * @returns 格式化後的日期字符串 (YYYY 年 MM 月 DD 日)
- */
-export function formatDate(dateString: string): string {
-  const date = convertToTaipeiTime(new Date(dateString));
-  return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`;
-}
-
-/**
  * 格式化日期時間為台北時區的本地化字符串
  * @param dateString - ISO格式的日期字符串
  * @returns 格式化後的日期時間字符串 (YYYY 年 MM 月 DD 日 HH:MM)
@@ -37,4 +27,4 @@ export function formatDateTime(dateString: string): string {
   const minutes = date.getMinutes().toString().padStart(2, '0');
   
   return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日 ${hours}:${minutes}`;
-} 
+}
