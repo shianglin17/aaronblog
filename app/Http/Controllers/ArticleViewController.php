@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Services\ArticleService;
 use App\Services\MarkdownService;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\View\View;
 use League\CommonMark\Exception\CommonMarkException;
@@ -55,7 +56,7 @@ class ArticleViewController extends Controller
         } catch (ModelNotFoundException $e) {
             // 文章不存在，返回 404
             abort(404, '文章不存在');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // 記錄錯誤並返回 500
             \Log::error('Article SSR Error: ' . $e->getMessage(), [
                 'slug' => $slug,
